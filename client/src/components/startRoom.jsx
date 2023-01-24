@@ -3,15 +3,20 @@ import { useNavigate } from "react-router-dom";
 
 class StartRoom extends Component {
 
-    constructor(props) {
-        super(props)
+    makeid(length) {
+        var result  = '';
+        var characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+        var charactersLength = characters.length;
+        for ( var i = 0; i < length; i++ ) {
+          result += characters.charAt(Math.floor(Math.random() * charactersLength));
+        }
+       return result;
     }
 
     createRoom() {
-        const room = makeid(5);
-        const player_id = makeid(16);
+        const room = this.makeid(5);
+        const player_id = this.makeid(16);
         
-        let navigate = useNavigate();
     }
 
     render() {
@@ -31,16 +36,6 @@ class StartRoom extends Component {
             </div>
         )
     }
-}
-
-function makeid(length) {
-    var result  = '';
-    var characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
-    var charactersLength = characters.length;
-    for ( var i = 0; i < length; i++ ) {
-      result += characters.charAt(Math.floor(Math.random() * charactersLength));
-    }
-   return result;
 }
 
 export default StartRoom
