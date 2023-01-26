@@ -1,6 +1,15 @@
 import React, { Component } from 'react'
+import { useNavigate } from "react-router-dom";
 
 class StartRoom extends Component {
+
+    constructor(props) {
+        super(props);
+        this.state = {
+            nickname : ""
+        };
+        this.handleSubmit = this.handleSubmit.bind(this)
+    }
 
     makeid(length) {
         var result  = '';
@@ -12,10 +21,11 @@ class StartRoom extends Component {
        return result;
     }
 
-    createRoom() {
+    handleSubmit() {
         const room = this.makeid(5);
         const player_id = this.makeid(16);
-        
+        const { navigate } = this.props;
+        navigate("/room/");
     }
 
     render() {
@@ -25,10 +35,11 @@ class StartRoom extends Component {
                     <div>
                         <label>Choose a nickname to create a room.</label>
                         <input id="nickname-input"
+                            onChange={(evt) => this.setState({nickname : evt.target.value})}
                             placeholder="Enter your nickname" 
                             maxLength="10"/>
                     </div>
-                    <button onClick={this.createRoom} role="button" type="submit">
+                    <button onClick={this.handleSubmit} role="button" type="submit">
                         <section className="flex items-center"> Create Room</section>
                     </button>
                 </section>
