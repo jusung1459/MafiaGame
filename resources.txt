@@ -1,1 +1,1 @@
-https://www.bezkoder.com/react-node-mongodb-auth/
+https://dev.to/jeffreythecoder/setup-jwt-authentication-in-mern-from-scratch-ib4
