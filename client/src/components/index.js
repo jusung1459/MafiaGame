@@ -1,3 +1,4 @@
-import StartRoom from './startRoom'
+import Home from './home/home'
+import Room from './room'
 
-export { StartRoom }
+export { Home, Room }
