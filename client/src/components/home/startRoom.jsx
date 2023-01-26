@@ -1,5 +1,5 @@
 import React, { Component } from 'react'
-import { useNavigate } from "react-router-dom";
+import {withRouter} from '../helper/router';
 
 class StartRoom extends Component {
 
@@ -24,13 +24,12 @@ class StartRoom extends Component {
     handleSubmit() {
         const room = this.makeid(5);
         const player_id = this.makeid(16);
-        const { navigate } = this.props;
-        navigate("/room/");
+        this.props.navigate("/room/"+room);
     }
 
     render() {
         return (
-            <div className="startroom">
+            <div className="container">
                 <section>
                     <div>
                         <label>Choose a nickname to create a room.</label>
@@ -48,4 +47,4 @@ class StartRoom extends Component {
     }
 }
 
-export default StartRoom
+export default withRouter(StartRoom)

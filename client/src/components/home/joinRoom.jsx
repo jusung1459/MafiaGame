@@ -19,7 +19,7 @@ class JoinRoom extends Component {
 
     render() {
         return (
-            <div className="join-room">
+            <div className="container">
                 <section>
                     <div>
                         <label>Enter the room code</label>

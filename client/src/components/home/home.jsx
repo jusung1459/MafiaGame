@@ -7,7 +7,7 @@ class Home extends Component {
 
     render() {
         return (
-            <main>
+            <main className='main'>
                 <div className='card mt-4'>
                     <h1>Welcome to mafia game</h1>
                     <h3>Create a room</h3>
