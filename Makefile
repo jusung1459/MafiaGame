@@ -3,7 +3,7 @@ build:
 	cd client && $(MAKE) build
 
 run:
-	docker-compose up
+	docker-compose --env-file ./.env up
 
 stop:
 	docker-compose down

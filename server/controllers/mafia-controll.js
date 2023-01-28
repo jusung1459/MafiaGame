@@ -29,7 +29,7 @@ createRoom = (req, res) => {
             roomid : room_id,
             id : player_id,
         }
-        const token = jwt.sign(user, "1234Supersecret", { expiresIn : '7d'});
+        const token = jwt.sign(user, process.env.JWT_KEY, { expiresIn : '7d'});
 
         return res.status(201).json({
             success: true,
