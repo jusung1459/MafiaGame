@@ -1,12 +1,16 @@
 import React, { Component } from 'react'
 import {withRouter} from '../helper/router';
+import axios from 'axios'
+
+const baseURL = 'http://localhost:3000/api/mafia'
 
 class StartRoom extends Component {
 
     constructor(props) {
         super(props);
         this.state = {
-            nickname : ""
+            nickname : "",
+            room : ""
         };
         this.handleSubmit = this.handleSubmit.bind(this)
     }
@@ -22,9 +26,28 @@ class StartRoom extends Component {
     }
 
     handleSubmit() {
+        const config = {
+            headers: { 'Content-Type': 'application/json' },
+        };
+        const body = JSON.stringify({ nickname:this.state.nickname });
+
         const room = this.makeid(5);
         const player_id = this.makeid(16);
-        this.props.navigate("/room/"+room);
+
+        try {
+            axios.post(`${baseURL}/create`, body, config).then((result) => {
+                const data = result['data'];
+                if (data['success'] == true) {
+                    delete data['success'];
+                    delete data['message'];
+                    localStorage.setItem('user', JSON.stringify(data));
+                    this.props.navigate("/room/"+room);
+                }
+            })
+            
+        } catch (err) {
+            console.log(err);
+        }
     }
 
     render() {

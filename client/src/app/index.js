@@ -11,10 +11,12 @@ import 'bootstrap/dist/css/bootstrap.min.css'
 
 function App() {
     return (
-        <Routes>
-            <Route path="/" element={<Home/>}/>
-            <Route path="/room/:roomid" element={<Room/>} />
-        </Routes>
+        <div>
+            <Routes>
+                <Route path="/" element={<Home/>}/>
+                <Route path="/room/:roomid" element={<Room/>} />
+            </Routes>
+        </div>  
     )
 }
 

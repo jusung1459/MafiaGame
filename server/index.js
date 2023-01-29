@@ -6,7 +6,7 @@ const db = require('./db')
 const mafiaRouter = require('./routes/mafia-router')
 
 require("dotenv").config();
-console.log(process.env)
+
 const app = express()
 const apiPort = 3000
 
