@@ -2,6 +2,8 @@ const Mafia = require('../models/mafia-model')
 const helper = require('../helpers/helper')
 const jwt = require('jsonwebtoken');
 
+const { io } = require('../index');
+
 authenticate = (req, res) => {
     const nickname = req.body.nickname;
     const room = req.body.room;
@@ -24,25 +26,33 @@ authenticate = (req, res) => {
 
 }
 
-connectRoom = (req, res) => {
-    const token = req.body.token;
-    if (!token) {
-        user = jwt.verify(token, process.env.JWT_KEY);
+StartRoom = (req, res) => {
     
-        return res.status(200).json({
-            nickname : user.nickname,
-            room : user.room,
-            player_id : player_id,
-            token
-        })
-    }
+    io.emit("message", "hello");
     return res.status(401).json({
         success: false,
-        message: "coutld not authenticate token"
+        message: "emit"
     });
+    const token = req.body.token;
+    if (token) {
+        return res.status(401).json({
+            success: false,
+            message: "coutld not authenticate token"
+        });
+    }
+
+    user = jwt.verify(token, process.env.JWT_KEY);
+    
+    return res.status(200).json({
+        nickname : user.nickname,
+        room : user.room,
+        player_id : player_id,
+        token
+    })
+    
 }
 
 module.exports = {
     authenticate,
-    connectRoom
+    StartRoom
 }

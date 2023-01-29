@@ -2,7 +2,6 @@ const Mafia = require('../models/mafia-model')
 const helper = require('../helpers/helper')
 const jwt = require('jsonwebtoken');
 
-
 createRoom = (req, res) => {
     const nickname = req.body.nickname;
     const room = helper.makeid(5);
