@@ -2,7 +2,7 @@ const Mafia = require('../models/mafia-model')
 const helper = require('../helpers/helper')
 const jwt = require('jsonwebtoken');
 
-const { io } = require('../index');
+
 
 authenticate = (req, res) => {
     const nickname = req.body.nickname;
@@ -27,10 +27,10 @@ authenticate = (req, res) => {
 }
 
 StartRoom = (req, res) => {
-    
-    io.emit("message", "hello");
-    return res.status(401).json({
-        success: false,
+    const socketConnection = require('../helpers/socket-singleton').connection();
+    socketConnection.sendEvent("message", "hello2");
+    return res.status(200).json({
+        success: true,
         message: "emit"
     });
     const token = req.body.token;
