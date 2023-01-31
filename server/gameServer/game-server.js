@@ -1,14 +1,18 @@
 process.on('message', (msg) => {
     console.log('Message from parent:', msg);
 });
+
+process.on('start')
   
 let counter = 0;
 
 const Game = class {
     constructor() {
-        this.state = "waiting";
+        this.state = "start";
     }
 }
+
+game = Game();
   
 setInterval(() => {
     process.send({ counter: counter++ });

@@ -12,7 +12,8 @@ createRoom = (req, res) => {
                 room : room,
                 player_id : player,
                 ip : ip,
-                browser : browser};
+                browser : browser,
+                owner : true};
 
     if (nickname == null) {
         return res.status(400).json({
@@ -79,7 +80,8 @@ joinRoom = (req, res) => {
         room : room_id,
         player_id : player_id,
         ip : ip,
-        browser : browser};
+        browser : browser,
+        owner : false};
 
     Mafia.findOneAndUpdate({roomid:room_id},
         {
