@@ -10,6 +10,6 @@ const router = express.Router()
 router.post('/mafia/create', MafiaCtrl.createRoom)
 router.post('/mafia/join', MafiaCtrl.joinRoom)
 router.post('/mafia/startroom', UserCtrl.StartRoom)
-router.get('/mafia', MafiaCtrl.getRoom)
+router.get('/mafia/gamestate', MafiaCtrl.getRoom)
 
 module.exports = router

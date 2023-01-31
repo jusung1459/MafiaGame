@@ -23,7 +23,7 @@ const Mafia = new Schema(
                 type : Map,
                 of : String    
             },
-            state : { type: String }
+            state : { type: String, required: true }
         },
         players : [PlayerSchema],
         messages : [MessagesSchema]
