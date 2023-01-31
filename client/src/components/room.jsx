@@ -6,7 +6,9 @@ class Room extends Component {
 
     constructor(props) {
         super(props);
-        this.socket = socketIO.connect('http://localhost:3000');
+        this.socket = socketIO.connect('http://localhost:3000', {
+            query: {token : JSON.parse(localStorage['user'])['token']},
+        });
     }
     
     componentDidMount() {

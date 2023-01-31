@@ -1,3 +1,5 @@
+const jwt = require('jsonwebtoken');
+
 let connection = null;
 
 // singleton class for socket io
@@ -12,10 +14,27 @@ class SocketConnection {
               origin: "http://localhost:8000",
               methods: ["GET", "POST"]
             }
-          });
+        });
+
+        // authenticate JWT in initial connection
+        io.use((socket, next) => {
+            // console.log(socket.handshake.query.token)
+            if (socket.handshake.query && socket.handshake.query.token) {
+                jwt.verify(socket.handshake.query.token, process.env.JWT_KEY, (err, decoded) => {
+                    if (err) {
+                        console.log(err);
+                        return next(new Error("Authentication error"));
+                    }
+                    // console.log(decoded['room']);
+                    socket.decoded = decoded;
+                    next();
+                });
+            }
+        });
 
         io.on('connection', (socket) => {
             this._socket = socket;
+            console.log(this._socket.decoded['room']);
             socket.emit("message", "hello");
             console.log("User connect: " + socket.id);
         });
