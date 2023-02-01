@@ -35,13 +35,14 @@ class SocketConnection {
         io.on('connection', (socket) => {
             this._socket = socket;
             console.log(this._socket.decoded['room']);
+            socket.join(this._socket.decoded['room'])
             socket.emit("message", "hello");
             console.log("User connect: " + socket.id);
         });
     }
 
     sendEvent(event, data) {
-        this._socket.emit(event, data);
+        this._socket.to(this._socket.decoded['room']).emit(event, data);
     }
 
     registerEvent(event, handler) {

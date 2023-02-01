@@ -99,6 +99,9 @@ joinRoom = (req, res) => {
     ).then(() => {
         const token = jwt.sign(user, process.env.JWT_KEY, { expiresIn : '7d'});
 
+        // todo
+        // send socket message to room of udpated message
+
         return res.status(201).json({
             success: true,
             nickname : user.nickname,
