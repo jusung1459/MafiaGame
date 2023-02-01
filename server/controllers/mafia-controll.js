@@ -105,7 +105,7 @@ joinRoom = (req, res) => {
             room: user.roomid,
             player_id: player_id,
             token: token,
-            message: 'room created',
+            message: 'joined room',
         })
     }).catch(error => {
         return res.status(400).json({

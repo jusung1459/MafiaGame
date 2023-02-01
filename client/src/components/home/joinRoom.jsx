@@ -1,4 +1,9 @@
-import React, { Component, useState } from 'react';
+import React, { Component } from 'react';
+import {withRouter} from '../helper/router';
+import axios from 'axios'
+
+const baseURL = 'http://localhost:3000/api/mafia'
+
 
 class JoinRoom extends Component {
 
@@ -15,6 +20,33 @@ class JoinRoom extends Component {
 
     handleSubmit() {
         console.log('room: ' + this.state.room + ' nickname: ' + this.state.nickname)
+        const config = {
+            headers: { 'Content-Type': 'application/json' },
+        };
+        
+        const body = JSON.stringify({ 
+            nickname:this.state.nickname,
+            room_id:this.state.room
+        });
+
+        try {
+            axios.post(`${baseURL}/join`, body, config).then((result) => {
+                console.log(result)
+                const data = result['data'];
+                if (data['success'] == true) {
+                    delete data['success'];
+                    delete data['message'];
+                    localStorage.setItem('user', JSON.stringify(data));
+                    const new_room = "/room/"+this.state.room;
+                    this.props.navigate(new_room);
+                }
+            }).catch(error => {
+                console.log(error);
+            });
+            
+        } catch (err) {
+            console.log(err);
+        }
     }
 
     render() {
@@ -44,4 +76,4 @@ class JoinRoom extends Component {
     }
 }
 
-export default JoinRoom
+export default withRouter(JoinRoom)
