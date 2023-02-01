@@ -121,7 +121,7 @@ joinRoom = (req, res) => {
 
 // returns filterd game state
 getRoom = (req, res) => {
-    const token = req.body.token;
+    const token = req.query.token;
 
     const user = jwt.verify(token, process.env.JWT_KEY);
 
