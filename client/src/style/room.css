@@ -1,0 +1,15 @@
+
+.chat-room {
+    border: 1px solid #ddd;
+    width: 350px;
+    height: 450px;
+    border-radius: 4px;
+    overflow: hidden;
+    margin-left: 50px;
+}
+
+.messages {
+    height: 342px;
+    overflow-y: auto;
+    padding: 15px 10px;
+  }
