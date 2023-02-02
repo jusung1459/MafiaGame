@@ -1,11 +1,9 @@
 
 .chat-room {
-    border: 1px solid #ddd;
-    width: 350px;
+    border: 5px solid #ddd;
     height: 450px;
     border-radius: 4px;
     overflow: hidden;
-    margin-left: 50px;
 }
 
 .messages {
