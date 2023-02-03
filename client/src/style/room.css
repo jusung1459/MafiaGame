@@ -11,3 +11,15 @@
     overflow-y: auto;
     padding: 15px 10px;
   }
+
+.beside-container {
+    display: flex;
+}
+
+.left-container {
+    flex: 0;
+}  
+
+.left-container:right-container {
+    margin-right: 100px;
+} 

@@ -41,7 +41,7 @@ class StartRoom extends Component {
                     delete data['success'];
                     delete data['message'];
                     localStorage.setItem('user', JSON.stringify(data));
-                    this.props.navigate("/room/"+room);
+                    this.props.navigate("/room/"+data['room']);
                 }
             })
             

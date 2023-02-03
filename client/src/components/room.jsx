@@ -50,7 +50,8 @@ class Room extends Component {
 
         this.socket.on('message', (msg) => console.log(msg));
 
-        this.socket.on('gameUpdate', () => {
+        this.socket.on('gameUpdate', (msg) => {
+            console.log('gameUpdate' + msg);
             console.log(this.state.token)
             axios.get(`${baseURL}/gamestate`, {params}, {config}).then((result) => {
                 console.log(result.data.data);

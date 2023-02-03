@@ -1,6 +1,7 @@
 const jwt = require('jsonwebtoken');
 
 let connection = null;
+let io = null
 
 // singleton class for socket io
 class SocketConnection {
@@ -9,7 +10,7 @@ class SocketConnection {
     }
 
     connect(server) {
-        const io = require('socket.io')(server, {
+        io = require('socket.io')(server, {
             cors: {
               origin: "http://localhost:8000",
               methods: ["GET", "POST"]
@@ -17,6 +18,7 @@ class SocketConnection {
         });
 
         // authenticate JWT in initial connection
+        io.eio.pingTimeout = 120000;
         io.use((socket, next) => {
             // console.log(socket.handshake.query.token)
             if (socket.handshake.query && socket.handshake.query.token) {
@@ -33,16 +35,13 @@ class SocketConnection {
         });
 
         io.on('connection', (socket) => {
-            this._socket = socket;
-            console.log(this._socket.decoded['room']);
-            socket.join(this._socket.decoded['room'])
-            socket.emit("message", "hello");
-            console.log("User connect: " + socket.id);
+            socket.join(socket.decoded['room'])
+            io.emit("message", "hello");
         });
     }
 
-    sendEvent(event, data) {
-        this._socket.to(this._socket.decoded['room']).emit(event, data);
+    sendEvent(event, data, room) {
+        io.in(room).emit(event, data);
     }
 
     registerEvent(event, handler) {

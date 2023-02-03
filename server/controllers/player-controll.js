@@ -59,7 +59,7 @@ player = (req, res) => {
 
         // tell players to update
         const socketConnection = require('../helpers/socket-singleton').connection();
-        socketConnection.sendEvent("message", "hello3");
+        socketConnection.sendEvent("message", "hello3", user.room);
         
         return res.status(201).json({data});
     }).catch(error => {
