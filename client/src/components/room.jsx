@@ -2,6 +2,7 @@ import React, { Component } from 'react'
 import socketIO from 'socket.io-client';
 import axios from 'axios'
 import Chat from './room/chat'
+import Players from './room/players';
 
 const baseURL = 'http://localhost:3000/api/mafia'
 
@@ -66,6 +67,9 @@ class Room extends Component {
         return (
             <div>
                 <h1>room</h1>
+                <Players players={this.state.players} 
+                        game={this.state.game}
+                        owner={this.state.owner}/>
                 <Chat messages={this.state.messages}/>
             </div>
         )
