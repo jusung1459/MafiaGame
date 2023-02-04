@@ -24,6 +24,18 @@ owner = (req, res) => {
                             player_id : kick_player_id
                         },
                     }
+                }).then((data) => {
+                    const socketConnection = require('../helpers/socket-singleton').connection();
+                    socketConnection.sendEvent("gameUpdate", "message", user.room);
+
+                    return res.status(201).json(
+                        {success: true,
+                        message: 'kicked player: ' + kick_player_id,});
+                }).catch(error => {
+                    return res.status(400).json({
+                        error,
+                        message: 'Cant kick player: ' + kick_player_id
+                    })
                 });
             }
             console.log("kick");
@@ -34,7 +46,6 @@ owner = (req, res) => {
         default:
             console.log("default case");
     }
-    return res.status(201).json({data});
 
 }
 

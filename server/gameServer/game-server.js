@@ -12,7 +12,7 @@ const Game = class {
     }
 }
 
-game = Game();
+let game = Game();
   
 setInterval(() => {
     process.send({ counter: counter++ });

@@ -98,9 +98,11 @@ joinRoom = (req, res) => {
         }
     ).then(() => {
         const token = jwt.sign(user, process.env.JWT_KEY, { expiresIn : '7d'});
-
+        
         // todo
         // send socket message to room of udpated message
+        const socketConnection = require('../helpers/socket-singleton').connection();
+        socketConnection.sendEvent("gameUpdate", "message", user.room);
 
         return res.status(201).json({
             success: true,
@@ -138,6 +140,7 @@ getRoom = (req, res) => {
         delete data.createdAt;
         delete data.updatedAt;
         delete data['__v'];
+        data.player_id = user.player_id;
 
         // tell players to update
         const socketConnection = require('../helpers/socket-singleton').connection();

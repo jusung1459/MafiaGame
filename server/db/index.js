@@ -1,7 +1,7 @@
 const mongoose = require('mongoose')
 
 mongoose
-    .connect('mongodb://172.20.0.1:27017/mafia', { useNewUrlParser: true })
+    .connect('mongodb://172.21.0.1:27017/mafia', { useNewUrlParser: true })
     .then(() => {
         console.log('successfully connected to the database');
     })
