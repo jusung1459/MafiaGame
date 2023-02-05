@@ -1,22 +1,67 @@
+const mongoose = require('mongoose')
+const Schema = mongoose.Schema
+
+mongoose
+    .connect('mongodb://172.18.0.1:27017/mafia', { useNewUrlParser: true })
+    .then(() => {
+        console.log('successfully connected to the database');
+    })
+    .catch(e => {
+        console.error('Connection error', e.message)
+    })
+
+const db = mongoose.connection
+
+const MessagesSchema = new Schema({
+    message : String,
+    nickname : String,
+    player_id : String
+})
+
+const PlayerSchema = new Schema({
+    nickname : String,
+    player_id : String
+})
+
+const Mafia = new Schema(
+    {
+        roomid: { type: String, required: true },
+        owner: { type: String, required: true },
+        game: { 
+            evil_players : [String],
+            good_players : [String],
+            roles : {
+                type : Map,
+                of : String    
+            },
+            state : { type: String, required: true }
+        },
+        players : [PlayerSchema],
+        messages : [MessagesSchema]
+    },
+    { timestamps: true },
+)
+
+db.on('error', console.error.bind(console, 'MongoDB connection error:'))
+
 process.on('message', (msg) => {
     console.log('Message from parent:', msg);
 });
 
-process.on('start')
   
 let counter = 0;
 
-const Game = class {
+let Game = class {
     constructor() {
         this.state = "start";
     }
 }
 
-let game = Game();
+let game = new Game();
   
 setInterval(() => {
     process.send({ counter: counter++ });
-    if (counter === 30) {
+    if (counter > 30) {
         process.exit(0);
     }
 }, 1000);

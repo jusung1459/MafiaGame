@@ -13,6 +13,7 @@ StartRoom = (req, res) => {
         child_process.send({"start":"hi"});
         child_process.on("message", (msg) => {
             console.log(msg);
+            const socketConnection = require('../helpers/socket-singleton').connection();
             socketConnection.sendEvent("message", msg, user.room);
         });
         return res.status(200).json({
