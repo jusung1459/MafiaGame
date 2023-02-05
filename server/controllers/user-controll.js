@@ -9,7 +9,7 @@ StartRoom = (req, res) => {
         const user = jwt.verify(token, process.env.JWT_KEY);
         console.log(user);
 
-        const child_process = fork('./gameServer/game-server.js');
+        const child_process = fork('./gameServer/game-server.js', [user.room]);
         child_process.send({"start":"hi"});
         child_process.on("message", (msg) => {
             console.log(msg);

@@ -1,6 +1,7 @@
 const mongoose = require('mongoose')
 const Schema = mongoose.Schema
 
+// db connection
 mongoose
     .connect('mongodb://172.18.0.1:27017/mafia', { useNewUrlParser: true })
     .then(() => {
@@ -42,12 +43,28 @@ const Mafia = new Schema(
     { timestamps: true },
 )
 
+MafiaDB = mongoose.model('mafia', Mafia)
+
 db.on('error', console.error.bind(console, 'MongoDB connection error:'))
 
 process.on('message', (msg) => {
     console.log('Message from parent:', msg);
 });
 
+let room_id = process.argv[2]
+
+function initGame() {
+
+}
+// getting game state
+MafiaDB.findOne({roomid:process.argv[2]}).lean().then((data) => {
+    console.log(data)
+}).catch(error => {
+    return res.status(400).json({
+        error,
+        message: 'Can not get room data',
+    })
+});
   
 let counter = 0;
 
