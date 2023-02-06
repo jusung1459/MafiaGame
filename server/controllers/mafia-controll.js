@@ -30,7 +30,8 @@ createRoom = (req, res) => {
         },
         players: {
             nickname : nickname,
-            player_id : player
+            player_id : player,
+            living : true
         },
         messages : {
             message : nickname + " has joined",
@@ -87,7 +88,8 @@ joinRoom = (req, res) => {
         {
             $push: {players: {
                 nickname : nickname,
-                player_id : player_id
+                player_id : player_id,
+                living : true,
             },
             messages : {
                 message : nickname + " has joined",

@@ -9,7 +9,13 @@ const MessagesSchema = new Schema({
 
 const PlayerSchema = new Schema({
     nickname : String,
-    player_id : String
+    player_id : String,
+    living : Boolean,
+})
+
+const VotesSchema = new Schema({
+    from_id : String,
+    to_id : String
 })
 
 const Mafia = new Schema(
@@ -26,6 +32,7 @@ const Mafia = new Schema(
             state : { type: String, required: true }
         },
         players : [PlayerSchema],
+        votes : [VotesSchema],
         messages : [MessagesSchema]
     },
     { timestamps: true },

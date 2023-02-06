@@ -24,6 +24,11 @@ const PlayerSchema = new Schema({
     player_id : String
 })
 
+const VotesSchema = new Schema({
+    from_id : String,
+    to_id : String
+})
+
 const Mafia = new Schema(
     {
         roomid: { type: String, required: true },
@@ -38,6 +43,7 @@ const Mafia = new Schema(
             state : { type: String, required: true }
         },
         players : [PlayerSchema],
+        votes : [VotesSchema],
         messages : [MessagesSchema]
     },
     { timestamps: true },
@@ -51,34 +57,106 @@ process.on('message', (msg) => {
     console.log('Message from parent:', msg);
 });
 
-let room_id = process.argv[2]
-
-function initGame() {
+next_state = {
+    // "waiting" : {
+    //     "next" : "start",
+    //     "time" : 10
+    // },
+    "start" : {
+        "next" : "night",
+        "time" : 20
+    },
+    "night" : {
+        "next" : "day_talk",
+        "time" : 40
+    },
+    "day_talk" : {
+        "next" : "vote",
+        "time" : 40
+    },
+    "vote" : {
+        "next" : "after_vote_talk",
+        "time" : 20
+    },
+    "after_vote_talk" : {
+        "next" : "start",
+        "time" : 20
+    },
 
 }
-// getting game state
-MafiaDB.findOne({roomid:process.argv[2]}).lean().then((data) => {
-    console.log(data)
-}).catch(error => {
-    return res.status(400).json({
-        error,
-        message: 'Can not get room data',
-    })
-});
-  
-let counter = 0;
 
-let Game = class {
-    constructor() {
-        this.state = "start";
+let room_id = process.argv[2]
+
+class Game {
+    constructor(room_id, data) {
+        this.game_state = "start";
+        this.room_id = room_id;
+        this.data = data;
     }
 }
 
-let game = new Game();
+let game = null;
+const roles = ["ranger", "sasquatchEVIL", "camper", "camper", "littlefeetEVIL", "hunter", "camper", "bigfeetEVIL", "lumberjack", "camper"];
+let counter = 0;
+
+function initGame() {
+    // getting game state
+    MafiaDB.findOne({roomid:process.argv[2]}).lean().then((data) => {
+        console.log(data)
+        game = new Game(room_id, data);
+
+        // set roles
+        let players = game.data.players;
+        players = players.sort(() => Math.random() - 0.5);
+        let evil_players = [];
+        let good_players = [];
+        let role_map = new Map();
+        players.forEach(function(player, index) {
+            role_map.set(player.player_id, roles[index]);
+            if (roles[index].includes("EVIL")) {
+                evil_players.push(player.player_id);
+            } else {
+                good_players.push(player.player_id);
+            }
+        });
+        console.log(role_map)
+        console.log(evil_players);
+        console.log(good_players);
+
+        MafiaDB.findOneAndUpdate({roomid:room_id}, {
+            $set: { game: {
+                    evil_players : evil_players,
+                    good_players : good_players,
+                    roles : role_map,
+                    state: "start"
+                }
+            }
+        }).then((data) => {
+            console.log(data);
+            counter = 20;
+        }).catch(error => {
+            console.log(error);
+        });
+    }).catch(error => {
+        console.log(error);
+    });
+}
+
+function updateGame() {
+    // getting game state
+    MafiaDB.findOne({roomid:process.argv[2]}).lean().then((data) => {
+        console.log(data)
+        game.data = data;
+    }).catch(error => {
+        console.log(error);
+    });
+}
+
+initGame();
   
 setInterval(() => {
     process.send({ counter: counter++ });
-    if (counter > 30) {
+    if (counter > 10) {
         process.exit(0);
     }
 }, 1000);
