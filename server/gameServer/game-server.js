@@ -82,6 +82,10 @@ next_state = {
         "next" : "end",
         "time" : 20
     },
+    "end" : {
+        "next" : "end",
+        "time" : 1,
+    },
 
 }
 
@@ -153,19 +157,29 @@ function updateGame() {
 
         if (game_state == "end") {
             process.exit(0);
-        } else {
-            game_state = next_state[game_state].next;
-            counter = next_state[game_state].time;
+        } 
 
-            MafiaDB.findOneAndUpdate({roomid:room_id}, {
-                $set: { 'game.state': game_state}
-            }).then((data) => {
-                // console.log(data);
-                process.send({action : "update_game"});
-            }).catch(error => {
-                console.log(error);
-            });
+        if (game_state == "vote") {
+            // todo
+            // count up votes and kill people if necessary
         }
+
+        if (game_state == "night") {
+            // todo
+            // see who used night roles and apply
+        }
+        game_state = next_state[game_state].next;
+        counter = next_state[game_state].time;
+
+        MafiaDB.findOneAndUpdate({roomid:room_id}, {
+            $set: { 'game.state': game_state}
+        }).then((data) => {
+            // console.log(data);
+            process.send({action : "update_game"});
+        }).catch(error => {
+            console.log(error);
+        });
+        
     }).catch(error => {
         console.log(error);
     });
