@@ -79,7 +79,7 @@ next_state = {
         "time" : 20
     },
     "after_vote_talk" : {
-        "next" : "start",
+        "next" : "end",
         "time" : 20
     },
 
@@ -102,7 +102,7 @@ let counter = 0;
 function initGame() {
     // getting game state
     MafiaDB.findOne({roomid:process.argv[2]}).lean().then((data) => {
-        console.log(data)
+        // console.log(data)
         game = new Game(room_id, data);
 
         // set roles
@@ -132,7 +132,8 @@ function initGame() {
                 }
             }
         }).then((data) => {
-            console.log(data);
+            // console.log(data);
+            process.send({action : "get_roles"});
             counter = 20;
         }).catch(error => {
             console.log(error);
@@ -147,6 +148,24 @@ function updateGame() {
     MafiaDB.findOne({roomid:process.argv[2]}).lean().then((data) => {
         console.log(data)
         game.data = data;
+        let game_state = game.data.game.state;
+        console.log(game_state)
+
+        if (game_state == "end") {
+            process.exit(0);
+        } else {
+            game_state = next_state[game_state].next;
+            counter = next_state[game_state].time;
+
+            MafiaDB.findOneAndUpdate({roomid:room_id}, {
+                $set: { 'game.state': game_state}
+            }).then((data) => {
+                // console.log(data);
+                process.send({action : "update_game"});
+            }).catch(error => {
+                console.log(error);
+            });
+        }
     }).catch(error => {
         console.log(error);
     });
@@ -155,8 +174,11 @@ function updateGame() {
 initGame();
   
 setInterval(() => {
-    process.send({ counter: counter++ });
-    if (counter > 10) {
+    process.send({ counter: counter-- });
+    if (counter <= 0) {
+        updateGame();
+    }
+    if (counter < -1) {
         process.exit(0);
     }
 }, 1000);
