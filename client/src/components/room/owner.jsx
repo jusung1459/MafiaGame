@@ -43,6 +43,15 @@ function Owner(props) {
             </div>
         );
     }
+    if (props.game.state == 'end' && props.owner === props.player_id) {
+        return(
+            <div className='owner-container'>
+                <button onClick={() => handleStartSubmit()} role="button" type="submit">
+                    <section className="flex items-center">Play Again</section>
+                </button>
+            </div>
+        );
+    }
 
 }
 

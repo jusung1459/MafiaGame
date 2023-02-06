@@ -58,29 +58,29 @@ process.on('message', (msg) => {
 });
 
 next_state = {
-    // "waiting" : {
-    //     "next" : "start",
-    //     "time" : 10
-    // },
+    "starting" : {
+        "next" : "start",
+        "time" : 10
+    },
     "start" : {
         "next" : "night",
-        "time" : 20
+        "time" : 5
     },
     "night" : {
         "next" : "day_talk",
-        "time" : 40
+        "time" : 5
     },
     "day_talk" : {
         "next" : "vote",
-        "time" : 40
+        "time" : 5
     },
     "vote" : {
         "next" : "after_vote_talk",
-        "time" : 20
+        "time" : 5
     },
     "after_vote_talk" : {
         "next" : "end",
-        "time" : 20
+        "time" : 5
     },
     "end" : {
         "next" : "end",
@@ -89,11 +89,20 @@ next_state = {
 
 }
 
-let room_id = process.argv[2]
+let room_id = process.argv[2];
+
+MafiaDB.findOneAndUpdate({roomid:room_id}, {
+    $set: { 'game.state': 'starting'}
+}).then((data) => {
+    // console.log(data);
+    process.send({action : "update_game"});
+}).catch(error => {
+    console.log(error);
+});
 
 class Game {
     constructor(room_id, data) {
-        this.game_state = "start";
+        this.game_state = "starting";
         this.room_id = room_id;
         this.data = data;
     }
@@ -132,13 +141,13 @@ function initGame() {
                     evil_players : evil_players,
                     good_players : good_players,
                     roles : role_map,
-                    state: "start"
+                    state: "starting"
                 }
             }
         }).then((data) => {
             // console.log(data);
             process.send({action : "get_roles"});
-            counter = 20;
+            counter = 10;
         }).catch(error => {
             console.log(error);
         });
@@ -193,7 +202,7 @@ setInterval(() => {
         updateGame();
     }
     if (counter < -1) {
-        process.exit(0);
+        process.send({action : "update_game"});
     }
 }, 1000);
 

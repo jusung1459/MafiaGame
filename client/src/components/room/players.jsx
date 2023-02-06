@@ -51,6 +51,16 @@ function Player(props) {
                 </div>)
             }
         }
+        if (props.game.state == "vote") {
+            if (props.player_id != button_player.player_button_id ) {
+                return (
+                <div className='right-container'>
+                    <button onClick={() => handleKickSubmit(button_player.player_button_id)}  role="button" type="submit">
+                        <section className="flex items-center"> Vote player</section>
+                    </button>
+                </div>)
+            }
+        }
     }
 
     if (props.players != undefined) {
