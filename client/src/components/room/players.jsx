@@ -16,8 +16,8 @@ function Player(props) {
         
     }, [props.players, props.game])
 
-    function handleKickSubmit(kick_player_id) {
-        console.log(kick_player_id);
+    function handleSubmit(chosen_player_id, action, url) {
+        console.log(chosen_player_id);
 
         const config = {
             headers: { 'Content-Type': 'application/json' },
@@ -25,13 +25,13 @@ function Player(props) {
         const body = JSON.stringify(
             { 
                 token : JSON.parse(localStorage['user'])['token'],
-                action : "kick-player",
-                kick_player_id : kick_player_id
+                action : action,
+                kick_player_id : chosen_player_id
             });
 
         try {
-            axios.post(`${baseURL}/owner`, body, config).then((result) => {
-                console.log('kicked player' + kick_player_id)
+            axios.post(`${baseURL}/${url}`, body, config).then((result) => {
+                console.log('kicked player' + chosen_player_id)
             })
             
         } catch (err) {
@@ -41,11 +41,11 @@ function Player(props) {
 
     function Player_buttons(button_player) {
         console.log(button_player.player_button_id)
-        if (props.owner === props.player_id && props.game.state == "waiting") {
+        if (props.owner === props.player_id && (props.game.state == "waiting" || props.game.state == "end")) {
             if (props.player_id != button_player.player_button_id ) {
                 return (
                 <div className='right-container'>
-                    <button onClick={() => handleKickSubmit(button_player.player_button_id)}  role="button" type="submit">
+                    <button onClick={() => handleSubmit(button_player.player_button_id, "kick-player", "owner")}  role="button" type="submit">
                         <section className="flex items-center"> Kick player</section>
                     </button>
                 </div>)
@@ -55,7 +55,7 @@ function Player(props) {
             if (props.player_id != button_player.player_button_id ) {
                 return (
                 <div className='right-container'>
-                    <button onClick={() => handleKickSubmit(button_player.player_button_id)}  role="button" type="submit">
+                    <button onClick={() => handleSubmit(button_player.player_button_id, "vote-player", "player")}  role="button" type="submit">
                         <section className="flex items-center"> Vote player</section>
                     </button>
                 </div>)

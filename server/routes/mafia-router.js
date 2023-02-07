@@ -15,6 +15,7 @@ router.post('/mafia/startroom', UserCtrl.StartRoom)
 router.get('/mafia/gamestate', MafiaCtrl.getRoom)
 
 router.post('/mafia/owner', PlayerCtrl.owner)
+router.post('/mafia/player', PlayerCtrl.player)
 router.post('/mafia/message', MessageCtrl.message)
 
 

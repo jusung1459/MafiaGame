@@ -13,11 +13,6 @@ const PlayerSchema = new Schema({
     living : Boolean,
 })
 
-const VotesSchema = new Schema({
-    from_id : String,
-    to_id : String
-})
-
 const Mafia = new Schema(
     {
         roomid: { type: String, required: true },
@@ -32,7 +27,10 @@ const Mafia = new Schema(
             state : { type: String, required: true }
         },
         players : [PlayerSchema],
-        votes : [VotesSchema],
+        votes : {
+            type : Map,
+            of : String    
+        },
         messages : [MessagesSchema]
     },
     { timestamps: true },
