@@ -73,10 +73,14 @@ next_state = {
         "time" : 5
     },
     "vote" : {
-        "next" : "after_vote_talk",
+        "next" : "trial",
         "time" : 5
     },
-    "after_vote_talk" : {
+    "trial" : {
+        "next" : "end",
+        "time" : 5
+    },
+    "after_trial_talk" : {
         "next" : "end",
         "time" : 5
     },
@@ -160,26 +164,76 @@ function updateGame() {
         console.log(data)
         game.data = data;
         let game_state = game.data.game.state;
-        console.log(game_state)
+        let next_game_state = next_state[game_state].next;
+        counter = next_state[next_game_state].time;
 
         if (game_state == "end") {
             process.exit(0);
         } 
 
+        // todo make switch statement
         if (game_state == "vote") {
             // todo
-            // count up votes and kill people if necessary
+            // count up votes and put player on trial
+            let votes = new Map(Object.entries(data.votes));
+            console.log(votes);
+            let most_voted_player = null;
+            let most_voted_count = 0;
+            let vote_counts = new Map();
+            votes.forEach(function(value, key) {
+                if (key in votes) {
+                    vote_counts[key] = vote_counts[key] + 1;
+                } else {
+                    vote_counts[key] = 1;
+                }
+            });
+            let lynch_player = null;
+            if (votes.size > 0) {
+                if (votes.size > 1) {
+                    let votesDesc = [...map1.entries()].sort((a,b) => b[1] - a[1])
+                    if (votesDesc[0][1] > votesDesc[1][1]) {
+                        // lynch player
+                        lynch_player = votesDesc[0][1];
+                    } else {
+                        // tie vote, no player lynched
+                    }
+                } else {
+                    // one vote, default lynch player
+                    lynch_player = votesDesc[0][1];
+                }
+            }
+            
+            if (lynch_player != null) {
+                // mark as dead in DB
+                // MafiaDB.findOneAndUpdate({roomid:room_id, }, {
+                //     $set: { players: {
+                            
+                //         }
+                //     }
+                // }).then((data) => {
+                //     // console.log(data);
+                //     process.send({action : "get_roles"});
+                //     counter = 10;
+                // }).catch(error => {
+                //     console.log(error);
+                // });
+            }
+            
+        }
+
+        if (game_state == "trial") {
+            // todo
+            // count up guilty vs innocents
+            // kill player or save player
         }
 
         if (game_state == "night") {
             // todo
             // see who used night roles and apply
         }
-        game_state = next_state[game_state].next;
-        counter = next_state[game_state].time;
 
         MafiaDB.findOneAndUpdate({roomid:room_id}, {
-            $set: { 'game.state': game_state}
+            $set: { 'game.state': next_game_state}
         }).then((data) => {
             // console.log(data);
             process.send({action : "update_game"});

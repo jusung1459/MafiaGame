@@ -37,7 +37,9 @@ createRoom = (req, res) => {
             message : nickname + " has joined",
             nickname : "Game",
             player_id : "0"
-        }
+        },
+        votes : new Map(),
+
     });
     if (!mafia) {
         return res.status(400).json({ success: false, error: err })
