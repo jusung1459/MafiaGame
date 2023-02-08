@@ -177,39 +177,47 @@ function updateGame() {
             // count up votes and put player on trial
             let votes = new Map(Object.entries(data.votes));
             console.log(votes);
-            let most_voted_player = null;
-            let most_voted_count = 0;
             let vote_counts = new Map();
             votes.forEach(function(value, key) {
-                if (key in votes) {
-                    vote_counts[key] = vote_counts[key] + 1;
+                if (vote_counts.has(value)) {
+                    vote_counts.set(value, (vote_counts.get(value) + 1));
                 } else {
-                    vote_counts[key] = 1;
+                    vote_counts.set(value, 1);
                 }
             });
             let lynch_player = null;
             if (votes.size > 0) {
+                console.log(vote_counts)
+                let votesDesc = [...vote_counts.entries()].sort((a,b) => b[1] - a[1])
+                console.log(votesDesc);
                 if (votes.size > 1) {
-                    let votesDesc = [...map1.entries()].sort((a,b) => b[1] - a[1])
                     if (votesDesc[0][1] > votesDesc[1][1]) {
                         // lynch player
-                        lynch_player = votesDesc[0][1];
+                        lynch_player = votesDesc[0][0];
                     } else {
                         // tie vote, no player lynched
                     }
                 } else {
                     // one vote, default lynch player
-                    lynch_player = votesDesc[0][1];
+                    lynch_player = votesDesc[0][0];
                 }
             }
-            
+            console.log("here")
+            console.log(lynch_player)
             if (lynch_player != null) {
                 // mark as dead in DB
-                MafiaDB.updateOne({roomid:process.argv[2], "players.player_id":lynch_player},
+                MafiaDB.updateOne({roomid:process.argv[2], "players.player_id":String(lynch_player)},
                     {$set:{"players.$.living":false}
                 }).then((data) => {
-                    console.log(data);
-                    process.send({action : "update_game"});
+                    console.log(data)
+                    MafiaDB.updateOne({roomid:process.argv[2]},{
+                        $pull:{"game.good_players":lynch_player, "game.evil_players":lynch_player}
+                    }).then((data) => {
+                        console.log(data);
+                        process.send({action : "update_game"});
+                    }).catch(error => {
+                        console.log(error);
+                    });
                     // counter = 10;
                 }).catch(error => {
                     console.log(error);
