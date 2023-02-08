@@ -205,18 +205,15 @@ function updateGame() {
             
             if (lynch_player != null) {
                 // mark as dead in DB
-                // MafiaDB.findOneAndUpdate({roomid:room_id, }, {
-                //     $set: { players: {
-                            
-                //         }
-                //     }
-                // }).then((data) => {
-                //     // console.log(data);
-                //     process.send({action : "get_roles"});
-                //     counter = 10;
-                // }).catch(error => {
-                //     console.log(error);
-                // });
+                MafiaDB.updateOne({roomid:process.argv[2], "players.player_id":lynch_player},
+                    {$set:{"players.$.living":false}
+                }).then((data) => {
+                    console.log(data);
+                    process.send({action : "update_game"});
+                    // counter = 10;
+                }).catch(error => {
+                    console.log(error);
+                });
             }
             
         }
