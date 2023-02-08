@@ -39,6 +39,9 @@ createRoom = (req, res) => {
             player_id : "0"
         },
         votes : new Map(),
+        trial : {
+            votes : new Map()
+        }
 
     });
     if (!mafia) {
@@ -138,6 +141,7 @@ getRoom = (req, res) => {
     }
 
     Mafia.findOne({roomid:user.room}).lean().then((data) => {
+        console.log(data)
         delete data['game']['evil_players'];
         delete data.game['good_players'];
         delete data.__id;

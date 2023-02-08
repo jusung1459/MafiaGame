@@ -31,6 +31,13 @@ const Mafia = new Schema(
             type : Map,
             of : String    
         },
+        trial : {
+            trial_player : String,
+            votes : {
+                type : Map,
+                of : String  
+            }  
+        },
         messages : [MessagesSchema]
     },
     { timestamps: true },

@@ -75,14 +75,13 @@ player = (req, res) => {
             const vote_player_id = req.body.kick_player_id;
             if (vote_player_id != null) {
                 Mafia.findOne({roomid:user.room}).lean().then((data) => {
+                    voted_player_info = data.players.find(element => element.player_id == vote_player_id)
                     if (data.game.state == "vote") {
                         let new_votes = data.votes;
-                        console.log(new_votes);
-                        console.log(typeof new_votes);
                         if (new_votes == undefined) {
                             new_votes = new Map();
                         }
-                        let vote_msg = user.nickname + " voted";
+                        let vote_msg = user.nickname + " voted for " + voted_player_info.nickname;
                         new_votes[user.player_id] = vote_player_id;
                         Mafia.updateOne({roomid:user.room}, {
                             $set: {
@@ -106,7 +105,7 @@ player = (req, res) => {
                             console.log(error);
                             return res.status(400).json({
                                 error,
-                                message: 'cant voted player: ' + vote_player_id
+                                message: 'cant vote player: ' + vote_player_id
                             })
                         });
                     }
@@ -118,10 +117,9 @@ player = (req, res) => {
                     })
                 });
             }
-            console.log("kick");
             break;
-        case 'end':
-            console.log("end");
+        case 'trial-vote-player':
+            const vote = req.body.vote;
             break;
         default:
             console.log("default case");

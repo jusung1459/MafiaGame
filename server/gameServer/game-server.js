@@ -42,6 +42,13 @@ const Mafia = new Schema(
             type : Map,
             of : String    
         },
+        trial : {
+            trial_player : String,
+            votes : {
+                type : Map,
+                of : String  
+            }  
+        },
         messages : [MessagesSchema]
     },
     { timestamps: true },
@@ -158,6 +165,10 @@ function initGame() {
     });
 }
 
+function checkEndGame() {
+    
+}
+
 function updateGame() {
     // getting game state
     MafiaDB.findOne({roomid:process.argv[2]}).lean().then((data) => {
@@ -173,11 +184,10 @@ function updateGame() {
 
         // todo make switch statement
         if (game_state == "vote") {
-            // todo
             // count up votes and put player on trial
             let votes = new Map(Object.entries(data.votes));
-            console.log(votes);
             let vote_counts = new Map();
+            // pool up counts
             votes.forEach(function(value, key) {
                 if (vote_counts.has(value)) {
                     vote_counts.set(value, (vote_counts.get(value) + 1));
@@ -196,24 +206,44 @@ function updateGame() {
                         lynch_player = votesDesc[0][0];
                     } else {
                         // tie vote, no player lynched
+                        next_game_state = "after_trial_talk";
                     }
                 } else {
                     // one vote, default lynch player
                     lynch_player = votesDesc[0][0];
                 }
             }
-            console.log("here")
-            console.log(lynch_player)
+            // console.log(lynch_player)
+            if (lynch_player != null) {
+                // place player on trial
+                MafiaDB.updateOne({roomid:process.argv[2]},
+                    {$set:{"trial.trial_player":String(lynch_player)}
+                }).then((data) => {
+                    console.log(data)
+                    
+                }).catch(error => {
+                    console.log(error);
+                });
+            }
+             
+        }
+
+        if (game_state == "trial") {
+            // todo
+            // count up guilty vs innocents
+            // kill player or save player
+            let lynch_player = null;
+
             if (lynch_player != null) {
                 // mark as dead in DB
                 MafiaDB.updateOne({roomid:process.argv[2], "players.player_id":String(lynch_player)},
                     {$set:{"players.$.living":false}
                 }).then((data) => {
-                    console.log(data)
+                    // console.log(data)
                     MafiaDB.updateOne({roomid:process.argv[2]},{
                         $pull:{"game.good_players":lynch_player, "game.evil_players":lynch_player}
                     }).then((data) => {
-                        console.log(data);
+                        // console.log(data);
                         process.send({action : "update_game"});
                     }).catch(error => {
                         console.log(error);
@@ -223,13 +253,6 @@ function updateGame() {
                     console.log(error);
                 });
             }
-            
-        }
-
-        if (game_state == "trial") {
-            // todo
-            // count up guilty vs innocents
-            // kill player or save player
         }
 
         if (game_state == "night") {
@@ -255,7 +278,7 @@ initGame();
   
 setInterval(() => {
     process.send({ counter: counter-- });
-    if (counter <= 0) {
+    if (counter < 0) {
         updateGame();
     }
     if (counter < -1) {

@@ -16,6 +16,7 @@ function Gamestate(props) {
     return(
         <div className='Gamestate-container'>
             <div>Game state: {props.game.state}</div>
+            <div>Time: {props.time}</div>
         </div>
     );
     
