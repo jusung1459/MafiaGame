@@ -88,7 +88,7 @@ next_state = {
         "time" : 5
     },
     "after_trial_talk" : {
-        "next" : "end",
+        "next" : "night",
         "time" : 5
     },
     "end" : {
@@ -172,7 +172,7 @@ function checkEndGame() {
 function updateGame() {
     // getting game state
     MafiaDB.findOne({roomid:process.argv[2]}).lean().then((data) => {
-        console.log(data)
+        // console.log(data)
         game.data = data;
         let game_state = game.data.game.state;
         let next_game_state = next_state[game_state].next;
@@ -200,16 +200,19 @@ function updateGame() {
                 console.log(vote_counts)
                 let votesDesc = [...vote_counts.entries()].sort((a,b) => b[1] - a[1])
                 console.log(votesDesc);
-                if (votes.size > 1) {
+                if (votesDesc.length > 1) {
                     if (votesDesc[0][1] > votesDesc[1][1]) {
                         // lynch player
+                        console.log("first")
                         lynch_player = votesDesc[0][0];
                     } else {
                         // tie vote, no player lynched
+                        console.log("second")
                         next_game_state = "after_trial_talk";
                     }
                 } else {
                     // one vote, default lynch player
+                    console.log("third")
                     lynch_player = votesDesc[0][0];
                 }
             }
@@ -221,13 +224,13 @@ function updateGame() {
                         "votes":new Map()}
                 }).then((data) => {
                     console.log(data)
-                    
                 }).catch(error => {
                     console.log(error);
                 });
             } else {
                 MafiaDB.updateOne({roomid:process.argv[2]},
-                    {$set:{"votes":new Map()}
+                    {$set:{"trial.trial_player":"",
+                        "votes":new Map()}
                 }).then((data) => {
                     console.log(data)
                 }).catch(error => {
@@ -241,7 +244,9 @@ function updateGame() {
             // todo
             // count up guilty vs innocents
             // kill player or save player
+            console.log(game.data.trial)
             let lynch_player = null;
+
 
             if (lynch_player != null) {
                 // mark as dead in DB
@@ -284,7 +289,7 @@ function updateGame() {
 }
 
 initGame();
-  
+
 setInterval(() => {
     process.send({ counter: counter-- });
     if (counter < 0) {

@@ -114,7 +114,7 @@ joinRoom = (req, res) => {
         return res.status(201).json({
             success: true,
             nickname : user.nickname,
-            room: user.roomid,
+            room: room_id,
             player_id: player_id,
             token: token,
             message: 'joined room',
@@ -142,7 +142,9 @@ getRoom = (req, res) => {
 
     Mafia.findOne({roomid:user.room}).lean().then((data) => {
         console.log(data)
-        data.role = data.game.roles[user.player_id];
+        if (data.game.state == 'vote') {
+            data.role = data.game.roles[user.player_id];
+        }
         delete data['game']['evil_players'];
         delete data.game['good_players'];
         delete data.game['roles'];
@@ -158,6 +160,7 @@ getRoom = (req, res) => {
         
         return res.status(201).json({data});
     }).catch(error => {
+        console.log(error)
         return res.status(400).json({
             error,
             message: 'Can not get room data',

@@ -120,6 +120,41 @@ player = (req, res) => {
             break;
         case 'trial-vote-player':
             const vote = req.body.vote;
+            const trial_player_id = "trial.votes."+String(user.player_id)
+            Mafia.findOne({roomid:user.room}).lean().then((data) => {
+                if (data.game.state == "trial") {
+                    if (vote == "guilty" || vote == "inno") {
+                        Mafia.updateOne({roomid:user.room}, {
+                            $set: {
+                                [trial_player_id] : String(req.body.vote),
+                            },
+                        }).then((data) => {
+                            const socketConnection = require('../helpers/socket-singleton').connection();
+                            socketConnection.sendEvent("gameUpdate", "message", user.room);
+
+                            return res.status(201).json(
+                                {success: true,
+                                message: 'voted player: ' + user.player_id,});
+                        }).catch(error => {
+                            console.log(error);
+                            return res.status(400).json({
+                                error,
+                                message: 'cant vote player: ' + user.player_id
+                            })
+                        });
+                    } else {
+                        return res.status(400).json({
+                            message: 'Cant vote trial player',
+                        })
+                    }
+                }
+            }).catch(error => {
+                console.log(error);
+                return res.status(400).json({
+                    error,
+                    message: 'Cant vote player: ' + vote_player_id
+                })
+            });
             break;
         default:
             console.log("default case");
