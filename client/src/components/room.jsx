@@ -6,6 +6,7 @@ import Players from './room/players';
 import Owner from './room/owner';
 import Gamestate from './room/gamestate';
 import Trial from './room/trial';
+import Role from './room/role';
 
 const baseURL = 'http://localhost:3000/api/mafia'
 
@@ -38,7 +39,9 @@ class Room extends Component {
             players : gamestate.players,
             owner : gamestate.owner,
             player_id : gamestate.player_id,
-            trial : gamestate.trial
+            trial : gamestate.trial,
+            votes : gamestate.votes,
+            role: gamestate.role
         }, () => console.log(this.state));
     }
     
@@ -77,13 +80,15 @@ class Room extends Component {
     render() {
         return (
             <div>
-                <h1>room</h1>
+                <h1>room : {JSON.parse(localStorage.getItem('user')).room}</h1>
+                <Role role={this.state.role} />
                 <Gamestate game={this.state.game}
                             time = {this.state.time}/>
                 <Players players={this.state.players} 
                         game={this.state.game}
                         owner={this.state.owner}
-                        player_id={this.state.player_id}/>
+                        player_id={this.state.player_id}
+                        votes={this.state.votes}/>
                 <Owner game={this.state.game}
                         owner={this.state.owner}
                         player_id={this.state.player_id}/>

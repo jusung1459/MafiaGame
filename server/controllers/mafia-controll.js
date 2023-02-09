@@ -142,8 +142,10 @@ getRoom = (req, res) => {
 
     Mafia.findOne({roomid:user.room}).lean().then((data) => {
         console.log(data)
+        data.role = data.game.roles[user.player_id];
         delete data['game']['evil_players'];
         delete data.game['good_players'];
+        delete data.game['roles'];
         delete data.__id;
         delete data.createdAt;
         delete data.updatedAt;

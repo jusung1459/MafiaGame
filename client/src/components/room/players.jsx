@@ -14,7 +14,28 @@ function Player(props) {
         console.log('from child' + props.players)
         console.log(props)
         
-    }, [props.players, props.game])
+    }, [props.players, props.game, props.votes])
+
+    function countVotes(votes) {
+        if (votes != undefined) {
+            let votes_string = JSON.stringify(votes)
+            let votes_parsed = JSON.parse(votes_string)
+            let vote_counts = new Map();
+            for (const key in votes_parsed) {
+                let value = votes_parsed[key];
+                if (vote_counts.has(value)) {
+                    vote_counts.set(value, (vote_counts.get(value) + 1));
+                } else {
+                    vote_counts.set(value, 1);
+                }
+            }
+            console.log(vote_counts)
+        }
+        // let vote_counts = new Map();
+        // // pool up counts
+    
+        // console.log(vote_counts)
+    }
 
     function handleSubmit(chosen_player_id, action, url) {
         console.log(chosen_player_id);
@@ -36,6 +57,33 @@ function Player(props) {
             
         } catch (err) {
             console.log(err);
+        }
+    }
+
+    function Vote_count(vote_player_id) {
+        if (props.game.state == "vote") {
+            let votes = props.votes;
+            if (votes != undefined) {
+                let votes_string = JSON.stringify(votes)
+                let votes_parsed = JSON.parse(votes_string)
+                let vote_counts = new Map();
+                for (const key in votes_parsed) {
+                    let value = votes_parsed[key];
+                    if (vote_counts.has(value)) {
+                        vote_counts.set(value, (vote_counts.get(value) + 1));
+                    } else {
+                        vote_counts.set(value, 1);
+                    }
+                }
+                if (vote_counts.has(vote_player_id.vote_player_id)) {
+                    return <div>{vote_counts.get(vote_player_id.vote_player_id)}</div>
+                } else {
+                    return <div>0</div>
+                }
+                
+            } else {
+                return <div>0</div> 
+            }
         }
     }
 
@@ -76,6 +124,7 @@ function Player(props) {
                                     <div className='beside-container'> 
                                         <div className='player-nickname left-container'>{m.nickname}</div>
                                         <Player_buttons player_button_id={m.player_id}/>
+                                        <Vote_count vote_player_id={m.player_id}/>
                                     </div>
                                     </li>
                                 </div>)

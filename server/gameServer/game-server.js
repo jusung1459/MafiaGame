@@ -217,10 +217,19 @@ function updateGame() {
             if (lynch_player != null) {
                 // place player on trial
                 MafiaDB.updateOne({roomid:process.argv[2]},
-                    {$set:{"trial.trial_player":String(lynch_player)}
+                    {$set:{"trial.trial_player":String(lynch_player),
+                        "votes":new Map()}
                 }).then((data) => {
                     console.log(data)
                     
+                }).catch(error => {
+                    console.log(error);
+                });
+            } else {
+                MafiaDB.updateOne({roomid:process.argv[2]},
+                    {$set:{"votes":new Map()}
+                }).then((data) => {
+                    console.log(data)
                 }).catch(error => {
                     console.log(error);
                 });

@@ -11,7 +11,7 @@ function Chat(props) {
 
     useEffect(() => {
         // to make scroll stuck to bottom on new message
-        console.log('from child' + props.messages)
+        // console.log('from child' + props.messages)
         if (messageEl) {
           messageEl.current.addEventListener('DOMNodeInserted', event => {
             const { currentTarget: target } = event;
