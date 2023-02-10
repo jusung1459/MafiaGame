@@ -245,7 +245,9 @@ function updateGame() {
             // count up guilty vs innocents
             // kill player or save player
             console.log(game.data.trial)
-            let lynch_player = null;
+
+            // todo find player to lynch
+            let lynch_player = game.data.trial.trial_player;
 
 
             if (lynch_player != null) {
@@ -274,19 +276,17 @@ function updateGame() {
                 console.log(vote_count_guilty + " " + vote_count_inno)
                 console.log(messages);
         
-                Mafia.updateOne({roomid:user.room}, {
+                Mafia.updateOne({roomid:process.argv[2]}, {
                     $push : { messages : { $each : messages } }
                 }).then((data) => {
-                    const socketConnection = require('../helpers/socket-singleton').connection();
-                    socketConnection.sendEvent("gameUpdate", "message", user.room);
-
+                    console.log("trial messages");
+                    process.send({action : "update_game"});
                 }).catch(error => {
                     console.log(error);
-
                 });
 
                 if (vote_count_guilty > vote_count_inno) {
-                    // lynch player
+                    // lynch player, set dead and delete from list
                     MafiaDB.updateOne({roomid:process.argv[2], "players.player_id":String(lynch_player)},
                         {$set:{"players.$.living":false}
                     }).then((data) => {

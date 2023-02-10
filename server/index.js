@@ -15,7 +15,7 @@ const apiPort = 3000
 var server = require('http').createServer(app);
 
 const corsOptions = {
-    origin: "http://localhost:8000",
+    // origin: "http://localhost:8000",
     optionsSuccessStatus: 200   
 };
 
