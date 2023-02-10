@@ -141,7 +141,7 @@ getRoom = (req, res) => {
     }
 
     Mafia.findOne({roomid:user.room}).lean().then((data) => {
-        console.log(data)
+        // console.log(data)
         if (data.game.state == 'vote') {
             data.role = data.game.roles[user.player_id];
         }

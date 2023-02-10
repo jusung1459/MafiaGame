@@ -122,6 +122,7 @@ player = (req, res) => {
             const vote = req.body.vote;
             const trial_player_id = "trial.votes."+String(user.player_id)
             Mafia.findOne({roomid:user.room}).lean().then((data) => {
+
                 if (data.game.state == "trial") {
                     if (vote == "guilty" || vote == "inno") {
                         Mafia.updateOne({roomid:user.room}, {
@@ -152,7 +153,7 @@ player = (req, res) => {
                 console.log(error);
                 return res.status(400).json({
                     error,
-                    message: 'Cant vote player: ' + vote_player_id
+                    message: 'Cant vote player: ' + user.player_id
                 })
             });
             break;

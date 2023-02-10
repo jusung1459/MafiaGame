@@ -249,23 +249,62 @@ function updateGame() {
 
 
             if (lynch_player != null) {
-                // mark as dead in DB
-                MafiaDB.updateOne({roomid:process.argv[2], "players.player_id":String(lynch_player)},
-                    {$set:{"players.$.living":false}
+                let trial_votes = new Map(Object.entries(game.data.trial.votes));
+                let messages = [];
+                let vote_count_guilty = 0
+                let vote_count_inno = 0
+                game.data.players.forEach((player) => {
+                    console.log(player)
+                    if (player.living == true) {
+                        let message = { "nickname" : "Game",
+                                    "player_id" : "0"};
+                        if (trial_votes.has(player.player_id)) {
+                            if (trial_votes.get(player.player_id) == "guilty") {
+                                message["message"] = player.nickname + " voted guilty";
+                                vote_count_guilty++;
+                            } else if (trial_votes.get(player.player_id) == "inno") {
+                                vote_count_inno++;
+                                message["message"] = player.nickname + " voted innocent";                        }
+                        } else {
+                            message["message"] = player.nickname + " abstained"; 
+                        }
+                        messages.push(message)
+                    }
+                })
+                console.log(vote_count_guilty + " " + vote_count_inno)
+                console.log(messages);
+        
+                Mafia.updateOne({roomid:user.room}, {
+                    $push : { messages : { $each : messages } }
                 }).then((data) => {
-                    // console.log(data)
-                    MafiaDB.updateOne({roomid:process.argv[2]},{
-                        $pull:{"game.good_players":lynch_player, "game.evil_players":lynch_player}
+                    const socketConnection = require('../helpers/socket-singleton').connection();
+                    socketConnection.sendEvent("gameUpdate", "message", user.room);
+
+                }).catch(error => {
+                    console.log(error);
+
+                });
+
+                if (vote_count_guilty > vote_count_inno) {
+                    // lynch player
+                    MafiaDB.updateOne({roomid:process.argv[2], "players.player_id":String(lynch_player)},
+                        {$set:{"players.$.living":false}
                     }).then((data) => {
-                        // console.log(data);
-                        process.send({action : "update_game"});
+                        // console.log(data)
+                        MafiaDB.updateOne({roomid:process.argv[2]},{
+                            $pull:{"game.good_players":lynch_player, "game.evil_players":lynch_player}
+                        }).then((data) => {
+                            // console.log(data);
+                            process.send({action : "update_game"});
+                        }).catch(error => {
+                            console.log(error);
+                        });
+                        // counter = 10;
                     }).catch(error => {
                         console.log(error);
                     });
-                    // counter = 10;
-                }).catch(error => {
-                    console.log(error);
-                });
+                    
+                }
             }
         }
 
