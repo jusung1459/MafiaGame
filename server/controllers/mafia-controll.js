@@ -142,7 +142,7 @@ getRoom = (req, res) => {
 
     Mafia.findOne({roomid:user.room}).lean().then((data) => {
         // console.log(data)
-        if (data.game.state == 'vote') {
+        if (data.game.state != 'waiting') {
             data.role = data.game.roles[user.player_id];
         }
         delete data['game']['evil_players'];

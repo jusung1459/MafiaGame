@@ -215,6 +215,8 @@ function updateGame() {
                     console.log("third")
                     lynch_player = votesDesc[0][0];
                 }
+            } else {
+                next_game_state = "after_trial_talk";
             }
             // console.log(lynch_player)
             if (lynch_player != null) {
@@ -276,7 +278,7 @@ function updateGame() {
                 console.log(vote_count_guilty + " " + vote_count_inno)
                 console.log(messages);
         
-                Mafia.updateOne({roomid:process.argv[2]}, {
+                MafiaDB.updateOne({roomid:process.argv[2]}, {
                     $push : { messages : { $each : messages } }
                 }).then((data) => {
                     console.log("trial messages");
