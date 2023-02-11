@@ -84,7 +84,7 @@ next_state = {
         "time" : 5
     },
     "trial" : {
-        "next" : "end",
+        "next" : "night",
         "time" : 5
     },
     "after_trial_talk" : {
@@ -93,6 +93,14 @@ next_state = {
     },
     "end" : {
         "next" : "end",
+        "time" : 1,
+    },
+    "end-mafia" : {
+        "next" : "end-mafia",
+        "time" : 1,
+    },
+    "end-town" : {
+        "next" : "end-town",
         "time" : 1,
     },
 
@@ -175,10 +183,12 @@ function updateGame() {
         // console.log(data)
         game.data = data;
         let game_state = game.data.game.state;
-        let next_game_state = next_state[game_state].next;
+        var next_game_state = next_state[game_state].next;
         counter = next_state[next_game_state].time;
 
-        if (game_state == "end") {
+        console.log("game state:                         " + game_state);
+
+        if (game_state == "end" || game_state == "end-mafia" || game_state == "end-town") {
             process.exit(0);
         } 
 
@@ -279,7 +289,8 @@ function updateGame() {
                 console.log(messages);
         
                 MafiaDB.updateOne({roomid:process.argv[2]}, {
-                    $push : { messages : { $each : messages } }
+                    $push : { messages : { $each : messages } },
+                    $set : {trial : {votes : {}, trial_player: ""}}
                 }).then((data) => {
                     console.log("trial messages");
                     process.send({action : "update_game"});
@@ -292,9 +303,8 @@ function updateGame() {
                     MafiaDB.updateOne({roomid:process.argv[2], "players.player_id":String(lynch_player)},
                         {$set:{"players.$.living":false}
                     }).then((data) => {
-                        // console.log(data)
                         MafiaDB.updateOne({roomid:process.argv[2]},{
-                            $pull:{"game.good_players":lynch_player, "game.evil_players":lynch_player}
+                            $pull:{"game.good_players":lynch_player, "game.evil_players":lynch_player},
                         }).then((data) => {
                             // console.log(data);
                             process.send({action : "update_game"});
@@ -315,7 +325,31 @@ function updateGame() {
             // see who used night roles and apply
         }
 
-        MafiaDB.findOneAndUpdate({roomid:room_id}, {
+        return next_game_state
+        
+    }).then(function(next_game_state) {
+        MafiaDB.findOne({roomid:process.argv[2]}).lean().then((data) => {
+            console.log("HEEEEEEEEEEEEERRRRRRRRREEEEEEEEE")
+            // console.log(data)
+            let evil_players = data.game.evil_players;
+            let good_players = data.game.good_players;
+            console.log(evil_players);
+            console.log(good_players);
+            console.log(good_players.length == 0)
+            console.log(evil_players.length == 0)
+            if (good_players.length == 0) {
+                next_game_state = "end-mafia";
+            } else if (evil_players.length == 0) {
+                next_game_state = "end-town";
+            }
+            console.log(next_game_state)
+        }).catch(error => {
+            console.log(error);
+        });
+
+        console.log("game state:")
+        console.log(next_game_state);
+        MafiaDB.updateOne({roomid:room_id}, {
             $set: { 'game.state': next_game_state}
         }).then((data) => {
             // console.log(data);
@@ -323,7 +357,6 @@ function updateGame() {
         }).catch(error => {
             console.log(error);
         });
-        
     }).catch(error => {
         console.log(error);
     });
