@@ -126,7 +126,7 @@ class Game {
 }
 
 let game = null;
-const roles = ["ranger", "sasquatchEVIL", "camper", "camper", "littlefeetEVIL", "hunter", "camper", "bigfeetEVIL", "lumberjack", "camper"];
+const roles = ["ranger", "sasquatchEVIL", "camper", "camper", "camper", "hunter", "littlefeetEVIL", "camper", "lumberjack", "bigfeetEVIL"];
 let counter = 0;
 
 function initGame() {
@@ -323,6 +323,14 @@ function updateGame() {
         if (game_state == "night") {
             // todo
             // see who used night roles and apply
+            // ranger - can investigate
+            // camper - can do nothing
+            // hunter - can kill a person once
+            // lumberjack - can protect
+            // sasquatchEVIL - can kill
+            // littlefeetEVIL - can do nothing
+            // bigfeetEVIL - can 
+            
         }
 
         console.log("end first")
@@ -375,20 +383,3 @@ setInterval(() => {
         process.send({action : "update_game"});
     }
 }, 1000);
-
-
-/*
-1. Owner starts room
-2. server spins up new process
-    - establish rolls 
-    - server sends message to players rolls have been created
-        - players make GET request for roll
-            - server encrypts new roll with token given
-            - player decrypts roll.
-            - player disconects general room socket
-            - player makes new socket again
-                - server looks at token and subscribes them to socket room "room_id"+"roll(town/evil)"
-    - waits 5seconds
-3. Start game
-
-*/
