@@ -38,6 +38,13 @@ const Mafia = new Schema(
                 of : String  
             }  
         },
+        night : {
+            type: Map,
+            of : new Schema({
+                player_id: String,
+                against_id: String
+            })
+        },
         messages : [MessagesSchema]
     },
     { timestamps: true },

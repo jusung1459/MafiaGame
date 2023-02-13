@@ -4,6 +4,7 @@ const MafiaCtrl = require('../controllers/mafia-controll')
 const UserCtrl = require('../controllers/user-controll')
 const PlayerCtrl = require('../controllers/player-controll')
 const MessageCtrl = require('../controllers/message-controll')
+const RoleCtrl = require('../controllers/role-controll')
 const mafiaModel = require('../models/mafia-model')
 const auth = require('../middleware/auth');
 
@@ -17,6 +18,7 @@ router.get('/mafia/gamestate', MafiaCtrl.getRoom)
 router.post('/mafia/owner', PlayerCtrl.owner)
 router.post('/mafia/player', PlayerCtrl.player)
 router.post('/mafia/message', MessageCtrl.message)
+router.post('/mafia/role', RoleCtrl.role)
 
 
 module.exports = router
