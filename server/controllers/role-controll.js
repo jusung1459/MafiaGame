@@ -32,31 +32,18 @@ role = (req, res) => {
         console.log(against_player_info)
 
         const player_role = data.game.roles[user.player_id];
-
-        // example
-        // {night: {
-        //     "ranger" : {
-        //         player_id: " adfsdfasf",
-        //         against_player_id : "dsfsdf"
-        //     }
-        //     }
-        // }
-        switch (player_role) {
-            case 'ranger':
-                
-                break;
-            case 'hunter':
-                console.log("")
-                break;
-            case 'lumberjack':
-                console.log("")
-                break;
-            case 'sasquatchEVIL':
-                console.log("")
-                break;
-            default:
-                console.log("default case");
-        }
+        
+        Mafia.updateOne({roomid:user.room}, {
+            $set: {
+                ["night." + player_role] : {
+                    player_id: user.player_id,
+                    against_id: against_player_info.player_id
+                }
+            }
+            
+        }).catch(error => {
+            console.log(error);
+        })
 
         return res.status(201).json(
             {success: true,

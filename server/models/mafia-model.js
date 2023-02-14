@@ -5,7 +5,8 @@ const MessagesSchema = new Schema({
     message : String,
     nickname : String,
     player_id : String
-})
+},
+{ timestamps: true })
 
 const PlayerSchema = new Schema({
     nickname : String,

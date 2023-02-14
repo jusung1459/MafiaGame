@@ -327,10 +327,23 @@ function updateGame() {
             // camper - can do nothing
             // hunter - can kill a person once
             // lumberjack - can protect
-            // sasquatchEVIL - can kill
-            // littlefeetEVIL - can do nothing
-            // bigfeetEVIL - can 
+            // sasquatchEVIL - can order kill
+            // littlefeetEVIL - can investigate
+            // bigfeetEVIL - does the dirty work
             
+            // get night
+            // iterate through keys
+            // kill: check if someone is protecting
+            // investigate: send chat through secret msg
+            //              - client can merge msg
+
+            const night = game.data.night;
+            console.log(night);
+            const night_roles = new Map(Object.entries(game.data.night));
+
+            console.log(night_roles);
+            
+
         }
 
         console.log("end first")
@@ -339,7 +352,7 @@ function updateGame() {
     }).then(() => {
         console.log("2nd then")
         MafiaDB.findOne({roomid:process.argv[2]}).lean().then((data) => {
-            console.log("HEEEEEEEEEEEEERRRRRRRRREEEEEEEEE")
+            console.log("inside 2nd then")
             // console.log(data)
             let evil_players = data.game.evil_players;
             let good_players = data.game.good_players;
