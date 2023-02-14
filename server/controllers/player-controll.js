@@ -16,7 +16,7 @@ owner = (req, res) => {
 
     switch (action) {
         case 'kick-player':
-            const kick_player_id = req.body.kick_player_id;
+            const kick_player_id = req.body.chosen_player_id;
             if (kick_player_id != null) {
                 Mafia.findOne({roomid:user.room}).lean().then((data) => {
                     if (data.game.state == "waiting" || data.game.state == "end") {
@@ -72,7 +72,7 @@ player = (req, res) => {
 
     switch (action) {
         case 'vote-player':
-            const vote_player_id = req.body.kick_player_id;
+            const vote_player_id = req.body.chosen_player_id;
             if (vote_player_id != null) {
                 Mafia.findOne({roomid:user.room}).lean().then((data) => {
                     voted_player_info = data.players.find(element => element.player_id == vote_player_id)

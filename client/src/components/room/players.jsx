@@ -47,11 +47,12 @@ function Player(props) {
             { 
                 token : JSON.parse(localStorage['user'])['token'],
                 action : action,
-                kick_player_id : chosen_player_id
+                chosen_player_id : chosen_player_id
             });
 
         try {
             axios.post(`${baseURL}/${url}`, body, config).then((result) => {
+                console.log(result);
                 console.log('kicked player' + chosen_player_id)
             })
             
@@ -107,6 +108,25 @@ function Player(props) {
                         <section className="flex items-center"> Vote player</section>
                     </button>
                 </div>)
+            }
+        }
+
+        if (props.game.state == "night") {
+            let action_role = "";
+            if (props.role == "ranger" || props.role == "littlefeetEVIL") {
+                action_role = "Investigate"
+            } else if (props.role == "hunter" || props.role == "sasquatchEVIL"){
+                action_role = "Kill"
+            }
+            if (action_role != "") {
+                if (props.player_id != button_player.player_button_id ) {
+                    return (
+                    <div className='right-container'>
+                        <button onClick={() => handleSubmit(button_player.player_button_id, "role", "role")}  role="button" type="submit">
+                            <section className="flex items-center"> {action_role} player</section>
+                        </button>
+                    </div>)
+                }
             }
         }
     }

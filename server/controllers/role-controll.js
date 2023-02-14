@@ -12,7 +12,7 @@ const jwt = require('jsonwebtoken');
 
 role = (req, res) => {
     const token = req.body.token;
-    const against_player_id = req.body.against_player;
+    const against_player_id = req.body.chosen_player_id;
 
 
     const user = jwt.verify(token, process.env.JWT_KEY);

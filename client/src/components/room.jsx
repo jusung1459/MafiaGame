@@ -88,6 +88,7 @@ class Room extends Component {
                         game={this.state.game}
                         owner={this.state.owner}
                         player_id={this.state.player_id}
+                        role={this.state.role}
                         votes={this.state.votes}/>
                 <Owner game={this.state.game}
                         owner={this.state.owner}
