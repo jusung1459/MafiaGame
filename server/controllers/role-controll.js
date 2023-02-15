@@ -52,6 +52,8 @@ role = (req, res) => {
         const roles = new Map(Object.entries(data.game.roles));
 
         night_roles.forEach((value, role) => {
+            console.log(role);
+            console.log(value);
             switch (role) {
                 case 'ranger':
                     // get against_id players role
@@ -60,17 +62,15 @@ role = (req, res) => {
                     console.log(against_role);
                     let message = { "nickname" : "Game",
                                     "player_id" : "0"};
-                    message["message"] = value.against_id + " abstained";
+                    
+                    message["message"] = value + " abstained";
                     let messages = [];
                     messages.push(message);
                     Mafia.updateOne({roomid:user.room}, {
                         $push: {
-                            ["secret." + user.player_id] : {
-                                messages : { $each : messages }
-                            }
+                            ["secret." + user.player_id] : message
                         }
-                    }).then((data) => console.log(data)
-                    ).catch(error => {
+                    }).catch(error => {
                         console.log(error);
                     });
                     break;
