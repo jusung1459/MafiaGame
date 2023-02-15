@@ -46,6 +46,10 @@ const Mafia = new Schema(
                 against_id: String
             })
         },
+        secret : {
+            type: Map,
+            of : MessagesSchema
+        },
         messages : [MessagesSchema]
     },
     { timestamps: true },

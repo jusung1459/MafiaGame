@@ -43,7 +43,47 @@ role = (req, res) => {
             
         }).catch(error => {
             console.log(error);
-        })
+        });
+
+        console.log("Night")
+
+        const night = data.night;
+        const night_roles = new Map(Object.entries(data.night));
+        const roles = new Map(Object.entries(data.game.roles));
+
+        night_roles.forEach((value, role) => {
+            switch (role) {
+                case 'ranger':
+                    // get against_id players role
+                    // send message through secret channel
+                    const against_role = roles.get(value.against_id);
+                    console.log(against_role);
+                    let message = { "nickname" : "Game",
+                                    "player_id" : "0"};
+                    message["message"] = value.against_id + " abstained";
+                    let messages = [];
+                    messages.push(message);
+                    Mafia.updateOne({roomid:user.room}, {
+                        $push: {
+                            ["secret." + user.player_id] : {
+                                messages : { $each : messages }
+                            }
+                        }
+                    }).then((data) => console.log(data)
+                    ).catch(error => {
+                        console.log(error);
+                    });
+                    break;
+                case 'littlefeetEVIL':
+                    break;
+                case 'hunter':
+                    break;
+                case 'sasquatchEVIL':
+                    break;
+                default:
+                    break;
+            }
+        });
 
         return res.status(201).json(
             {success: true,
@@ -55,7 +95,7 @@ role = (req, res) => {
         console.log(error);
         return res.status(400).json({
             error,
-            message: 'Cant vote player: ' + agasint_player_id,
+            message: 'Cant user role',
         })
     });
 
