@@ -41,7 +41,8 @@ createRoom = (req, res) => {
         votes : new Map(),
         trial : {
             votes : new Map()
-        }
+        },
+        secret : new Map()
 
     });
     if (!mafia) {
@@ -153,6 +154,11 @@ getRoom = (req, res) => {
         delete data.updatedAt;
         delete data['__v'];
         data.player_id = user.player_id;
+
+        // filter secret messages for user
+        let secrets = new Map(Object.entries(data.secret));
+        data.secret_message = secrets.get(user.player_id);
+        delete(data.secret)
 
         // tell players to update
         const socketConnection = require('../helpers/socket-singleton').connection();

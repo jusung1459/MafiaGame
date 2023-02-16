@@ -18,7 +18,7 @@ function Chat(props) {
             target.scroll({ top: target.scrollHeight, behavior: 'smooth' });
           });
         }
-    }, [props.messages])
+    }, [props.messages]);
 
     function handleMsgSubmit() {
 

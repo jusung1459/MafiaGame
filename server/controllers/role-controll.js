@@ -47,13 +47,24 @@ role = (req, res) => {
 
         console.log("Night")
 
-        const night = data.night;
         const night_roles = new Map(Object.entries(data.night));
         const roles = new Map(Object.entries(data.game.roles));
+
+        const role_investigation = {
+            "ranger" : "This person upkeeps the park",
+            "sasquatchEVIL" : "Very hairy",
+            "camper" : "You see them sing songs and roast marshmellows",
+            "hunter" : "You see a gun!", 
+            "littlefeetEVIL": "Hairy with small feet", 
+            "lumberjack" : "Chop chop chop", 
+            "bigfeetEVIL" : "Look at those massive feet!"
+        };
 
         night_roles.forEach((value, role) => {
             console.log(role);
             console.log(value);
+            against_role = roles.get(value.against_id);
+            console.log("role: " + against_role);
             switch (role) {
                 case 'ranger':
                     // get against_id players role
@@ -63,7 +74,7 @@ role = (req, res) => {
                     let message = { "nickname" : "Game",
                                     "player_id" : "0"};
                     
-                    message["message"] = value + " abstained";
+                    message["message"] = role_investigation[against_role];
                     let messages = [];
                     messages.push(message);
                     Mafia.updateOne({roomid:user.room}, {

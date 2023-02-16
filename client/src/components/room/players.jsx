@@ -11,8 +11,8 @@ function Player(props) {
 
     useEffect(() => {
         // to make scroll stuck to bottom on new message
-        console.log('from child' + props.players)
-        console.log(props)
+        // console.log('from child' + props.players)
+        // console.log(props)
         
     }, [props.players, props.game, props.votes])
 
@@ -89,7 +89,7 @@ function Player(props) {
     }
 
     function Player_buttons(button_player) {
-        console.log(button_player.player_button_id)
+        // console.log(button_player.player_button_id)
         if (props.owner === props.player_id && (props.game.state == "waiting" || props.game.state == "end")) {
             if (props.player_id != button_player.player_button_id ) {
                 return (

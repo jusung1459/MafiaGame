@@ -9,7 +9,7 @@ function Gamestate(props) {
     const [game, setgame] = useState('');
 
     useEffect(() => {
-        console.log(props)
+        // console.log(props)
         
     }, [props.game])
 

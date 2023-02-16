@@ -22,7 +22,8 @@ class Room extends Component {
             owner : '',
             player_id : '',
             time : 0,
-            trial : ''
+            trial : '',
+            secret : []
         }
         this.socket = socketIO.connect('http://localhost:3000', {
             query: {token : JSON.parse(localStorage['user'])['token']},
@@ -41,8 +42,20 @@ class Room extends Component {
             player_id : gamestate.player_id,
             trial : gamestate.trial,
             votes : gamestate.votes,
-            role: gamestate.role
+            role: gamestate.role,
+            secret : gamestate.secret_message
         }, () => console.log(this.state));
+    }
+
+    componentDidUpdate(prevProps, prevState) {
+        if (prevState.secret !== this.state.secret) {
+            if (this.state.secret != undefined && this.state.messages != undefined) {
+                this.setState({
+                    messages : [...this.state.messages, ...this.state.secret],
+                });
+                
+            }
+        }
     }
     
     componentDidMount() {
@@ -97,7 +110,8 @@ class Room extends Component {
                         owner={this.state.owner}
                         player_id={this.state.player_id}
                         trial_player={this.state.trial}/>
-                <Chat messages={this.state.messages}/>
+                <Chat messages={this.state.messages}
+                        secret={this.state.secret}/>
             </div>
         )
     }

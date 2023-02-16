@@ -11,7 +11,7 @@ function Trial(props) {
     const [trial_player, settrial_player] = useState('');
 
     useEffect(() => {
-        console.log(props)
+        // console.log(props)
         
     }, [props.game])
 
