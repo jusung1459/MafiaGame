@@ -42,6 +42,7 @@ createRoom = (req, res) => {
         trial : {
             votes : new Map()
         },
+        night : new Map(),
         secret : new Map()
 
     });
