@@ -7,7 +7,7 @@ StartRoom = (req, res) => {
     const token = req.body.token;
     if (token) {
         const user = jwt.verify(token, process.env.JWT_KEY);
-        console.log(user);
+        // console.log(user);
 
         Mafia.findOne({roomid:user.room}).lean().then((data) => {
             if (user.player_id == data.owner) {

@@ -51,7 +51,9 @@ class Room extends Component {
         if (prevState.secret !== this.state.secret) {
             if (this.state.secret != undefined && this.state.messages != undefined) {
                 this.setState({
-                    messages : [...this.state.messages, ...this.state.secret],
+                    messages : [...this.state.messages, ...this.state.secret].sort((a, b) => {
+                        return Date.parse(a.createdAt) - Date.parse(b.createdAt)
+                    } ),
                 });
                 
             }
