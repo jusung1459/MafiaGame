@@ -37,17 +37,32 @@ function Trial(props) {
         }
     }
 
-    if (props.game.state == 'trial' && (props.player_id != props.trial_player.trial_player)) {
-        return(
-            <div className='owner-container'>
-                <button onClick={() => handleStartSubmit("guilty")} role="button" type="submit">
-                    <section className="flex items-center">Guilty</section>
-                </button>
-                <button onClick={() => handleStartSubmit("inno")} role="button" type="submit">
-                    <section className="flex items-center">Innocent</section>
-                </button>
-            </div>
-        );
+    if (props.game.state == 'trial') {
+        if (props.player_id != props.trial_player.trial_player) {
+            const against_player = props.players.find((player) => {
+                
+                return player.player_id == props.trial_player.trial_player;
+            });
+            if (against_player != undefined) {
+                return(
+                    <div className='owner-container'>
+                        <button onClick={() => handleStartSubmit("guilty")} role="button" type="submit">
+                            <section className="flex items-center">Guilty</section>
+                        </button>
+                        <button onClick={() => handleStartSubmit("inno")} role="button" type="submit">
+                            <section className="flex items-center">Innocent</section>
+                        </button>
+                        <div>voting {against_player.nickname}</div>
+                    </div>
+                );
+            }
+        } else {
+            return(
+            <div>
+                <div>You are on trial. State your case!</div>
+            </div>)
+        }
+        
     } else {
         return <div></div>
     }

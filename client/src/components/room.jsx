@@ -111,7 +111,8 @@ class Room extends Component {
                 <Trial game={this.state.game}
                         owner={this.state.owner}
                         player_id={this.state.player_id}
-                        trial_player={this.state.trial}/>
+                        trial_player={this.state.trial}
+                        players={this.state.players}/>
                 <Chat messages={this.state.messages}
                         secret={this.state.secret}/>
             </div>
