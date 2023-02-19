@@ -144,17 +144,6 @@ getRoom = (req, res) => {
 
     Mafia.findOne({roomid:user.room}).lean().then((data) => {
         // console.log(data)
-        if (data.game.state != 'waiting') {
-            data.role = data.game.roles[user.player_id];
-        }
-        delete data['game']['evil_players'];
-        delete data.game['good_players'];
-        delete data.game['roles'];
-        delete data.__id;
-        delete data.createdAt;
-        delete data.updatedAt;
-        delete data['__v'];
-        data.player_id = user.player_id;
 
         // filter secret messages for user
         let secrets = new Map(Object.entries(data.secret));
@@ -169,6 +158,22 @@ getRoom = (req, res) => {
             data.dead = [];
         }
         delete(data.secret)
+        data.evil = [];
+        if (data.game.state != 'waiting') {
+            data.role = data.game.roles[user.player_id];
+
+            if (data.game.roles[user.player_id].includes("EVIL")) {
+                data.evil_chat = secrets.get("evil");
+            }
+        }
+        delete data['game']['evil_players'];
+        delete data.game['good_players'];
+        delete data.game['roles'];
+        delete data.__id;
+        delete data.createdAt;
+        delete data.updatedAt;
+        delete data['__v'];
+        data.player_id = user.player_id;
 
         // tell players to update
         const socketConnection = require('../helpers/socket-singleton').connection();

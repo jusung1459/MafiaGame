@@ -143,6 +143,7 @@ class Game {
 let game = null;
 const roles = ["ranger", "sasquatchEVIL", "camper", "camper", "camper", "hunter", "littlefeetEVIL", "camper", "lumberjack", "bigfeetEVIL"];
 let counter = 0;
+let total_counter = 900; // total seconds, game terminates if game goes on for too long
 
 function initGame() {
     // getting game state
@@ -457,7 +458,11 @@ async function updateGame() {
 initGame();
 
 setInterval(() => {
+    total_counter = total_counter - 1;
     process.send({ counter: counter-- });
+    if (total_counter < 0) {
+        process.exit(0);
+    }
     if (counter < 0) {
         updateGame();
     }

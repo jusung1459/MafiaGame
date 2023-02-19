@@ -47,6 +47,30 @@ message = (req, res) => {
                     }
                 } else if (state === "night") {
                     // only mafia can talk to each other
+                    if (data.game.roles[user.player_id].includes("EVIL")) {
+                        console.log("is evil")
+                        let new_message = { "nickname" : user.nickname,
+                                "player_id" : user.player_id,
+                                "createdAt":new Date()};
+                
+                        new_message["message"] = message;
+
+                        Mafia.updateOne({roomid:user.room}, {
+                            $push: {
+                                ["secret." + "evil"] : new_message,
+                            }
+                        }).then(() => {
+                            const socketConnection = require('../helpers/socket-singleton').connection();
+                            socketConnection.sendEvent("gameUpdate", "message", user.room);
+
+                            return res.status(201).json({
+                                success: true,
+                                message: 'message sent',
+                            })
+                        }).catch(error => {
+                            console.log(error);
+                        });
+                    }
                 } else {
                     Mafia.findOneAndUpdate({roomid:user.room},
                         {   

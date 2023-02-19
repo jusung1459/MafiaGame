@@ -24,7 +24,8 @@ class Room extends Component {
             time : 0,
             trial : '',
             secret : [],
-            dead : []
+            dead : [],
+            evil_chat : []
         }
         this.socket = socketIO.connect('http://localhost:3000', {
             query: {token : JSON.parse(localStorage['user'])['token']},
@@ -45,17 +46,18 @@ class Room extends Component {
             votes : gamestate.votes,
             role: gamestate.role,
             secret : gamestate.secret_message,
-            dead : gamestate.dead
+            dead : gamestate.dead,
+            evil_chat : gamestate.evil_chat
         }, () => console.log(this.state));
     }
 
     componentDidUpdate(prevProps, prevState) {
-        if (prevState.secret !== this.state.secret || prevState.dead !== this.state.dead) {
+        if (prevState.secret !== this.state.secret || prevState.dead !== this.state.dead || prevState.evil_chat !== this.state.evil_chat) {
 
             console.log(this.state.secret != undefined)
-            if ((this.state.secret != undefined && this.state.messages != undefined) && this.state.dead != undefined) {
+            if (((this.state.secret != undefined && this.state.messages != undefined) && this.state.dead != undefined) && this.state.evil_chat != undefined) {
                 this.setState({
-                    messages : [...this.state.messages, ...this.state.secret, ...this.state.dead].sort((a, b) => {
+                    messages : [...this.state.messages, ...this.state.secret, ...this.state.dead, ...this.state.evil_chat].sort((a, b) => {
                         return Date.parse(a.createdAt) - Date.parse(b.createdAt)
                     } ),
                 });
