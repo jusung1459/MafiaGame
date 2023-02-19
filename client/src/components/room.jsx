@@ -25,7 +25,8 @@ class Room extends Component {
             trial : '',
             secret : [],
             dead : [],
-            evil_chat : []
+            evil_chat : [],
+            player_status : new Map(),
         }
         this.socket = socketIO.connect('http://localhost:3000', {
             query: {token : JSON.parse(localStorage['user'])['token']},
@@ -35,7 +36,8 @@ class Room extends Component {
     }
 
     updateGameState(gamestate) {
-        console.log(gamestate)
+        console.log(gamestate);
+
         this.setState({
             messages : gamestate.messages,
             game : gamestate.game,
@@ -63,6 +65,17 @@ class Room extends Component {
                 });
                 
             }
+        }
+        if (prevState.players !== this.state.players) {
+            console.log(this.state.players)
+            const player_status_temp = new Map();
+            this.state.players.forEach((player) => {
+                player_status_temp.set(player.player_id, player.living);
+            });
+            console.log(player_status_temp)
+            this.setState({
+                player_status : player_status_temp
+            })
         }
     }
     
@@ -102,7 +115,9 @@ class Room extends Component {
         return (
             <div>
                 <h1>room : {JSON.parse(localStorage.getItem('user')).room}</h1>
-                <Role role={this.state.role} />
+                <Role role={this.state.role}
+                        player_id={this.state.player_id}
+                        player_status={this.state.player_status} />
                 <Gamestate game={this.state.game}
                             time = {this.state.time}/>
                 <Players players={this.state.players} 

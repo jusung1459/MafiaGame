@@ -6,8 +6,20 @@ import '../../style/room.css'
 const baseURL = 'http://localhost:3000/api/mafia'
 
 function Role(props) {
-    
-    return <h1>Role : {props.role}</h1>
+
+    if (props.player_status.get(props.player_id)) {
+        return (
+            <div>
+                <h1>Role : {props.role}</h1>
+                <div>You are Alive</div>
+            </div>)
+    } else {
+        return (
+            <div>
+                <h1>Role : {props.role}</h1>
+                <div>You are Dead</div>
+            </div>)
+    }
 
 }
 
