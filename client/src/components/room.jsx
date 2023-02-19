@@ -23,7 +23,8 @@ class Room extends Component {
             player_id : '',
             time : 0,
             trial : '',
-            secret : []
+            secret : [],
+            dead : []
         }
         this.socket = socketIO.connect('http://localhost:3000', {
             query: {token : JSON.parse(localStorage['user'])['token']},
@@ -43,15 +44,18 @@ class Room extends Component {
             trial : gamestate.trial,
             votes : gamestate.votes,
             role: gamestate.role,
-            secret : gamestate.secret_message
+            secret : gamestate.secret_message,
+            dead : gamestate.dead
         }, () => console.log(this.state));
     }
 
     componentDidUpdate(prevProps, prevState) {
-        if (prevState.secret !== this.state.secret) {
-            if (this.state.secret != undefined && this.state.messages != undefined) {
+        if (prevState.secret !== this.state.secret || prevState.dead !== this.state.dead) {
+
+            console.log(this.state.secret != undefined)
+            if ((this.state.secret != undefined && this.state.messages != undefined) && this.state.dead != undefined) {
                 this.setState({
-                    messages : [...this.state.messages, ...this.state.secret].sort((a, b) => {
+                    messages : [...this.state.messages, ...this.state.secret, ...this.state.dead].sort((a, b) => {
                         return Date.parse(a.createdAt) - Date.parse(b.createdAt)
                     } ),
                 });
@@ -114,7 +118,8 @@ class Room extends Component {
                         trial_player={this.state.trial}
                         players={this.state.players}/>
                 <Chat messages={this.state.messages}
-                        secret={this.state.secret}/>
+                        secret={this.state.secret}
+                        dead = {this.state.dead}/>
             </div>
         )
     }

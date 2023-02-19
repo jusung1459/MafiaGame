@@ -159,6 +159,15 @@ getRoom = (req, res) => {
         // filter secret messages for user
         let secrets = new Map(Object.entries(data.secret));
         data.secret_message = secrets.get(user.player_id);
+        if (data.secret_message === undefined) {
+            data.secret_message = [];
+        }
+        let player_status = data.players.find((player) => {return player.player_id === user.player_id});
+        if (player_status.living == false) {
+            data.dead = secrets.get("dead");
+        } else {
+            data.dead = [];
+        }
         delete(data.secret)
 
         // tell players to update
