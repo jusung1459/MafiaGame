@@ -76,7 +76,10 @@ player = (req, res) => {
             if (vote_player_id != null) {
                 Mafia.findOne({roomid:user.room}).lean().then((data) => {
                     voted_player_info = data.players.find(element => element.player_id == vote_player_id)
-                    if (data.game.state == "vote") {
+                    const player_info = data.players.find(element => element.player_id == user.player_id);
+                    // console.log(voted_player_info)
+                    // console.log(player_info)
+                    if (data.game.state == "vote" && (voted_player_info.living && player_info.living)) {
                         let new_votes = data.votes;
                         if (new_votes == undefined) {
                             new_votes = new Map();
@@ -108,6 +111,11 @@ player = (req, res) => {
                                 message: 'cant vote player: ' + vote_player_id
                             })
                         });
+                    } else {
+                        console.log("cant vote")
+                        return res.status(200).json({
+                            message: 'Cant vote player: ' + vote_player_id
+                        })
                     }
                 }).catch(error => {
                     console.log(error);

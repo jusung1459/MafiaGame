@@ -23,3 +23,7 @@
 .left-container:right-container {
     margin-right: 100px;
 } 
+
+.living-false {
+    text-decoration: line-through;
+  }

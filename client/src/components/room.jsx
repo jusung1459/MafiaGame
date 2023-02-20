@@ -72,7 +72,6 @@ class Room extends Component {
             this.state.players.forEach((player) => {
                 player_status_temp.set(player.player_id, player.living);
             });
-            console.log(player_status_temp)
             this.setState({
                 player_status : player_status_temp
             })
@@ -126,7 +125,8 @@ class Room extends Component {
                         owner={this.state.owner}
                         player_id={this.state.player_id}
                         role={this.state.role}
-                        votes={this.state.votes}/>
+                        votes={this.state.votes}
+                        player_status={this.state.player_status}/>
                 <Owner game={this.state.game}
                         owner={this.state.owner}
                         player_id={this.state.player_id}/>
@@ -134,7 +134,8 @@ class Room extends Component {
                         owner={this.state.owner}
                         player_id={this.state.player_id}
                         trial_player={this.state.trial}
-                        players={this.state.players}/>
+                        players={this.state.players}
+                        player_status={this.state.player_status}/>
                 <Chat messages={this.state.messages}
                         secret={this.state.secret}
                         dead = {this.state.dead}/>

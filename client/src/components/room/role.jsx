@@ -14,6 +14,7 @@ function Role(props) {
     }
 
     if (props.player_status.get(props.player_id)) {
+        console.log(props.player_status)
         return (
             <div>
                 <h1>Role : {props.role}</h1>

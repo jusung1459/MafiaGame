@@ -10,32 +10,30 @@ function Player(props) {
     const [game, setgame] = useState('');
 
     useEffect(() => {
-        // to make scroll stuck to bottom on new message
-        // console.log('from child' + props.players)
         // console.log(props)
         
-    }, [props.players, props.game, props.votes])
+    }, [props.players, props.game, props.votes, props.player_status])
 
-    function countVotes(votes) {
-        if (votes != undefined) {
-            let votes_string = JSON.stringify(votes)
-            let votes_parsed = JSON.parse(votes_string)
-            let vote_counts = new Map();
-            for (const key in votes_parsed) {
-                let value = votes_parsed[key];
-                if (vote_counts.has(value)) {
-                    vote_counts.set(value, (vote_counts.get(value) + 1));
-                } else {
-                    vote_counts.set(value, 1);
-                }
-            }
-            console.log(vote_counts)
-        }
-        // let vote_counts = new Map();
-        // // pool up counts
+    // function countVotes(votes) {
+    //     if (votes != undefined) {
+    //         let votes_string = JSON.stringify(votes)
+    //         let votes_parsed = JSON.parse(votes_string)
+    //         let vote_counts = new Map();
+    //         for (const key in votes_parsed) {
+    //             let value = votes_parsed[key];
+    //             if (vote_counts.has(value)) {
+    //                 vote_counts.set(value, (vote_counts.get(value) + 1));
+    //             } else {
+    //                 vote_counts.set(value, 1);
+    //             }
+    //         }
+    //         console.log(vote_counts)
+    //     }
+    //     // let vote_counts = new Map();
+    //     // // pool up counts
     
-        // console.log(vote_counts)
-    }
+    //     // console.log(vote_counts)
+    // }
 
     function handleSubmit(chosen_player_id, action, url) {
         console.log(chosen_player_id);
@@ -62,7 +60,7 @@ function Player(props) {
     }
 
     function Vote_count(vote_player_id) {
-        if (props.game.state == "vote") {
+        if (props.game.state == "vote" && props.player_status.get(vote_player_id.vote_player_id)) {
             let votes = props.votes;
             if (votes != undefined) {
                 let votes_string = JSON.stringify(votes)
@@ -100,32 +98,36 @@ function Player(props) {
                 </div>)
             }
         }
-        if (props.game.state == "vote") {
-            if (props.player_id != button_player.player_button_id ) {
-                return (
-                <div className='right-container'>
-                    <button onClick={() => handleSubmit(button_player.player_button_id, "vote-player", "player")}  role="button" type="submit">
-                        <section className="flex items-center"> Vote player</section>
-                    </button>
-                </div>)
-            }
-        }
-
-        if (props.game.state == "night") {
-            let action_role = "";
-            if (props.role == "ranger" || props.role == "littlefeetEVIL") {
-                action_role = "Investigate"
-            } else if (props.role == "hunter" || props.role == "sasquatchEVIL"){
-                action_role = "Kill"
-            }
-            if (action_role != "") {
+        console.log(button_player)
+        console.log(props.player_status.get(button_player.player_button_id))
+        if (props.player_status.get(button_player.player_button_id) && props.player_status.get(props.player_id)) {
+            if (props.game.state == "vote") {
                 if (props.player_id != button_player.player_button_id ) {
                     return (
                     <div className='right-container'>
-                        <button onClick={() => handleSubmit(button_player.player_button_id, "role", "role")}  role="button" type="submit">
-                            <section className="flex items-center"> {action_role} player</section>
+                        <button onClick={() => handleSubmit(button_player.player_button_id, "vote-player", "player")}  role="button" type="submit">
+                            <section className="flex items-center"> Vote player</section>
                         </button>
                     </div>)
+                }
+            }
+    
+            if (props.game.state == "night") {
+                let action_role = "";
+                if (props.role == "ranger" || props.role == "littlefeetEVIL") {
+                    action_role = "Investigate"
+                } else if (props.role == "hunter" || props.role == "sasquatchEVIL"){
+                    action_role = "Kill"
+                }
+                if (action_role != "") {
+                    if (props.player_id != button_player.player_button_id ) {
+                        return (
+                        <div className='right-container'>
+                            <button onClick={() => handleSubmit(button_player.player_button_id, "role", "role")}  role="button" type="submit">
+                                <section className="flex items-center"> {action_role} player</section>
+                            </button>
+                        </div>)
+                    }
                 }
             }
         }
@@ -142,7 +144,7 @@ function Player(props) {
                                 <div key={i} className={`${m.player_id}-id`}>
                                     <li>
                                     <div className='beside-container'> 
-                                        <div className='player-nickname left-container'>{m.nickname}</div>
+                                        <div className={`living-${props.player_status.get(m.player_id)} player-nickname left-container`}>{m.nickname}</div>
                                         <Player_buttons player_button_id={m.player_id}/>
                                         <Vote_count vote_player_id={m.player_id}/>
                                     </div>

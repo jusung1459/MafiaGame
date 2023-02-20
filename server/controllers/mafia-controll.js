@@ -160,13 +160,14 @@ getRoom = (req, res) => {
         delete(data.secret)
         data.evil = [];
 
-
-        const player_role = data.game.roles[user.player_id];
-        const player_role_counter = data.role_counter[player_role];
-        if (player_role_counter === undefined) {
-            data.role_counter = -1;
-        } else {
-            data.role_counter = player_role_counter;
+        if (data.game.roles !== undefined) {
+            const player_role = data.game.roles[user.player_id];
+            const player_role_counter = data.role_counter[player_role];
+            if (player_role_counter === undefined) {
+                data.role_counter = -1;
+            } else {
+                data.role_counter = player_role_counter;
+            }
         }
 
         if (data.game.state != 'waiting') {
