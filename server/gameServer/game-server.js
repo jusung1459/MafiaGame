@@ -62,7 +62,11 @@ const Mafia = new Schema(
             type: Map,
             of : [MessagesSchema]
         },
-        messages : [MessagesSchema]
+        messages : [MessagesSchema],
+        role_counter : {
+            type : Map,
+            of : Number
+        }
     },
     { timestamps: true },
 )
@@ -141,7 +145,8 @@ class Game {
 }
 
 let game = null;
-const roles = ["ranger", "sasquatchEVIL", "camper", "camper", "camper", "hunter", "littlefeetEVIL", "camper", "lumberjack", "bigfeetEVIL"];
+// const roles = ["ranger", "sasquatchEVIL", "camper", "camper", "camper", "hunter", "littlefeetEVIL", "camper", "lumberjack", "bigfeetEVIL"];
+const roles = ["ranger", "littlefeetEVIL", "hunter", "camper", "camper", "hunter", "littlefeetEVIL", "camper", "lumberjack", "bigfeetEVIL"];
 let counter = 0;
 let total_counter = 900; // total seconds, game terminates if game goes on for too long
 
@@ -165,9 +170,12 @@ function initGame() {
                 good_players.push(player.player_id);
             }
         });
-        // console.log(role_map)
-        // console.log(evil_players);
-        // console.log(good_players);
+        
+        let role_counter = {
+            "hunter" : 2,
+            "littlefeetEVIL" : 3,
+            "lumberjack" : 3
+        }
 
         MafiaDB.findOneAndUpdate({roomid:room_id}, {
             $set: { game: {
@@ -175,7 +183,8 @@ function initGame() {
                     good_players : good_players,
                     roles : role_map,
                     state: "starting"
-                }
+                },
+                role_counter : role_counter
             }
         }).then((data) => {
             // console.log(data);
@@ -394,27 +403,55 @@ async function checkState() {
                     
                     message["message"] = against_player_info.nickname + role_investigation[against_role];
 
-                    return MafiaDB.updateOne({roomid:process.argv[2]}, {
-                        $push: {
-                            ["secret." + value.player_id] : message,
-                        }
-                    }).exec().catch(error => {
-                        console.log(error);
-                    });
+                    if (role === 'littlefeetEVIL') {
+                        return MafiaDB.updateOne({roomid:process.argv[2]}, {
+                            $push: {
+                                ["secret." + value.player_id] : message,
+                            },
+                            $inc: {
+                                "role_counter.littlefeetEVIL" : -1
+                            }
+                        }).exec().catch(error => {
+                            console.log(error);
+                        });
+                    } else {
+                        return MafiaDB.updateOne({roomid:process.argv[2]}, {
+                            $push: {
+                                ["secret." + value.player_id] : message,
+                            }
+                        }).exec().catch(error => {
+                            console.log(error);
+                        });
+                    }
                 } else if (role === 'hunter' || role === 'sasquatchEVIL') {
                     // kill player and remove from alive
                     console.log("hunter: " );
                     console.log(value)
                     console.log(against_player_info);
-                    return MafiaDB.updateOne({roomid:process.argv[2], "players.player_id":value.against_id},
-                        {$set:{"players.$.living":false}
-                    }).then( (result) => {
-                        return MafiaDB.updateOne({roomid:process.argv[2]},{
-                            $pull:{"game.good_players":value.against_id, "game.evil_players":value.against_id},
-                        }).exec()
-                    }).catch(error => {
-                        console.log(error);
-                    });
+                    if (role === 'hunter') {
+                        return MafiaDB.updateOne({roomid:process.argv[2], "players.player_id":value.against_id},
+                            {$set:{"players.$.living":false},
+                            $inc: {
+                                "role_counter.hunter" : -1
+                            }
+                        }).then( (result) => {
+                            return MafiaDB.updateOne({roomid:process.argv[2]},{
+                                $pull:{"game.good_players":value.against_id, "game.evil_players":value.against_id},
+                            }).exec()
+                        }).catch(error => {
+                            console.log(error);
+                        });
+                    } else {
+                        return MafiaDB.updateOne({roomid:process.argv[2], "players.player_id":value.against_id},
+                            {$set:{"players.$.living":false}
+                        }).then( (result) => {
+                            return MafiaDB.updateOne({roomid:process.argv[2]},{
+                                $pull:{"game.good_players":value.against_id, "game.evil_players":value.against_id},
+                            }).exec()
+                        }).catch(error => {
+                            console.log(error);
+                        });
+                    }
                 }
             })).then((data) => {
                 console.log("after await")

@@ -7,11 +7,18 @@ const baseURL = 'http://localhost:3000/api/mafia'
 
 function Role(props) {
 
+    function renderRoleCount() {
+        if (props.role_counter >= 0) {
+            return <div>{props.role_counter} role action left</div>
+        }
+    }
+
     if (props.player_status.get(props.player_id)) {
         return (
             <div>
                 <h1>Role : {props.role}</h1>
                 <div>You are Alive</div>
+                <div>{renderRoleCount()}</div>
             </div>)
     } else {
         return (

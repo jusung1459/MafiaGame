@@ -32,60 +32,28 @@ role = (req, res) => {
         console.log(against_player_info)
 
         const player_role = data.game.roles[user.player_id];
-        
-        Mafia.updateOne({roomid:user.room}, {
-            $set: {
-                ["night." + player_role] : {
-                    player_id: user.player_id,
-                    against_id: against_player_info.player_id
+        console.log(player_role)
+        console.log(data.role_counter)
+        console.log(data.role_counter[player_role])
+        const player_role_counter = data.role_counter[player_role];
+
+        if (player_role_counter === undefined || player_role_counter > 0) {
+            Mafia.updateOne({roomid:user.room}, {
+                $set: {
+                    ["night." + player_role] : {
+                        player_id: user.player_id,
+                        against_id: against_player_info.player_id
+                    }
                 }
-            }
-            
-        }).catch(error => {
-            console.log(error);
-        });
+                
+            }).catch(error => {
+                console.log(error);
+            });
+        } else {
+            console.log("do nothing no more roles left")
+        }
 
         console.log("Night")
-
-        // const night_roles = new Map(Object.entries(data.night));
-        // const roles = new Map(Object.entries(data.game.roles));
-
-        // const role_investigation = {
-        //     "ranger" : " upkeeps the park",
-        //     "sasquatchEVIL" : " is very hairy",
-        //     "camper" : " sing songs and roast marshmellows",
-        //     "hunter" : " has a gun!", 
-        //     "littlefeetEVIL": " is hairy with small feet", 
-        //     "lumberjack" : " chop chop chops", 
-        //     "bigfeetEVIL" : " has massive feet!"
-        // };
-
-        // night_roles.forEach((value, role) => {
-        //     console.log(role);
-        //     console.log(value);
-        //     against_role = roles.get(value.against_id);
-        //     const against_player_info = data.players.find(element => element.player_id == value.against_id);
-        //     if (role === 'ranger' || role === 'littlefeetEVIL') {
-        //         // get against_id players role
-        //         // send message through secret channel
-        //         const against_role = roles.get(value.against_id);
-        //         let message = { "nickname" : "Game",
-        //                         "player_id" : "0"};
-                
-        //         message["message"] = against_player_info.nickname + role_investigation[against_role];
-        //         let messages = [];
-        //         messages.push(message);
-        //         Mafia.updateOne({roomid:user.room}, {
-        //             $push: {
-        //                 ["secret." + value.player_id] : message
-        //             }
-        //         }).catch(error => {
-        //             console.log(error);
-        //         });
-        //     } else if (role === 'hunter' || role === 'sasquatchEVIL') {
-
-        //     }
-        // });
 
         return res.status(201).json(
             {success: true,

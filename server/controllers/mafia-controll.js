@@ -159,11 +159,26 @@ getRoom = (req, res) => {
         }
         delete(data.secret)
         data.evil = [];
+
+
+        const player_role = data.game.roles[user.player_id];
+        const player_role_counter = data.role_counter[player_role];
+        if (player_role_counter === undefined) {
+            data.role_counter = -1;
+        } else {
+            data.role_counter = player_role_counter;
+        }
+
         if (data.game.state != 'waiting') {
             data.role = data.game.roles[user.player_id];
 
             if (data.game.roles[user.player_id].includes("EVIL")) {
                 data.evil_chat = secrets.get("evil");
+                if (data.evil_chat == undefined) {
+                    data.evil_chat  = [];
+                }
+            } else {
+                data.evil_chat  = [];
             }
         }
         delete data['game']['evil_players'];

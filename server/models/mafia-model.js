@@ -50,7 +50,11 @@ const Mafia = new Schema(
             type: Map,
             of : MessagesSchema
         },
-        messages : [MessagesSchema]
+        messages : [MessagesSchema],
+        role_counter : {
+            type : Map,
+            of : Number
+        }
     },
     { timestamps: true },
 )

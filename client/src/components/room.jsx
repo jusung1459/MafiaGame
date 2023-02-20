@@ -49,15 +49,15 @@ class Room extends Component {
             role: gamestate.role,
             secret : gamestate.secret_message,
             dead : gamestate.dead,
-            evil_chat : gamestate.evil_chat
+            evil_chat : gamestate.evil_chat,
+            role_counter : gamestate.role_counter
         }, () => console.log(this.state));
     }
 
     componentDidUpdate(prevProps, prevState) {
         if (prevState.secret !== this.state.secret || prevState.dead !== this.state.dead || prevState.evil_chat !== this.state.evil_chat) {
-
-            console.log(this.state.secret != undefined)
             if (((this.state.secret != undefined && this.state.messages != undefined) && this.state.dead != undefined) && this.state.evil_chat != undefined) {
+                console.log("in here")
                 this.setState({
                     messages : [...this.state.messages, ...this.state.secret, ...this.state.dead, ...this.state.evil_chat].sort((a, b) => {
                         return Date.parse(a.createdAt) - Date.parse(b.createdAt)
@@ -117,7 +117,8 @@ class Room extends Component {
                 <h1>room : {JSON.parse(localStorage.getItem('user')).room}</h1>
                 <Role role={this.state.role}
                         player_id={this.state.player_id}
-                        player_status={this.state.player_status} />
+                        player_status={this.state.player_status}
+                        role_counter={this.state.role_counter} />
                 <Gamestate game={this.state.game}
                             time = {this.state.time}/>
                 <Players players={this.state.players} 
