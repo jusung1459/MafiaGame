@@ -55,7 +55,14 @@ class Room extends Component {
     }
 
     componentDidUpdate(prevProps, prevState) {
+
         if (prevState.secret !== this.state.secret || prevState.dead !== this.state.dead || prevState.evil_chat !== this.state.evil_chat) {
+            console.log("here")
+            console.log(this.state.secret)
+            console.log(this.state.messages)
+            console.log(this.state.dead)
+            console.log(this.state.evil_chat)
+
             if (((this.state.secret != undefined && this.state.messages != undefined) && this.state.dead != undefined) && this.state.evil_chat != undefined) {
                 console.log("in here")
                 this.setState({

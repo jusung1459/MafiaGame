@@ -154,6 +154,9 @@ getRoom = (req, res) => {
         let player_status = data.players.find((player) => {return player.player_id === user.player_id});
         if (player_status.living == false) {
             data.dead = secrets.get("dead");
+            if (data.dead === undefined) {
+                data.dead = [];
+            }
         } else {
             data.dead = [];
         }

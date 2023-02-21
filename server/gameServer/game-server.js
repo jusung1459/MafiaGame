@@ -141,12 +141,13 @@ class Game {
         this.game_state = "starting";
         this.room_id = room_id;
         this.data = data;
+        this.counter = 0;
     }
 }
 
 let game = null;
-// const roles = ["ranger", "sasquatchEVIL", "camper", "camper", "camper", "hunter", "littlefeetEVIL", "camper", "lumberjack", "bigfeetEVIL"];
-const roles = ["ranger", "littlefeetEVIL", "hunter", "camper", "camper", "hunter", "littlefeetEVIL", "camper", "lumberjack", "bigfeetEVIL"];
+const roles = ["ranger", "sasquatchEVIL", "camper", "camper", "camper", "hunter", "littlefeetEVIL", "camper", "lumberjack", "bigfeetEVIL"];
+// const roles = ["ranger", "littlefeetEVIL", "hunter", "camper", "camper", "hunter", "littlefeetEVIL", "camper", "lumberjack", "bigfeetEVIL"];
 let counter = 0;
 let total_counter = 900; // total seconds, game terminates if game goes on for too long
 
@@ -342,7 +343,15 @@ async function checkState() {
             });
 
             if (vote_count_guilty > vote_count_inno) {
-                // lynch player, set dead and delete from list
+                // lynch player, set dead and delete from list, state their role to chat
+
+                let against_player_info = game.data.players.find(element => element.player_id == lynch_player);
+                let message = { "nickname" : "Game",
+                                "player_id" : "0"};
+                message["message"] = "The camp has lynched " + against_player_info.nickname + ", camper was " + game.data.game.roles[lynch_player]+"!";
+                messages = [];
+                messages.push(message)
+
                 const living_promise = MafiaDB.updateOne({roomid:process.argv[2], "players.player_id":String(lynch_player)},
                     {$set:{"players.$.living":false}
                 }).exec().catch(error => {
@@ -350,6 +359,7 @@ async function checkState() {
                 });
                 const list_promise = MafiaDB.updateOne({roomid:process.argv[2]},{
                     $pull:{"game.good_players":lynch_player, "game.evil_players":lynch_player},
+                    $push : { messages : { $each : messages } }
                 }).exec().catch(error => {
                     console.log(error);
                 });
@@ -385,14 +395,12 @@ async function checkState() {
                 "lumberjack" : " chop chop chops", 
                 "bigfeetEVIL" : " has massive feet!"
             };
+
+            let dead_reveal_msgs = [];
             await Promise.all(Array.from(night_roles).map(([role, value]) => {
-                console.log("inside map")
-                console.log(role);
-                console.log(value);
                 against_role = roles.get(value.against_id);
                 const against_player_info = game.data.players.find(element => element.player_id == value.against_id);
-                console.log(roles);
-                console.log(against_player_info)
+
                 if (role === 'ranger' || role === 'littlefeetEVIL') {
                     // get against_id players role
                     // send message through secret channel
@@ -426,8 +434,12 @@ async function checkState() {
                 } else if (role === 'hunter' || role === 'sasquatchEVIL') {
                     // kill player and remove from alive
                     console.log("hunter: " );
-                    console.log(value)
-                    console.log(against_player_info);
+
+                    let dead_reveal_msg = { "nickname" : "Game",
+                                    "player_id" : "0"};
+                    dead_reveal_msg["message"] = against_player_info.nickname + "was found dead tonight, camper was " + against_role + "!";
+                    dead_reveal_msgs.push(dead_reveal_msg);
+
                     if (role === 'hunter') {
                         return MafiaDB.updateOne({roomid:process.argv[2], "players.player_id":value.against_id},
                             {$set:{"players.$.living":false},
@@ -454,6 +466,13 @@ async function checkState() {
                     }
                 }
             })).then((data) => {
+                if (dead_reveal_msgs.length > 0) {
+                    MafiaDB.updateOne({roomid:process.argv[2]}, {
+                        $push : { messages : { $each : dead_reveal_msgs } }
+                    }).exec().catch(error => {
+                        console.log(error);
+                    });
+                }
                 console.log("after await")
                 console.log(data)
             });
