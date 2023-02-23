@@ -162,15 +162,17 @@ getRoom = (req, res) => {
         }
 
         data.dead_players = []
-        data.game.dead_players.forEach((dead_player) => {
-            let player_status = data.players.find((player) => {return player.player_id === dead_player});
-            let dead_data = {
-                "dead_player_id" : dead_player,
-                "dead_player_nickname" : player_status.nickname,
-                "dead_player_role" : data.game.roles[dead_player]
-            }
-            data.dead_players.push(dead_data)
-        })
+        if (data.game.dead_players != undefined) {
+            data.game.dead_players.forEach((dead_player) => {
+                let player_status = data.players.find((player) => {return player.player_id === dead_player});
+                let dead_data = {
+                    "dead_player_id" : dead_player,
+                    "dead_player_nickname" : player_status.nickname,
+                    "dead_player_role" : data.game.roles[dead_player]
+                }
+                data.dead_players.push(dead_data)
+            })
+        }
         delete(data.secret)
         data.evil = [];
 
