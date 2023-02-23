@@ -69,15 +69,15 @@ function Chat(props) {
                     })
                     }
                 </div>
-                <div className='beside-container'>
-                    <div className='left-container'>
+                <div className='input-container'>
+                    <div className='left-input msg-input'>
                         <input id="nickname-input"
                             // onChange={(e) => setMessage(e.target.value)}
                             ref={messageRef}
                             placeholder="Type message here" 
                             maxLength="100"/>
                     </div>
-                    <div className='right-container'>
+                    <div className='right-input msg-input'>
                         <button onClick={handleMsgSubmit} role="button" type="submit">
                             <section className="flex items-center"> Send Message</section>
                         </button>

@@ -58,14 +58,14 @@ class Room extends Component {
     componentDidUpdate(prevProps, prevState) {
 
         if (prevState.secret !== this.state.secret || prevState.dead !== this.state.dead || prevState.evil_chat !== this.state.evil_chat) {
-            console.log("here")
-            console.log(this.state.secret)
-            console.log(this.state.messages)
-            console.log(this.state.dead)
-            console.log(this.state.evil_chat)
+            // console.log("here")
+            // console.log(this.state.secret)
+            // console.log(this.state.messages)
+            // console.log(this.state.dead)
+            // console.log(this.state.evil_chat)
 
             if (((this.state.secret != undefined && this.state.messages != undefined) && this.state.dead != undefined) && this.state.evil_chat != undefined) {
-                console.log("in here")
+                // console.log("in here")
                 this.setState({
                     messages : [...this.state.messages, ...this.state.secret, ...this.state.dead, ...this.state.evil_chat].sort((a, b) => {
                         return Date.parse(a.createdAt) - Date.parse(b.createdAt)
@@ -75,7 +75,7 @@ class Room extends Component {
             }
         }
         if (prevState.players !== this.state.players) {
-            console.log(this.state.players)
+            // console.log(this.state.players)
             const player_status_temp = new Map();
             this.state.players.forEach((player) => {
                 player_status_temp.set(player.player_id, player.living);
@@ -121,22 +121,20 @@ class Room extends Component {
     render() {
         return (
             <div className="container">
-                <div>
-
-
-                </div>
-                <div className='room room-id'>
-                    <h1>room : {JSON.parse(localStorage.getItem('user')).room}</h1>
-                </div>
-                <div className='room room-role'>
-                    <Role role={this.state.role}
-                            player_id={this.state.player_id}
-                            player_status={this.state.player_status}
-                            role_counter={this.state.role_counter} />
-                </div>
-                <div className='room room-state'>
-                    <Gamestate game={this.state.game}
-                                time = {this.state.time}/>
+                <div className='gridthree-container'>
+                    <div className='room room-id'>
+                        <h4>room : {JSON.parse(localStorage.getItem('user')).room}</h4>
+                    </div>
+                    <div className='room room-role'>
+                        <Role role={this.state.role}
+                                player_id={this.state.player_id}
+                                player_status={this.state.player_status}
+                                role_counter={this.state.role_counter} />
+                    </div>
+                    <div className='room room-state'>
+                        <Gamestate game={this.state.game}
+                                    time = {this.state.time}/>
+                    </div>
                 </div>
                 <div className='room room-player'>
                     <Players players={this.state.players} 

@@ -98,8 +98,8 @@ function Player(props) {
                 </div>)
             }
         }
-        console.log(button_player)
-        console.log(props.player_status.get(button_player.player_button_id))
+        // console.log(button_player)
+        // console.log(props.player_status.get(button_player.player_button_id))
         if (props.player_status.get(button_player.player_button_id) && props.player_status.get(props.player_id)) {
             if (props.game.state == "vote") {
                 if (props.player_id != button_player.player_button_id ) {
@@ -135,7 +135,7 @@ function Player(props) {
 
     if (props.players != undefined && props.dead_players != undefined) {
         return(
-            <div classname='grid-container'>
+            <div className='grid-container'>
                 <div className='grid-left-container'>
                     <div>Players</div>
                     <div className='players'>
@@ -158,20 +158,19 @@ function Player(props) {
                     </div>
                 </div>
                 <div className='grid-right-container'>
-                    <div>Graveyard</div>
                     <div className='graveyard'>
+                        <div>Graveyard</div>
                         <ul>
                         {
                             props.dead_players.map((m, i) => {
                                 return (
-                                    <li>
                                     <div key={i} className={`${m.dead_player_id}-id`}>
-                                    
+                                        <li>                                        
                                         <div className='beside-container'> 
                                             <div>{m.dead_player_nickname} ({m.dead_player_role})</div>
                                         </div>
-                                    </div>
-                                    </li>)
+                                        </li>
+                                    </div>)
                             })
                         }
                         </ul>

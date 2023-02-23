@@ -17,14 +17,14 @@ function Role(props) {
         console.log(props.player_status)
         return (
             <div>
-                <h1>Role : {props.role}</h1>
+                <h4>Role : {props.role}</h4>
                 <div>You are Alive</div>
                 <div>{renderRoleCount()}</div>
             </div>)
     } else {
         return (
             <div>
-                <h1>Role : {props.role}</h1>
+                <h4>Role : {props.role}</h4>
                 <div>You are Dead</div>
             </div>)
     }
