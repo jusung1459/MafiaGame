@@ -6,7 +6,8 @@ import '../../style/room.css'
 const baseURL = 'http://localhost:3000/api/mafia'
 
 function Chat(props) {
-    const [message, setMessage] = useState('');
+    // const [message, setMessage] = useState('');
+    const messageRef = useRef('');
     const messageEl = useRef(null);
 
     useEffect(() => {
@@ -22,15 +23,15 @@ function Chat(props) {
 
     function handleMsgSubmit() {
 
-        if (message != '') {
-            console.log(message);
+        if (messageRef.current.value != '') {
+            console.log(messageRef.current.value);
 
             const config = {
                 headers: { 'Content-Type': 'application/json' },
             };
             const body = JSON.stringify(
                 { 
-                    message:message,
+                    message:messageRef.current.value,
                     token : JSON.parse(localStorage['user'])['token']
                 });
     
@@ -44,7 +45,16 @@ function Chat(props) {
             }
         }
 
-        setMessage('');
+        messageRef.current.value = '';
+    }
+
+    function RenderMessage(msg) {
+        // console.log(msg.index, msg.msg)
+        return (<div className={`${msg.msg.player_id}-msg beside-container`}>
+                    <div className={`msg-${msg.msg.player_id} left-container`}>{msg.msg.nickname}:</div>
+                    <div className='right-container'>{msg.msg.message}</div>
+                </div>)
+        
     }
     
 
@@ -55,18 +65,15 @@ function Chat(props) {
                 <div className='messages' ref={messageEl}>
                     {
                     props.messages.map((m, i) => {
-                        return <div key={i} className={`{m.player_id} beside-container`}>
-                            <div className='left-container'>{m.nickname}:</div>
-                            <div className='right-container'>{m.message}</div>
-                        </div>
+                        return <div key={i}><RenderMessage msg={m} index={i}/> </div>
                     })
                     }
                 </div>
                 <div className='beside-container'>
                     <div className='left-container'>
                         <input id="nickname-input"
-                            onChange={(e) => setMessage(e.target.value)}
-                            value={message}
+                            // onChange={(e) => setMessage(e.target.value)}
+                            ref={messageRef}
                             placeholder="Type message here" 
                             maxLength="100"/>
                     </div>

@@ -18,6 +18,8 @@
 
 .left-container {
     flex: 0;
+    margin-left: 1em;
+    margin-right: 0.5em;
 }  
 
 .left-container:right-container {
@@ -26,4 +28,53 @@
 
 .living-false {
     text-decoration: line-through;
+    color: #808080;
   }
+
+.msg-0{
+    color: #ff726f;
+}
+
+.flex-players-container {
+    display:-webkit-flex;
+    display:flex;
+    list-style-type:none;
+    padding:0;
+    justify-content:flex-end;
+}
+
+.players-container {
+    margin-right: auto;
+}
+
+.container {
+    display: flex;
+    flex-direction: column;
+    align-self: center;
+    row-gap: 10px;
+}
+
+
+.room-role {
+    order : 1
+}
+
+.room-state {
+    order : 1
+}
+
+.room-player {
+    order : 1
+}
+
+.room-owner {
+    order : 1
+}
+
+.room-trial {
+    order : 1
+}
+
+.room-chat {
+    order : 1
+}

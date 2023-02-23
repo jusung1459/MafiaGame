@@ -21,6 +21,7 @@ const Mafia = new Schema(
         game: { 
             evil_players : [String],
             good_players : [String],
+            dead_players : [String],
             roles : {
                 type : Map,
                 of : String    

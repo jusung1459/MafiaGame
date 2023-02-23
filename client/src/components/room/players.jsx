@@ -133,33 +133,54 @@ function Player(props) {
         }
     }
 
-    if (props.players != undefined) {
+    if (props.players != undefined && props.dead_players != undefined) {
         return(
-            <div className='players-container'>
-                <div className='players'>
-                    <ol type="1">
-                    {
-                        props.players.map((m, i) => {
-                            return (
-                                <div key={i} className={`${m.player_id}-id`}>
-                                    <li>
-                                    <div className='beside-container'> 
-                                        <div className={`living-${props.player_status.get(m.player_id)} player-nickname left-container`}>{m.nickname}</div>
-                                        <Player_buttons player_button_id={m.player_id}/>
-                                        <Vote_count vote_player_id={m.player_id}/>
-                                    </div>
-                                    </li>
-                                </div>)
-                        })
-                    }
-                    </ol>
+            <div classname='flex-players-container'>
+                <div className='players-container'>
+                    <div>Players</div>
+                    <div className='players'>
+                        <ol type="1">
+                        {
+                            props.players.map((m, i) => {
+                                return (
+                                    <div key={i} className={`${m.player_id}-id`}>
+                                        <li>
+                                        <div className='beside-container'> 
+                                            <div className={`living-${props.player_status.get(m.player_id)} player-nickname left-container`}>{m.nickname}</div>
+                                            <Player_buttons player_button_id={m.player_id}/>
+                                            <Vote_count vote_player_id={m.player_id}/>
+                                        </div>
+                                        </li>
+                                    </div>)
+                            })
+                        }
+                        </ol>
+                    </div>
+                </div>
+                <div className='dead_players-container'>
+                    <div>Graveyard</div>
+                    <div className='graveyard'>
+                        {
+                            props.dead_players.map((m, i) => {
+                                return (
+                                    <div key={i} className={`${m.dead_player_id}-id`}>
+                                    
+                                        <div className='beside-container'> 
+                                            <div>{m.dead_player_nickname} ({m.dead_player_role})</div>
+                                        </div>
+                                    </div>)
+                            })
+                        }
+                    </div>
                 </div>
             </div>
         );
     } else {
         return(
-            <div>Player</div>
-            
+            <div>
+                <div>Player</div>
+                <div>Graveyard</div>
+            </div>
         );
     }
 

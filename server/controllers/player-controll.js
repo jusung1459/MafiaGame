@@ -93,7 +93,7 @@ player = (req, res) => {
                             $push : {
                                 messages : {
                                     message : vote_msg,
-                                    nickname : "game",
+                                    nickname : "Game",
                                     player_id : 0
                                 }
                             }

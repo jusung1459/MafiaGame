@@ -33,6 +33,7 @@ const Mafia = new Schema(
         game: { 
             evil_players : [String],
             good_players : [String],
+            dead_players : [String],
             roles : {
                 type : Map,
                 of : String    
@@ -162,6 +163,7 @@ function initGame() {
         players = players.sort(() => Math.random() - 0.5);
         let evil_players = [];
         let good_players = [];
+        let dead_players = []
         let role_map = new Map();
         players.forEach(function(player, index) {
             role_map.set(player.player_id, roles[index]);
@@ -182,6 +184,7 @@ function initGame() {
             $set: { game: {
                     evil_players : evil_players,
                     good_players : good_players,
+                    dead_players : dead_players,
                     roles : role_map,
                     state: "starting"
                 },
@@ -367,7 +370,8 @@ async function checkState() {
                 });
                 const list_promise = MafiaDB.updateOne({roomid:process.argv[2]},{
                     $pull:{"game.good_players":lynch_player, "game.evil_players":lynch_player},
-                    $push : { messages : { $each : messages } }
+                    $push : { messages : { $each : messages },
+                             "game.dead_players":lynch_player}
                 }).exec().catch(error => {
                     console.log(error);
                 });
@@ -457,6 +461,7 @@ async function checkState() {
                         }).then( (result) => {
                             return MafiaDB.updateOne({roomid:process.argv[2]},{
                                 $pull:{"game.good_players":value.against_id, "game.evil_players":value.against_id},
+                                $push : { "game.dead_players":value.against_id}
                             }).exec()
                         }).catch(error => {
                             console.log(error);
@@ -467,6 +472,7 @@ async function checkState() {
                         }).then( (result) => {
                             return MafiaDB.updateOne({roomid:process.argv[2]},{
                                 $pull:{"game.good_players":value.against_id, "game.evil_players":value.against_id},
+                                $push : { "game.dead_players":value.against_id}
                             }).exec()
                         }).catch(error => {
                             console.log(error);

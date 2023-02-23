@@ -49,6 +49,7 @@ class Room extends Component {
             role: gamestate.role,
             secret : gamestate.secret_message,
             dead : gamestate.dead,
+            dead_players : gamestate.dead_players,
             evil_chat : gamestate.evil_chat,
             role_counter : gamestate.role_counter
         }, () => console.log(this.state));
@@ -119,33 +120,52 @@ class Room extends Component {
     
     render() {
         return (
-            <div>
-                <h1>room : {JSON.parse(localStorage.getItem('user')).room}</h1>
-                <Role role={this.state.role}
-                        player_id={this.state.player_id}
-                        player_status={this.state.player_status}
-                        role_counter={this.state.role_counter} />
-                <Gamestate game={this.state.game}
-                            time = {this.state.time}/>
-                <Players players={this.state.players} 
-                        game={this.state.game}
-                        owner={this.state.owner}
-                        player_id={this.state.player_id}
-                        role={this.state.role}
-                        votes={this.state.votes}
-                        player_status={this.state.player_status}/>
-                <Owner game={this.state.game}
-                        owner={this.state.owner}
-                        player_id={this.state.player_id}/>
-                <Trial game={this.state.game}
-                        owner={this.state.owner}
-                        player_id={this.state.player_id}
-                        trial_player={this.state.trial}
-                        players={this.state.players}
-                        player_status={this.state.player_status}/>
-                <Chat messages={this.state.messages}
-                        secret={this.state.secret}
-                        dead = {this.state.dead}/>
+            <div className="container">
+                <div>
+
+
+                </div>
+                <div className='room-id'>
+                    <h1>room : {JSON.parse(localStorage.getItem('user')).room}</h1>
+                </div>
+                <div className='room-role'>
+                    <Role role={this.state.role}
+                            player_id={this.state.player_id}
+                            player_status={this.state.player_status}
+                            role_counter={this.state.role_counter} />
+                </div>
+                <div className='room-state'>
+                    <Gamestate game={this.state.game}
+                                time = {this.state.time}/>
+                </div>
+                <div className='room-player'>
+                    <Players players={this.state.players} 
+                            game={this.state.game}
+                            owner={this.state.owner}
+                            player_id={this.state.player_id}
+                            role={this.state.role}
+                            votes={this.state.votes}
+                            player_status={this.state.player_status}
+                            dead_players={this.state.dead_players}/>
+                </div>
+                <div className='room-owner'>
+                    <Owner game={this.state.game}
+                            owner={this.state.owner}
+                            player_id={this.state.player_id}/>
+                </div>
+                <div className='room-trial'>
+                    <Trial game={this.state.game}
+                            owner={this.state.owner}
+                            player_id={this.state.player_id}
+                            trial_player={this.state.trial}
+                            players={this.state.players}
+                            player_status={this.state.player_status}/>
+                </div>
+                <div className='room-chat'>
+                    <Chat messages={this.state.messages}
+                            secret={this.state.secret}
+                            dead = {this.state.dead}/>
+                </div>
             </div>
         )
     }
