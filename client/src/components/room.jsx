@@ -127,6 +127,7 @@ class Room extends Component {
                     </div>
                     <div className='room room-role'>
                         <Role role={this.state.role}
+                                game={this.state.game}
                                 player_id={this.state.player_id}
                                 player_status={this.state.player_status}
                                 role_counter={this.state.role_counter} />
