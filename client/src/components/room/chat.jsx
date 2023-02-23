@@ -52,7 +52,7 @@ function Chat(props) {
         // console.log(msg.index, msg.msg)
         return (<div className={`${msg.msg.player_id}-msg beside-container`}>
                     <div className={`msg-${msg.msg.player_id} left-container`}>{msg.msg.nickname}:</div>
-                    <div className='right-container'>{msg.msg.message}</div>
+                    <div className='right-container msg-text'>{msg.msg.message}</div>
                 </div>)
         
     }
@@ -61,7 +61,6 @@ function Chat(props) {
     if (props.messages != undefined) {
         return(
             <div className="chat-room" target="_blank">
-                <h1>chat</h1>
                 <div className='messages' ref={messageEl}>
                     {
                     props.messages.map((m, i) => {
