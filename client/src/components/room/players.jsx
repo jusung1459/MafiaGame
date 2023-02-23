@@ -135,8 +135,8 @@ function Player(props) {
 
     if (props.players != undefined && props.dead_players != undefined) {
         return(
-            <div classname='flex-players-container'>
-                <div className='players-container'>
+            <div classname='grid-container'>
+                <div className='grid-left-container'>
                     <div>Players</div>
                     <div className='players'>
                         <ol type="1">
@@ -157,20 +157,24 @@ function Player(props) {
                         </ol>
                     </div>
                 </div>
-                <div className='dead_players-container'>
+                <div className='grid-right-container'>
                     <div>Graveyard</div>
                     <div className='graveyard'>
+                        <ul>
                         {
                             props.dead_players.map((m, i) => {
                                 return (
+                                    <li>
                                     <div key={i} className={`${m.dead_player_id}-id`}>
                                     
                                         <div className='beside-container'> 
                                             <div>{m.dead_player_nickname} ({m.dead_player_role})</div>
                                         </div>
-                                    </div>)
+                                    </div>
+                                    </li>)
                             })
                         }
+                        </ul>
                     </div>
                 </div>
             </div>

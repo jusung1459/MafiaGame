@@ -35,46 +35,33 @@
     color: #ff726f;
 }
 
-.flex-players-container {
-    display:-webkit-flex;
-    display:flex;
-    list-style-type:none;
-    padding:0;
-    justify-content:flex-end;
+.grid-container {
+    overflow: auto;
+    width: 100%;
 }
 
-.players-container {
-    margin-right: auto;
+.grid-left-container {
+    float: left;
+    width: 60%;
 }
+
+.grid-right-container {
+    float: right;
+    width: 40%;
+}
+
+ul {
+    list-style-type: none;
+}
+
 
 .container {
     display: flex;
-    flex-direction: column;
-    align-self: center;
-    row-gap: 10px;
+    flex-wrap: wrap;
+}
+
+.room {
+    flex: 0 0 100%
 }
 
 
-.room-role {
-    order : 1
-}
-
-.room-state {
-    order : 1
-}
-
-.room-player {
-    order : 1
-}
-
-.room-owner {
-    order : 1
-}
-
-.room-trial {
-    order : 1
-}
-
-.room-chat {
-    order : 1
-}

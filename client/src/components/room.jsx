@@ -125,20 +125,20 @@ class Room extends Component {
 
 
                 </div>
-                <div className='room-id'>
+                <div className='room room-id'>
                     <h1>room : {JSON.parse(localStorage.getItem('user')).room}</h1>
                 </div>
-                <div className='room-role'>
+                <div className='room room-role'>
                     <Role role={this.state.role}
                             player_id={this.state.player_id}
                             player_status={this.state.player_status}
                             role_counter={this.state.role_counter} />
                 </div>
-                <div className='room-state'>
+                <div className='room room-state'>
                     <Gamestate game={this.state.game}
                                 time = {this.state.time}/>
                 </div>
-                <div className='room-player'>
+                <div className='room room-player'>
                     <Players players={this.state.players} 
                             game={this.state.game}
                             owner={this.state.owner}
@@ -148,12 +148,12 @@ class Room extends Component {
                             player_status={this.state.player_status}
                             dead_players={this.state.dead_players}/>
                 </div>
-                <div className='room-owner'>
+                <div className='room room-owner'>
                     <Owner game={this.state.game}
                             owner={this.state.owner}
                             player_id={this.state.player_id}/>
                 </div>
-                <div className='room-trial'>
+                <div className='room room-trial'>
                     <Trial game={this.state.game}
                             owner={this.state.owner}
                             player_id={this.state.player_id}
@@ -161,7 +161,7 @@ class Room extends Component {
                             players={this.state.players}
                             player_status={this.state.player_status}/>
                 </div>
-                <div className='room-chat'>
+                <div className='room room-chat'>
                     <Chat messages={this.state.messages}
                             secret={this.state.secret}
                             dead = {this.state.dead}/>
