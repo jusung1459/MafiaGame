@@ -60,7 +60,7 @@ function Chat(props) {
 
     if (props.messages != undefined) {
         return(
-            <div className="chat-room" target="_blank">
+            <div className="chat-room">
                 <div className='messages' ref={messageEl}>
                     {
                     props.messages.map((m, i) => {
