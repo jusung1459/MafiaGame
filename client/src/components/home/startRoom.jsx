@@ -52,19 +52,16 @@ class StartRoom extends Component {
 
     render() {
         return (
-            <div className="container">
-                <section>
-                    <div>
-                        <label>Choose a nickname to create a room.</label>
-                        <input id="nickname-input"
-                            onChange={(evt) => this.setState({nickname : evt.target.value})}
-                            placeholder="Enter your nickname" 
-                            maxLength="10"/>
-                    </div>
-                    <button onClick={this.handleSubmit} role="button" type="submit">
-                        <section className="flex items-center"> Create Room</section>
-                    </button>
-                </section>
+            <div className='sub-box'>
+                <div className='input-box'>
+                    <input id="nickname-input"
+                        onChange={(evt) => this.setState({nickname : evt.target.value})}
+                        maxLength="10"/>
+                    <label>Choose a nickname to create a room.</label>
+                </div>
+                <button className='form-button' onClick={this.handleSubmit} role="button" type="submit">
+                    <section className="flex items-center"> Create Room</section>
+                </button>
             </div>
         )
     }

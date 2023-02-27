@@ -1,10 +1,24 @@
 
-.container {
-    min-height: 100vh;
-    display: flex;
-    flex-direction: column;
-    justify-content: space-between;
+@media (width > 600px) {
+    .container {
+        min-height: 100vh;
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+        padding : 2rem, 2rem, 2rem, 2rem
+    }
+  }
+  
+@media (width < 599px) {
+    .container {
+        min-height: 100vh;
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+        padding : 1rem, 1rem, 1rem, 1rem;
+    }
 }
+  
 
 .room-chat {
     margin-bottom: 1em;
@@ -101,13 +115,6 @@ ul {
   
 .msg-input {
     display: table-cell;
-}
-  
-#nickname-input {
-    padding-left: 1em;
-    margin-left: 1em;
-    margin-right: 10em;
-    width: 96%;
 }
   
 .right-input {

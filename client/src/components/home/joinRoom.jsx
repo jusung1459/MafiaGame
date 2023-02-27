@@ -51,24 +51,20 @@ class JoinRoom extends Component {
 
     render() {
         return (
-            <div className="container">
-                <section>
-                    <div>
-                        <label>Enter the room code</label>
-                        <input id="room-input" 
-                            onChange={(evt) => this.setState({room : evt.target.value})}
-                            placeholder="Enter your room code" 
-                            maxLength="5" minLength="5"/>
-                    </div>
-                    <div>
-                        <label>Enter your nickname</label>
-                        <input id="nickname-input" 
-                            onChange={(evt) => this.setState({nickname : evt.target.value})}
-                            placeholder="Enter your nickname" 
-                            maxLength="10" minLength="1"/>
-                    </div>
-                </section>
-                <button onClick={this.handleSubmit} role="button" type="submit">
+            <div className='sub-box'>
+                <div className='input-box'>
+                    <input id="room-input" 
+                        onChange={(evt) => this.setState({room : evt.target.value})}
+                        maxLength="5" minLength="5"/>
+                    <label>Enter the room code</label>
+                </div>
+                <div className='input-box'>
+                    <input id="nickname-input" 
+                        onChange={(evt) => this.setState({nickname : evt.target.value})}
+                        maxLength="10" minLength="1"/>
+                    <label>Enter your nickname</label>
+                </div>
+                <button className='form-button' onClick={this.handleSubmit} role="button" type="submit">
                     <section className="flex items-center"> Join Room</section>
                 </button>
             </div>
