@@ -1,28 +1,46 @@
 /* 
-.container {
+.room-container {
     background-image: url("http://localhost:8000/picture/campground.png");
     background-position: center;
     background-size: cover;
 } */
 
-@media (width > 600px) {
-    .container {
+.room-container {
+    background-image: linear-gradient(rgba(0, 0, 0, 0.527),
+                    rgba(0, 0, 0, 0.5)), 
+                    url("http://localhost:8000/picture/campground.png");
+    background-position: center;
+    background-size: cover;
+}
+
+@media (width > 800px) {
+    .room-container {
         min-height: 100vh;
         display: flex;
         flex-direction: column;
         justify-content: space-between;
-        padding : 2rem, 2rem, 2rem, 2rem
+        padding : 2rem 4rem;
     }
   }
   
-@media (width < 599px) {
-    .container {
+@media (width < 799px) {
+    .room-container {
         min-height: 100vh;
         display: flex;
         flex-direction: column;
         justify-content: space-between;
-        padding : 1rem, 1rem, 1rem, 1rem;
+        padding : 0.5rem;
+        padding-left: 5px;
+        padding-right: 5px;
     }
+}
+
+.info-container {
+    backdrop-filter: blur(10px);
+}
+
+div {
+    color : white;
 }
 
 .beside-container {
@@ -100,11 +118,13 @@ ul {
     margin-bottom: 1em;
     width: 100%;
     margin-top: auto;
+    background: transparent;
+    backdrop-filter: blur(10px);
 }
 
 .chat-room {
     height: 350px;
-    border: 5px solid #ddd;
+    border: 5px solid #463737;
     border-radius: 4px;
     overflow: hidden;
 }
@@ -117,11 +137,12 @@ ul {
   
 .msg-text {
     word-wrap: break-word;
-    width: 85%;
+    overflow-x: auto;
 }
 
 .input-container {
     display: flex;
+    margin-left: 15px;
 }
 
 .input-container input {
@@ -130,11 +151,12 @@ ul {
     padding: 0rem;
     resize: vertical;
     flex: 1 1 auto;
+    color: white;
+    border-bottom: 2px solid #ffffff;
+    padding-left: 0.5rem;
 }
 
 .msg-button {
     background-color: transparent;
-    background-color: transparent;
     border: none;
-    cursor: pointer;
 }

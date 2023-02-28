@@ -17,7 +17,6 @@
     backdrop-filter: blur(10px);
     border: 5px solid rgba(255, 255, 255, 0.5);
     border-radius: 20px;
-    /* backdrop-filter: blur(15px); */
     display: flex;
     flex-direction: column;
     justify-content: center;

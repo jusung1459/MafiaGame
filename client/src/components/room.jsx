@@ -120,45 +120,47 @@ class Room extends Component {
     
     render() {
         return (
-            <div className="container">
-                <div className='gridthree-container'>
-                    <div className='room room-id'>
-                        <h4>room : {JSON.parse(localStorage.getItem('user')).room}</h4>
+            <div className="room-container">
+                <div className='info-container'>
+                    <div className='gridthree-container'>
+                        <div className='room room-id'>
+                            <h4>room : {JSON.parse(localStorage.getItem('user')).room}</h4>
+                        </div>
+                        <div className='room room-role'>
+                            <Role role={this.state.role}
+                                    game={this.state.game}
+                                    player_id={this.state.player_id}
+                                    player_status={this.state.player_status}
+                                    role_counter={this.state.role_counter} />
+                        </div>
+                        <div className='room room-state'>
+                            <Gamestate game={this.state.game}
+                                        time = {this.state.time}/>
+                        </div>
                     </div>
-                    <div className='room room-role'>
-                        <Role role={this.state.role}
+                    <div className='room room-player'>
+                        <Players players={this.state.players} 
                                 game={this.state.game}
+                                owner={this.state.owner}
                                 player_id={this.state.player_id}
+                                role={this.state.role}
+                                votes={this.state.votes}
                                 player_status={this.state.player_status}
-                                role_counter={this.state.role_counter} />
+                                dead_players={this.state.dead_players}/>
                     </div>
-                    <div className='room room-state'>
-                        <Gamestate game={this.state.game}
-                                    time = {this.state.time}/>
+                    <div className='room room-owner'>
+                        <Owner game={this.state.game}
+                                owner={this.state.owner}
+                                player_id={this.state.player_id}/>
                     </div>
-                </div>
-                <div className='room room-player'>
-                    <Players players={this.state.players} 
-                            game={this.state.game}
-                            owner={this.state.owner}
-                            player_id={this.state.player_id}
-                            role={this.state.role}
-                            votes={this.state.votes}
-                            player_status={this.state.player_status}
-                            dead_players={this.state.dead_players}/>
-                </div>
-                <div className='room room-owner'>
-                    <Owner game={this.state.game}
-                            owner={this.state.owner}
-                            player_id={this.state.player_id}/>
-                </div>
-                <div className='room room-trial'>
-                    <Trial game={this.state.game}
-                            owner={this.state.owner}
-                            player_id={this.state.player_id}
-                            trial_player={this.state.trial}
-                            players={this.state.players}
-                            player_status={this.state.player_status}/>
+                    <div className='room room-trial'>
+                        <Trial game={this.state.game}
+                                owner={this.state.owner}
+                                player_id={this.state.player_id}
+                                trial_player={this.state.trial}
+                                players={this.state.players}
+                                player_status={this.state.player_status}/>
+                    </div>
                 </div>
                 <div className='room room-chat'>
                     <Chat messages={this.state.messages}
