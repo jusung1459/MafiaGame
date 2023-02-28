@@ -3,6 +3,8 @@ import socketIO from 'socket.io-client';
 import axios from 'axios'
 import '../../style/room.css'
 
+import {ReactComponent as IconSend} from '../../style/icons/send_button.svg'
+
 const baseURL = 'http://localhost:3000/api/mafia'
 
 function Chat(props) {
@@ -48,6 +50,13 @@ function Chat(props) {
         messageRef.current.value = '';
     }
 
+    function handleMsgEnterSubmit(event) {
+        var code = event.keyCode || event.which;
+        if(code === 13) { //13 is the enter keycode
+            handleMsgSubmit();
+        } 
+    }
+
     function RenderMessage(msg) {
         // console.log(msg.index, msg.msg)
         return (<div className={`${msg.msg.player_id}-msg beside-container`}>
@@ -69,18 +78,16 @@ function Chat(props) {
                     }
                 </div>
                 <div className='input-container'>
-                    <div className='left-input msg-input'>
                         <input id="nickname-input"
                             // onChange={(e) => setMessage(e.target.value)}
                             ref={messageRef}
                             placeholder="Type message here" 
-                            maxLength="100"/>
-                    </div>
-                    <div className='right-input msg-input'>
-                        <button onClick={handleMsgSubmit} role="button" type="submit">
-                            <section className="flex items-center"> Send Message</section>
+                            maxLength="100"
+                            type="text"
+                            onKeyUp={handleMsgEnterSubmit}/>
+                        <button className='msg-button' onClick={handleMsgSubmit} role="button" type="submit">
+                            <IconSend className='send-icon' width="1.5rem" height="1.5rem"/>
                         </button>
-                    </div>
                 </div>
             </div>
             

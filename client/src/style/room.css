@@ -1,3 +1,9 @@
+/* 
+.container {
+    background-image: url("http://localhost:8000/picture/campground.png");
+    background-position: center;
+    background-size: cover;
+} */
 
 @media (width > 600px) {
     .container {
@@ -18,26 +24,6 @@
         padding : 1rem, 1rem, 1rem, 1rem;
     }
 }
-  
-
-.room-chat {
-    margin-bottom: 1em;
-    width: 100%;
-    margin-top: auto;
-}
-
-.chat-room {
-    height: 350px;
-    border: 5px solid #ddd;
-    border-radius: 4px;
-    overflow: hidden;
-}
-
-.messages {
-    height: 300px;
-    overflow-y: auto;
-    padding: 15px 10px;
-  }
 
 .beside-container {
     display: flex;
@@ -108,21 +94,47 @@ ul {
     text-align: center;
 }
 
-.input-container {
-    display: table;
+/* Chat */
+
+.room-chat {
+    margin-bottom: 1em;
     width: 100%;
-  }
-  
-.msg-input {
-    display: table-cell;
+    margin-top: auto;
+}
+
+.chat-room {
+    height: 350px;
+    border: 5px solid #ddd;
+    border-radius: 4px;
+    overflow: hidden;
+}
+
+.messages {
+    height: 300px;
+    overflow-y: auto;
+    padding: 15px 10px;
 }
   
-.right-input {
-    width: 116px;
-}  
-
 .msg-text {
     word-wrap: break-word;
     width: 85%;
 }
 
+.input-container {
+    display: flex;
+}
+
+.input-container input {
+    background-color: transparent;
+    border: none;
+    padding: 0rem;
+    resize: vertical;
+    flex: 1 1 auto;
+}
+
+.msg-button {
+    background-color: transparent;
+    background-color: transparent;
+    border: none;
+    cursor: pointer;
+}
