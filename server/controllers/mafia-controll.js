@@ -105,7 +105,11 @@ joinRoom = (req, res) => {
             }
             }
         }
-    ).then(() => {
+    ).then((result) => {
+        console.log(result);
+        if (result === null) {
+            throw ("Room does not exist");
+        }
         const token = jwt.sign(user, process.env.JWT_KEY, { expiresIn : '7d'});
         
         // todo
@@ -123,7 +127,8 @@ joinRoom = (req, res) => {
         })
     }).catch(error => {
         return res.status(400).json({
-            error,
+            error: JSON.stringify(error),
+            success:false,
             message: 'Cannot Join Room',
         })
     });

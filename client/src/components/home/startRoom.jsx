@@ -9,6 +9,7 @@ class StartRoom extends Component {
     constructor(props) {
         super(props);
         this.state = {
+            placeholder_nickname : "",
             nickname : "",
             room : ""
         };
@@ -26,6 +27,14 @@ class StartRoom extends Component {
     }
 
     handleSubmit() {
+        if (this.state.nickname.length < 1) {
+            this.setState({
+                placeholder_nickname : "Enter a non empty nickname",
+                room : '',
+                nickname : ''
+            });
+            return;
+        }
         const config = {
             headers: { 'Content-Type': 'application/json' },
         };
@@ -46,7 +55,12 @@ class StartRoom extends Component {
             })
             
         } catch (err) {
-            console.log(err);
+            this.setState({
+                placeholder_room:"Enter 5 character room code",
+                placeholder_nickname : "Enter a nickname",
+                room : '',
+                nickname : ''
+            });
         }
     }
 
@@ -54,9 +68,10 @@ class StartRoom extends Component {
         return (
             <div className='sub-box'>
                 <div className='input-box'>
-                    <input id="nickname-input"
+                    <input id="nickname-input" className='home-input'
                         onChange={(evt) => this.setState({nickname : evt.target.value})}
-                        maxLength="10"/>
+                        maxLength="10"
+                        placeholder={this.state.placeholder_nickname}/>
                     <label>Choose a nickname to create a room.</label>
                 </div>
                 <button className='form-button' onClick={this.handleSubmit} role="button" type="submit">

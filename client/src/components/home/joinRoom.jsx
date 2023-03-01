@@ -11,7 +11,9 @@ class JoinRoom extends Component {
         super(props);
         this.state = {
             room : "",
-            nickname : ""
+            nickname : "",
+            placeholder_room : "",
+            placeholder_nickname : ""
         };
         this.handleSubmit = this.handleSubmit.bind(this)
     }
@@ -20,6 +22,19 @@ class JoinRoom extends Component {
 
     handleSubmit() {
         console.log('room: ' + this.state.room + ' nickname: ' + this.state.nickname)
+        
+        if (this.state.nickname.length < 1 || this.state.room.length != 5)  {
+            this.setState({
+                placeholder_room:"Enter 5 character room code",
+                placeholder_nickname : "Enter a non empty nickname",
+                room : '',
+                nickname : ''
+            });
+            
+            return;
+        
+        }
+
         const config = {
             headers: { 'Content-Type': 'application/json' },
         };
@@ -41,11 +56,21 @@ class JoinRoom extends Component {
                     this.props.navigate(new_room);
                 }
             }).catch(error => {
-                console.log(error);
+                this.setState({
+                    placeholder_room:"Enter 5 character room code",
+                    placeholder_nickname : "Enter a nickname",
+                    room : '',
+                    nickname : ''
+                });
             });
             
         } catch (err) {
-            console.log(err);
+            this.setState({
+                placeholder_room:"Enter valid 5 character room code",
+                placeholder_nickname : "Enter a nickname",
+                room : '',
+                nickname : ''
+            });
         }
     }
 
@@ -53,15 +78,19 @@ class JoinRoom extends Component {
         return (
             <div className='sub-box'>
                 <div className='input-box'>
-                    <input id="room-input" 
+                    <input id="room-input"  className='home-input'
                         onChange={(evt) => this.setState({room : evt.target.value})}
-                        maxLength="5" minLength="5"/>
+                        maxLength="5" minLength="5"
+                        value={this.state.room}
+                        placeholder={this.state.placeholder_room}/>
                     <label>Enter the room code</label>
                 </div>
                 <div className='input-box'>
-                    <input id="nickname-input" 
+                    <input id="nickname-input" className='home-input' 
                         onChange={(evt) => this.setState({nickname : evt.target.value})}
-                        maxLength="10" minLength="1"/>
+                        value={this.state.nickname}
+                        maxLength="10" minLength="1"
+                        placeholder={this.state.placeholder_nickname}/>
                     <label>Enter your nickname</label>
                 </div>
                 <button className='form-button' onClick={this.handleSubmit} role="button" type="submit">
