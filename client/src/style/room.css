@@ -117,6 +117,13 @@ ul {
     align-items: center;
 }
 
+
+/* Players */
+.invisble-button {
+    background: transparent;
+    border: none;
+}
+
 /* Chat */
 
 .room-chat {

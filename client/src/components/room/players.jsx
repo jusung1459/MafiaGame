@@ -2,6 +2,7 @@ import React, { useRef, useEffect, useState } from 'react'
 import socketIO from 'socket.io-client';
 import axios from 'axios'
 import '../../style/room.css'
+import {ReactComponent as IconBoot} from '../../style/icons/boot_kick.svg'
 
 const baseURL = 'http://localhost:3000/api/mafia'
 
@@ -92,8 +93,8 @@ function Player(props) {
             if (props.player_id != button_player.player_button_id ) {
                 return (
                 <div className='right-container'>
-                    <button onClick={() => handleSubmit(button_player.player_button_id, "kick-player", "owner")}  role="button" type="submit">
-                        <section className="flex items-center"> Kick player</section>
+                    <button className='invisble-button' onClick={() => handleSubmit(button_player.player_button_id, "kick-player", "owner")}  role="button" type="submit">
+                        <IconBoot className='boot-icon' width="1.5rem" height="1.5rem"/>
                     </button>
                 </div>)
             }

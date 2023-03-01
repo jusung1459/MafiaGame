@@ -2,6 +2,7 @@ import React, { useRef, useEffect, useState } from 'react'
 import socketIO from 'socket.io-client';
 import axios from 'axios'
 import '../../style/room.css'
+import {ReactComponent as IconStart} from '../../style/icons/start-icon.svg'
 
 const baseURL = 'http://localhost:3000/api/mafia'
 
@@ -37,8 +38,8 @@ function Owner(props) {
     if (props.game.state == 'waiting' && props.owner === props.player_id) {
         return(
             <div className='owner-container'>
-                <button onClick={() => handleStartSubmit()} role="button" type="submit">
-                    <section className="flex items-center">Start Game</section>
+                <button className='invisble-button' onClick={() => handleStartSubmit()} role="button" type="submit">
+                    <IconStart className='boot-icon' width="3em" height="3rem"/>
                 </button>
             </div>
         );
