@@ -148,18 +148,20 @@ class Room extends Component {
                                 player_status={this.state.player_status}
                                 dead_players={this.state.dead_players}/>
                     </div>
-                    <div className='room room-owner'>
-                        <Owner game={this.state.game}
-                                owner={this.state.owner}
-                                player_id={this.state.player_id}/>
-                    </div>
-                    <div className='room room-trial'>
-                        <Trial game={this.state.game}
-                                owner={this.state.owner}
-                                player_id={this.state.player_id}
-                                trial_player={this.state.trial}
-                                players={this.state.players}
-                                player_status={this.state.player_status}/>
+                    <div className='centered-info'>
+                        <div className='room room-owner'>
+                            <Owner game={this.state.game}
+                                    owner={this.state.owner}
+                                    player_id={this.state.player_id}/>
+                        </div>
+                        <div className='room room-trial'>
+                            <Trial game={this.state.game}
+                                    owner={this.state.owner}
+                                    player_id={this.state.player_id}
+                                    trial_player={this.state.trial}
+                                    players={this.state.players}
+                                    player_status={this.state.player_status}/>
+                        </div>
                     </div>
                 </div>
                 <div className='room room-chat'>

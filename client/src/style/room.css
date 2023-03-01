@@ -37,6 +37,8 @@
 
 .info-container {
     backdrop-filter: blur(10px);
+    padding-top: 1rem;
+    padding-bottom: 1rem;
 }
 
 div {
@@ -60,10 +62,6 @@ div {
     text-decoration: line-through;
     color: #808080;
   }
-
-.msg-0{
-    color: #ff726f;
-}
 
 .grid-container {
     overflow: auto;
@@ -110,6 +108,13 @@ ul {
     /* border: 5px solid #ddd;
     border-radius: 4px; */
     text-align: center;
+}
+
+.centered-info {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
 }
 
 /* Chat */
@@ -160,4 +165,12 @@ ul {
 .msg-button {
     background-color: transparent;
     border: none;
+}
+
+.msg-0{
+    color: #ff726f;
+}
+
+.msg-1{
+    color: #ff726f;
 }
