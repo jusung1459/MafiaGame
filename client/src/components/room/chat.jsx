@@ -5,7 +5,7 @@ import '../../style/room.css'
 
 import {ReactComponent as IconSend} from '../../style/icons/send_button.svg'
 
-const baseURL = 'http://localhost:3000/api/mafia'
+const baseURL = 'http://' + process.env.REACT_APP_URL_ADDRESS + ':3000/api/mafia'
 
 function Chat(props) {
     // const [message, setMessage] = useState('');

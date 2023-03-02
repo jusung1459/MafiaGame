@@ -2,7 +2,7 @@ import React, { Component } from 'react'
 import {withRouter} from '../helper/router';
 import axios from 'axios'
 
-const baseURL = 'http://localhost:3000/api/mafia'
+const baseURL = 'http://' + process.env.REACT_APP_URL_ADDRESS + ':3000/api/mafia'
 
 class StartRoom extends Component {
 

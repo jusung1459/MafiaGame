@@ -5,7 +5,7 @@ import '../../style/room.css'
 import {ReactComponent as IconSave} from '../../style/icons/save_icon.svg'
 import {ReactComponent as IconLynch} from '../../style/icons/lynch_icon.svg'
 
-const baseURL = 'http://localhost:3000/api/mafia'
+const baseURL = 'http://' + process.env.REACT_APP_URL_ADDRESS + ':3000/api/mafia'
 
 function Trial(props) {
     // const [players, setplayers] = useState('');

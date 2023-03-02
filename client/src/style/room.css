@@ -207,3 +207,9 @@ ul {
 .msg-1{
     color: #ff726f;
 }
+
+/* icon */
+.boot-icon {
+    width: 1.5rem;
+    height: 1.5rem;
+}

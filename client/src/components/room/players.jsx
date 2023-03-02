@@ -7,7 +7,7 @@ import {ReactComponent as IconVote} from '../../style/icons/vote_icon.svg'
 import {ReactComponent as IconKnife} from '../../style/icons/knife_icon.svg'
 import {ReactComponent as IconInvest} from '../../style/icons/investigate_icon.svg'
 
-const baseURL = 'http://localhost:3000/api/mafia'
+const baseURL = 'http://' + process.env.REACT_APP_URL_ADDRESS + ':3000/api/mafia'
 
 function Player(props) {
     // const [players, setplayers] = useState('');
@@ -102,7 +102,7 @@ function Player(props) {
                                 onClick={() => handleSubmit(button_player.player_button_id, "vote-player", "player")}  
                                 role="button" 
                                 type="submit">
-                            <IconVote className='boot-icon' width="1.5rem" height="1.5rem"/>
+                            <IconVote className='boot-icon'/>
                         </button>
                     </div>)
                 }
@@ -120,7 +120,7 @@ function Player(props) {
                                     onClick={() => handleSubmit(button_player.player_button_id, "role", "role")}  
                                     role="button" 
                                     type="submit">
-                                <IconInvest className='boot-icon' width="1.5rem" height="1.5rem"/>
+                                <IconInvest className='boot-icon'/>
                             </button>
                         </div>)
                     }
@@ -134,7 +134,7 @@ function Player(props) {
                                     onClick={() => handleSubmit(button_player.player_button_id, "role", "role")}  
                                     role="button" 
                                     type="submit">
-                                <IconKnife className='boot-icon' width="1.5rem" height="1.5rem"/>
+                                <IconKnife className='boot-icon'/>
                             </button>
                         </div>)
                     }

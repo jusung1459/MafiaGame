@@ -3,7 +3,7 @@ import socketIO from 'socket.io-client';
 import axios from 'axios'
 import '../../style/room.css'
 
-const baseURL = 'http://localhost:3000/api/mafia'
+const baseURL = 'http://' + process.env.REACT_APP_URL_ADDRESS + ':3000/api/mafia'
 
 function Role(props) {
 

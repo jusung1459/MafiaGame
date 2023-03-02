@@ -4,7 +4,7 @@ import axios from 'axios'
 import '../../style/room.css'
 import {ReactComponent as IconStart} from '../../style/icons/start-icon.svg'
 
-const baseURL = 'http://localhost:3000/api/mafia'
+const baseURL = 'http://' + process.env.REACT_APP_URL_ADDRESS + ':3000/api/mafia'
 
 function Owner(props) {
     const [players, setplayers] = useState('');

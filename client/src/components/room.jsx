@@ -7,8 +7,12 @@ import Owner from './room/owner';
 import Gamestate from './room/gamestate';
 import Trial from './room/trial';
 import Role from './room/role';
+import background from '../style/picture/campground.png'
 
-const baseURL = 'http://localhost:3000/api/mafia'
+const baseURL = 'http://' + process.env.REACT_APP_URL_ADDRESS + ':3000/api/mafia'
+const style_background = {
+    backgroundImage: `linear-gradient(rgba(0, 0, 0, 0.527), rgba(0, 0, 0, 0.5)), url("${background}")`
+}
 
 class Room extends Component {
 
@@ -28,7 +32,7 @@ class Room extends Component {
             evil_chat : [],
             player_status : new Map(),
         }
-        this.socket = socketIO.connect('http://localhost:3000', {
+        this.socket = socketIO.connect('http://' + process.env.REACT_APP_URL_ADDRESS + ':3000', {
             query: {token : JSON.parse(localStorage['user'])['token']},
         });
 
@@ -120,7 +124,7 @@ class Room extends Component {
     
     render() {
         return (
-            <div className="room-container">
+            <div className="room-container" style={style_background}>
                 <div className='info-container'>
                     <div className='gridthree-container'>
                         <div className='room room-id'>

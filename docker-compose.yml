@@ -8,6 +8,8 @@ services:
       - mern-app
     environment:
       - WATCHPACK_POLLING=true
+    env_file:
+      - .env
     volumes:
       - ./client:/app/client
       - /app/client/node_modules

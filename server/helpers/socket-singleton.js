@@ -12,7 +12,7 @@ class SocketConnection {
     connect(server) {
         io = require('socket.io')(server, {
             cors: {
-              origin: "http://localhost:8000",
+              origin: 'http://' + process.env.URL_ADDRESS + ':8000',
               methods: ["GET", "POST"]
             }
         });
