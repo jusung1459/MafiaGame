@@ -421,7 +421,7 @@ async function checkState() {
                     let message = { "nickname" : "Game",
                                     "player_id" : "0"};
                     
-                    message["message"] = against_player_info.nickname + role_investigation[against_role];
+                    message["message"] =against_player_info.nickname + role_investigation[against_role];
 
                     if (role === 'littlefeetEVIL') {
                         return MafiaDB.updateOne({roomid:process.argv[2]}, {

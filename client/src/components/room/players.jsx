@@ -10,34 +10,19 @@ import {ReactComponent as IconInvest} from '../../style/icons/investigate_icon.s
 const baseURL = 'http://localhost:3000/api/mafia'
 
 function Player(props) {
-    const [players, setplayers] = useState('');
-    const [game, setgame] = useState('');
+    // const [players, setplayers] = useState('');
+    // const [game, setgame] = useState('');
+    const [selected, setSelected] = useState('');
+    const [lastState, setLastState] = useState('');
 
     useEffect(() => {
-        // console.log(props)
+        console.log(props.game)
+        if (props.game.state != lastState) {
+            setSelected('');
+            setLastState(props.game.state);
+        }
         
     }, [props.players, props.game, props.votes, props.player_status])
-
-    // function countVotes(votes) {
-    //     if (votes != undefined) {
-    //         let votes_string = JSON.stringify(votes)
-    //         let votes_parsed = JSON.parse(votes_string)
-    //         let vote_counts = new Map();
-    //         for (const key in votes_parsed) {
-    //             let value = votes_parsed[key];
-    //             if (vote_counts.has(value)) {
-    //                 vote_counts.set(value, (vote_counts.get(value) + 1));
-    //             } else {
-    //                 vote_counts.set(value, 1);
-    //             }
-    //         }
-    //         console.log(vote_counts)
-    //     }
-    //     // let vote_counts = new Map();
-    //     // // pool up counts
-    
-    //     // console.log(vote_counts)
-    // }
 
     function handleSubmit(chosen_player_id, action, url) {
         console.log(chosen_player_id);
@@ -56,6 +41,7 @@ function Player(props) {
             axios.post(`${baseURL}/${url}`, body, config).then((result) => {
                 console.log(result);
                 console.log('kicked player' + chosen_player_id)
+                setSelected(chosen_player_id)
             })
             
         } catch (err) {
@@ -96,7 +82,10 @@ function Player(props) {
             if (props.player_id != button_player.player_button_id ) {
                 return (
                 <div className='right-container'>
-                    <button className='invisble-button' onClick={() => handleSubmit(button_player.player_button_id, "kick-player", "owner")}  role="button" type="submit">
+                    <button className='invisble-button' 
+                            onClick={() => handleSubmit(button_player.player_button_id, "kick-player", "owner")}  
+                            role="button" 
+                            type="submit">
                         <IconBoot className='boot-icon' width="1.5rem" height="1.5rem"/>
                     </button>
                 </div>)
@@ -109,7 +98,10 @@ function Player(props) {
                 if (props.player_id != button_player.player_button_id ) {
                     return (
                     <div className='right-container'>
-                        <button className='invisble-button' onClick={() => handleSubmit(button_player.player_button_id, "vote-player", "player")}  role="button" type="submit">
+                        <button className={'invisble-button ' + (selected === button_player.player_button_id ? "player-button-active" : "") }
+                                onClick={() => handleSubmit(button_player.player_button_id, "vote-player", "player")}  
+                                role="button" 
+                                type="submit">
                             <IconVote className='boot-icon' width="1.5rem" height="1.5rem"/>
                         </button>
                     </div>)
@@ -124,7 +116,10 @@ function Player(props) {
                     if (props.player_id != button_player.player_button_id ) {
                         return (
                         <div className='right-container'>
-                            <button className='invisble-button' onClick={() => handleSubmit(button_player.player_button_id, "role", "role")}  role="button" type="submit">
+                            <button className={'invisble-button ' + (selected === button_player.player_button_id ? "player-button-active" : "") }
+                                    onClick={() => handleSubmit(button_player.player_button_id, "role", "role")}  
+                                    role="button" 
+                                    type="submit">
                                 <IconInvest className='boot-icon' width="1.5rem" height="1.5rem"/>
                             </button>
                         </div>)
@@ -135,7 +130,10 @@ function Player(props) {
                     if (props.player_id != button_player.player_button_id ) {
                         return (
                         <div className='right-container'>
-                            <button className='invisble-button' onClick={() => handleSubmit(button_player.player_button_id, "role", "role")}  role="button" type="submit">
+                            <button className={'invisble-button ' + (selected === button_player.player_button_id ? "player-button-active" : "") }
+                                    onClick={() => handleSubmit(button_player.player_button_id, "role", "role")}  
+                                    role="button" 
+                                    type="submit">
                                 <IconKnife className='boot-icon' width="1.5rem" height="1.5rem"/>
                             </button>
                         </div>)

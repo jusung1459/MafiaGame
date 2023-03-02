@@ -39,14 +39,14 @@ function Role(props) {
     }
     if (props.game.state !== 'waiting') {
         if (props.player_status.get(props.player_id)) {
-            console.log(props.player_status)
+            // console.log(props.player_status)
             return (
                 <div>
                     <h4>Role : {props.role}</h4>
                     <div>{information_roles[props.role]}</div>
                     <div>{renderGoal()}</div>
-                    <div>You are Alive</div>
-                    <div>{renderRoleCount()}</div>
+                    <div className='role-style'>You are Alive</div>
+                    <div className='role-style'>{renderRoleCount()}</div>
                 </div>)
         } else {
             return (
@@ -54,7 +54,7 @@ function Role(props) {
                     <h4>Role : {props.role}</h4>
                     <div>{information_roles[props.role]}</div>
                     <div>{renderGoal()}</div>
-                    <div>You are Dead</div>
+                    <div className='role-style'>You are Dead</div>
                 </div>)
         }
     }

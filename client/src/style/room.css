@@ -117,11 +117,19 @@ ul {
     align-items: center;
 }
 
+/* Role */
+.role-style {
+    padding-top: 1rem;
+}
 
 /* Players */
 .invisble-button {
     background: transparent;
     border: none;
+}
+
+.player-button-active {
+    background-color: #51E6F6;
 }
 
 /* Trial */
@@ -138,11 +146,7 @@ ul {
     justify-content: center;
 }
 
-#lynch-button:focus {
-    background-color: #51E6F6;
-}
-
-#save-button:focus {
+.trial-active {
     background-color: #51E6F6;
 }
 

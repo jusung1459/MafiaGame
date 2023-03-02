@@ -8,9 +8,12 @@ import {ReactComponent as IconLynch} from '../../style/icons/lynch_icon.svg'
 const baseURL = 'http://localhost:3000/api/mafia'
 
 function Trial(props) {
-    const [players, setplayers] = useState('');
-    const [game, setgame] = useState('');
-    const [trial_player, settrial_player] = useState('');
+    // const [players, setplayers] = useState('');
+    // const [game, setgame] = useState('');
+    // const [trial_player, settrial_player] = useState('');
+
+    const [active_lynch, setActive_lynch] = useState(false);
+    const [active_save, setActive_save] = useState(false);
 
     useEffect(() => {
         // console.log(props)
@@ -32,6 +35,14 @@ function Trial(props) {
         try {
             axios.post(`${baseURL}/player`, body, config).then((result) => {
                 // console.log('start room')
+                // to toggle active button pressed
+                if (vote_type == "guilty") {
+                    setActive_lynch(true);
+                    setActive_save(false);
+                } else {
+                    setActive_lynch(false);
+                    setActive_save(true);
+                }
             })
             
         } catch (err) {
@@ -49,10 +60,10 @@ function Trial(props) {
                 return(
                     <div>
                         <div className='owner-container'>
-                            <button className='invisble-button trial-button' id="lynch-button" onClick={() => handleStartSubmit("guilty")} role="button" type="submit">
+                            <button className={'invisble-button trial-button ' + (active_lynch && 'trial-active')} id="lynch-button" onClick={() => handleStartSubmit("guilty")} role="button" type="submit">
                                 <IconLynch className='boot-icon' width="3em" height="3rem"/>
                             </button>
-                            <button className='invisble-button trial-button' id="save-button" onClick={() => handleStartSubmit("inno")} role="button" type="submit">
+                            <button className={'invisble-button trial-button ' + (active_save && 'trial-active')} id="save-button" onClick={() => handleStartSubmit("inno")} role="button" type="submit">
                                 <IconSave className='boot-icon' width="3em" height="3rem"/>
                             </button>
                         </div>
