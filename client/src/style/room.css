@@ -124,6 +124,28 @@ ul {
     border: none;
 }
 
+/* Trial */
+.trial-button {
+    padding-left: 3rem;
+    padding-right: 3rem;
+    border-radius: 5px;
+}
+
+.vote-for {
+    padding-top: 3rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+#lynch-button:focus {
+    background-color: #51E6F6;
+}
+
+#save-button:focus {
+    background-color: #51E6F6;
+}
+
 /* Chat */
 
 .room-chat {

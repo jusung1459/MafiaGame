@@ -2,6 +2,8 @@ import React, { useRef, useEffect, useState } from 'react'
 import socketIO from 'socket.io-client';
 import axios from 'axios'
 import '../../style/room.css'
+import {ReactComponent as IconSave} from '../../style/icons/save_icon.svg'
+import {ReactComponent as IconLynch} from '../../style/icons/lynch_icon.svg'
 
 const baseURL = 'http://localhost:3000/api/mafia'
 
@@ -45,14 +47,16 @@ function Trial(props) {
             });
             if (against_player != undefined) {
                 return(
-                    <div className='owner-container'>
-                        <button onClick={() => handleStartSubmit("guilty")} role="button" type="submit">
-                            <section className="flex items-center">Guilty</section>
-                        </button>
-                        <button onClick={() => handleStartSubmit("inno")} role="button" type="submit">
-                            <section className="flex items-center">Innocent</section>
-                        </button>
-                        <div>voting {against_player.nickname}</div>
+                    <div>
+                        <div className='owner-container'>
+                            <button className='invisble-button trial-button' id="lynch-button" onClick={() => handleStartSubmit("guilty")} role="button" type="submit">
+                                <IconLynch className='boot-icon' width="3em" height="3rem"/>
+                            </button>
+                            <button className='invisble-button trial-button' id="save-button" onClick={() => handleStartSubmit("inno")} role="button" type="submit">
+                                <IconSave className='boot-icon' width="3em" height="3rem"/>
+                            </button>
+                        </div>
+                        <div className='vote-for'>voting {against_player.nickname}</div>
                     </div>
                 );
             }

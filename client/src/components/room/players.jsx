@@ -3,6 +3,9 @@ import socketIO from 'socket.io-client';
 import axios from 'axios'
 import '../../style/room.css'
 import {ReactComponent as IconBoot} from '../../style/icons/boot_kick.svg'
+import {ReactComponent as IconVote} from '../../style/icons/vote_icon.svg'
+import {ReactComponent as IconKnife} from '../../style/icons/knife_icon.svg'
+import {ReactComponent as IconInvest} from '../../style/icons/investigate_icon.svg'
 
 const baseURL = 'http://localhost:3000/api/mafia'
 
@@ -106,8 +109,8 @@ function Player(props) {
                 if (props.player_id != button_player.player_button_id ) {
                     return (
                     <div className='right-container'>
-                        <button onClick={() => handleSubmit(button_player.player_button_id, "vote-player", "player")}  role="button" type="submit">
-                            <section className="flex items-center"> Vote player</section>
+                        <button className='invisble-button' onClick={() => handleSubmit(button_player.player_button_id, "vote-player", "player")}  role="button" type="submit">
+                            <IconVote className='boot-icon' width="1.5rem" height="1.5rem"/>
                         </button>
                     </div>)
                 }
@@ -117,15 +120,23 @@ function Player(props) {
                 let action_role = "";
                 if (props.role == "ranger" || props.role == "littlefeetEVIL") {
                     action_role = "Investigate"
-                } else if (props.role == "hunter" || props.role == "sasquatchEVIL"){
-                    action_role = "Kill"
-                }
-                if (action_role != "") {
+
                     if (props.player_id != button_player.player_button_id ) {
                         return (
                         <div className='right-container'>
-                            <button onClick={() => handleSubmit(button_player.player_button_id, "role", "role")}  role="button" type="submit">
-                                <section className="flex items-center"> {action_role} player</section>
+                            <button className='invisble-button' onClick={() => handleSubmit(button_player.player_button_id, "role", "role")}  role="button" type="submit">
+                                <IconInvest className='boot-icon' width="1.5rem" height="1.5rem"/>
+                            </button>
+                        </div>)
+                    }
+                } else if (props.role == "hunter" || props.role == "sasquatchEVIL"){
+                    action_role = "Kill"
+
+                    if (props.player_id != button_player.player_button_id ) {
+                        return (
+                        <div className='right-container'>
+                            <button className='invisble-button' onClick={() => handleSubmit(button_player.player_button_id, "role", "role")}  role="button" type="submit">
+                                <IconKnife className='boot-icon' width="1.5rem" height="1.5rem"/>
                             </button>
                         </div>)
                     }
