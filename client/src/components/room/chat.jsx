@@ -16,10 +16,11 @@ function Chat(props) {
         // to make scroll stuck to bottom on new message
         // console.log('from child' + props.messages)
         if (messageEl) {
-          messageEl.current.addEventListener('DOMNodeInserted', event => {
-            const { currentTarget: target } = event;
-            target.scroll({ top: target.scrollHeight, behavior: 'smooth' });
-          });
+            new MutationObserver((mut) => {
+                const target = mut[0].target
+                target.scroll({ top: target.scrollHeight, behavior: 'smooth' });
+            }).observe(messageEl.current, {childList : true})
+            
         }
     }, [props.messages]);
 
@@ -86,7 +87,7 @@ function Chat(props) {
                             type="text"
                             onKeyUp={handleMsgEnterSubmit}/>
                         <button className='msg-button' onClick={handleMsgSubmit} role="button" type="submit">
-                            <IconSend className='send-icon' width="1.5rem" height="1.5rem"/>
+                            <IconSend className='send-icon boot-icon'/>
                         </button>
                 </div>
             </div>

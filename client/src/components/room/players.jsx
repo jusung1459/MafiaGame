@@ -16,7 +16,7 @@ function Player(props) {
     const [lastState, setLastState] = useState('');
 
     useEffect(() => {
-        console.log(props.game)
+        // console.log(props.game)
         if (props.game.state != lastState) {
             setSelected('');
             setLastState(props.game.state);
@@ -25,7 +25,7 @@ function Player(props) {
     }, [props.players, props.game, props.votes, props.player_status])
 
     function handleSubmit(chosen_player_id, action, url) {
-        console.log(chosen_player_id);
+        // console.log(chosen_player_id);
 
         const config = {
             headers: { 'Content-Type': 'application/json' },
@@ -39,8 +39,8 @@ function Player(props) {
 
         try {
             axios.post(`${baseURL}/${url}`, body, config).then((result) => {
-                console.log(result);
-                console.log('kicked player' + chosen_player_id)
+                // console.log(result);
+                // console.log('kicked player' + chosen_player_id)
                 setSelected(chosen_player_id)
             })
             
@@ -86,7 +86,7 @@ function Player(props) {
                             onClick={() => handleSubmit(button_player.player_button_id, "kick-player", "owner")}  
                             role="button" 
                             type="submit">
-                        <IconBoot className='boot-icon' width="1.5rem" height="1.5rem"/>
+                        <IconBoot className='boot-icon'/>
                     </button>
                 </div>)
             }

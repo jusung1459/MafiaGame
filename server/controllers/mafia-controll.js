@@ -214,7 +214,7 @@ getRoom = (req, res) => {
 
         // tell players to update
         const socketConnection = require('../helpers/socket-singleton').connection();
-        socketConnection.sendEvent("message", "hello3", user.room);
+        socketConnection.sendEvent("message", "update", user.room);
         
         return res.status(201).json({data});
     }).catch(error => {

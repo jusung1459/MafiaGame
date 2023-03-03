@@ -36,7 +36,11 @@ class SocketConnection {
 
         io.on('connection', (socket) => {
             socket.join(socket.decoded['room'])
-            io.emit("message", "hello");
+            io.emit("message", "connected");
+
+            socket.on("disconnect", (reason) => {
+                console.log(reason);
+            });
         });
     }
 
