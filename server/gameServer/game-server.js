@@ -1,6 +1,10 @@
 const mongoose = require('mongoose')
 const Schema = mongoose.Schema
 
+// todo
+// can't require helper files
+// docker problem? try require.resolve()
+
 // db connection
 mongoose
     .connect('mongodb://172.18.0.1:27017/mafia', { useNewUrlParser: true })
