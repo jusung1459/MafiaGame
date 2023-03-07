@@ -1,5 +1,4 @@
-import React, { useRef, useEffect, useState } from 'react'
-import socketIO from 'socket.io-client';
+import React, { useEffect, useState } from 'react'
 import axios from 'axios'
 import '../../style/room.css'
 import {ReactComponent as IconBoot} from '../../style/icons/boot_kick.svg'
@@ -17,7 +16,7 @@ function Player(props) {
 
     useEffect(() => {
         // console.log(props.game)
-        if (props.game.state != lastState) {
+        if (props.game.state !== lastState) {
             setSelected('');
             setLastState(props.game.state);
         }
@@ -50,9 +49,9 @@ function Player(props) {
     }
 
     function Vote_count(vote_player_id) {
-        if (props.game.state == "vote" && props.player_status.get(vote_player_id.vote_player_id)) {
+        if (props.game.state === "vote" && props.player_status.get(vote_player_id.vote_player_id)) {
             let votes = props.votes;
-            if (votes != undefined) {
+            if (votes !== undefined) {
                 let votes_string = JSON.stringify(votes)
                 let votes_parsed = JSON.parse(votes_string)
                 let vote_counts = new Map();
@@ -78,8 +77,8 @@ function Player(props) {
 
     function Player_buttons(button_player) {
         // console.log(button_player.player_button_id)
-        if (props.owner === props.player_id && (props.game.state == "waiting" || props.game.state == "end")) {
-            if (props.player_id != button_player.player_button_id ) {
+        if (props.owner === props.player_id && (props.game.state === "waiting" || props.game.state === "end")) {
+            if (props.player_id !== button_player.player_button_id ) {
                 return (
                 <div className='right-container'>
                     <button className='invisble-button' 
@@ -94,8 +93,8 @@ function Player(props) {
         // console.log(button_player)
         // console.log(props.player_status.get(button_player.player_button_id))
         if (props.player_status.get(button_player.player_button_id) && props.player_status.get(props.player_id)) {
-            if (props.game.state == "vote") {
-                if (props.player_id != button_player.player_button_id ) {
+            if (props.game.state === "vote") {
+                if (props.player_id !== button_player.player_button_id ) {
                     return (
                     <div className='right-container'>
                         <button className={'invisble-button ' + (selected === button_player.player_button_id ? "player-button-active" : "") }
@@ -108,12 +107,12 @@ function Player(props) {
                 }
             }
     
-            if (props.game.state == "night") {
+            if (props.game.state === "night") {
                 let action_role = "";
-                if (props.role == "ranger" || props.role == "littlefeetEVIL") {
+                if (props.role === "ranger" || props.role === "littlefeetEVIL") {
                     action_role = "Investigate"
 
-                    if (props.player_id != button_player.player_button_id ) {
+                    if (props.player_id !== button_player.player_button_id ) {
                         return (
                         <div className='right-container'>
                             <button className={'invisble-button ' + (selected === button_player.player_button_id ? "player-button-active" : "") }
@@ -124,10 +123,10 @@ function Player(props) {
                             </button>
                         </div>)
                     }
-                } else if (props.role == "hunter" || props.role == "sasquatchEVIL"){
+                } else if (props.role === "hunter" || props.role === "sasquatchEVIL"){
                     action_role = "Kill"
 
-                    if (props.player_id != button_player.player_button_id ) {
+                    if (props.player_id !== button_player.player_button_id ) {
                         return (
                         <div className='right-container'>
                             <button className={'invisble-button ' + (selected === button_player.player_button_id ? "player-button-active" : "") }
@@ -143,7 +142,7 @@ function Player(props) {
         }
     }
 
-    if (props.players != undefined && props.dead_players != undefined) {
+    if (props.players !== undefined && props.dead_players !== undefined) {
         return(
             <div className='grid-container'>
                 <div className='grid-left-container'>

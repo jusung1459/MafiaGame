@@ -23,7 +23,7 @@ class JoinRoom extends Component {
     handleSubmit() {
         console.log('room: ' + this.state.room + ' nickname: ' + this.state.nickname)
         
-        if (this.state.nickname.length < 1 || this.state.room.length != 5)  {
+        if (this.state.nickname.length < 1 || this.state.room.length !== 5)  {
             this.setState({
                 placeholder_room:"Enter 5 character room code",
                 placeholder_nickname : "Enter a non empty nickname",
@@ -48,7 +48,7 @@ class JoinRoom extends Component {
             axios.post(`${baseURL}/join`, body, config).then((result) => {
                 console.log(result)
                 const data = result['data'];
-                if (data['success'] == true) {
+                if (data['success'] === true) {
                     delete data['success'];
                     delete data['message'];
                     localStorage.setItem('user', JSON.stringify(data));
@@ -56,6 +56,7 @@ class JoinRoom extends Component {
                     this.props.navigate(new_room);
                 }
             }).catch(error => {
+                console.log(error)
                 this.setState({
                     placeholder_room:"Enter 5 character room code",
                     placeholder_nickname : "Enter a nickname",

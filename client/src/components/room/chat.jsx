@@ -1,5 +1,4 @@
-import React, { useRef, useEffect, useState } from 'react'
-import socketIO from 'socket.io-client';
+import React, { useRef, useEffect } from 'react'
 import axios from 'axios'
 import '../../style/room.css'
 
@@ -26,7 +25,7 @@ function Chat(props) {
 
     function handleMsgSubmit() {
 
-        if (messageRef.current.value != '') {
+        if (messageRef.current.value !== '') {
             console.log(messageRef.current.value);
 
             const config = {
@@ -68,7 +67,7 @@ function Chat(props) {
     }
     
 
-    if (props.messages != undefined) {
+    if (props.messages !== undefined) {
         return(
             <div className="chat-room">
                 <div className='messages' ref={messageEl}>

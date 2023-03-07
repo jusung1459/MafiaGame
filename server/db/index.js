@@ -1,4 +1,5 @@
 const mongoose = require('mongoose')
+const redis = require('redis');
 
 mongoose
     .connect('mongodb://172.18.0.1:27017/mafia', { useNewUrlParser: true })
@@ -11,4 +12,12 @@ mongoose
 
 const db = mongoose.connection
 
-module.exports = db
+const redisClient = redis.createClient();
+redisClient.on('connect', () => {
+    console.log('connected to redis');
+});
+
+module.exports = {
+    db,
+    redisClient
+} 
