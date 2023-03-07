@@ -1,84 +1,5 @@
-const mongoose = require('mongoose')
-const Schema = mongoose.Schema
-
-// todo
-// can't require helper files
-// docker problem? try require.resolve()
-
-// db connection
-mongoose
-    .connect('mongodb://172.18.0.1:27017/mafia', { useNewUrlParser: true })
-    .then(() => {
-        console.log('successfully connected to the database');
-    })
-    .catch(e => {
-        console.error('Connection error', e.message)
-    })
-
-const db = mongoose.connection
-
-const MessagesSchema = new Schema({
-    message : String,
-    nickname : String,
-    player_id : String
-},
-{ timestamps: true })
-
-const PlayerSchema = new Schema({
-    nickname : String,
-    player_id : String,
-    living : Boolean,
-})
-
-const Mafia = new Schema(
-    {
-        roomid: { type: String, required: true },
-        owner: { type: String, required: true },
-        game: { 
-            evil_players : [String],
-            good_players : [String],
-            dead_players : [String],
-            roles : {
-                type : Map,
-                of : String    
-            },
-            state : { type: String, required: true }
-        },
-        players : [PlayerSchema],
-        votes : {
-            type : Map,
-            of : String    
-        },
-        trial : {
-            trial_player : String,
-            votes : {
-                type : Map,
-                of : String  
-            }  
-        },
-        night : {
-            type: Map,
-            of : new Schema({
-                player_id: String,
-                against_id: String
-            })
-        },
-        secret : {
-            type: Map,
-            of : [MessagesSchema]
-        },
-        messages : [MessagesSchema],
-        role_counter : {
-            type : Map,
-            of : Number
-        }
-    },
-    { timestamps: true },
-)
-
-MafiaDB = mongoose.model('mafia', Mafia)
-
-db.on('error', console.error.bind(console, 'MongoDB connection error:'))
+const { db, redisClient } = require("./helpers/database")
+const MafiaDB = require('./helpers/mafia-model')
 
 process.on('message', (msg) => {
     console.log('Message from parent:', msg);
@@ -158,6 +79,9 @@ let total_counter = 900; // total seconds, game terminates if game goes on for t
 
 function initGame() {
     // getting game state
+    counter = 0;
+    total_counter = 900; 
+
     MafiaDB.findOne({roomid:process.argv[2]}).lean().then((data) => {
         // console.log(data)
         game = new Game(room_id, data);
@@ -540,4 +464,4 @@ setInterval(() => {
     if (counter < 0) {
         updateGame();
     }
-}, 1000);
+}, 1000, total_counter, counter);
