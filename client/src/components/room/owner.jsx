@@ -1,5 +1,4 @@
-import React, { useRef, useEffect, useState } from 'react'
-import socketIO from 'socket.io-client';
+import React, { useEffect } from 'react'
 import axios from 'axios'
 import '../../style/room.css'
 import {ReactComponent as IconStart} from '../../style/icons/start-icon.svg'
@@ -7,8 +6,6 @@ import {ReactComponent as IconStart} from '../../style/icons/start-icon.svg'
 const baseURL = 'http://' + process.env.REACT_APP_URL_ADDRESS + ':3000/api/mafia'
 
 function Owner(props) {
-    const [players, setplayers] = useState('');
-    const [game, setgame] = useState('');
 
     useEffect(() => {
         // console.log(props)
@@ -35,7 +32,7 @@ function Owner(props) {
         }
     }
 
-    if (props.game.state == 'waiting' && props.owner === props.player_id) {
+    if (props.game.state === 'waiting' && props.owner === props.player_id) {
         return(
             <div className='owner-container'>
                 <button className='invisble-button' onClick={() => handleStartSubmit()} role="button" type="submit">
@@ -44,7 +41,7 @@ function Owner(props) {
             </div>
         );
     }
-    if (props.game.state == 'end' && props.owner === props.player_id) {
+    if (props.game.state === 'end' && props.owner === props.player_id) {
         return(
             <div className='owner-container'>
                 <button onClick={() => handleStartSubmit()} role="button" type="submit">

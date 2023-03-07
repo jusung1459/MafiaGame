@@ -1,5 +1,4 @@
-import React, { useRef, useEffect, useState } from 'react'
-import socketIO from 'socket.io-client';
+import React, { useEffect, useState } from 'react'
 import axios from 'axios'
 import '../../style/room.css'
 import {ReactComponent as IconSave} from '../../style/icons/save_icon.svg'
@@ -36,7 +35,7 @@ function Trial(props) {
             axios.post(`${baseURL}/player`, body, config).then((result) => {
                 // console.log('start room')
                 // to toggle active button pressed
-                if (vote_type == "guilty") {
+                if (vote_type === "guilty") {
                     setActive_lynch(true);
                     setActive_save(false);
                 } else {
@@ -50,13 +49,13 @@ function Trial(props) {
         }
     }
 
-    if (props.game.state == 'trial') {
-        if (props.player_id != props.trial_player.trial_player) {
+    if (props.game.state === 'trial') {
+        if (props.player_id !== props.trial_player.trial_player) {
             const against_player = props.players.find((player) => {
                 
-                return player.player_id == props.trial_player.trial_player;
+                return player.player_id === props.trial_player.trial_player;
             });
-            if (against_player != undefined) {
+            if (against_player !== undefined) {
                 return(
                     <div>
                         <div className='owner-container'>

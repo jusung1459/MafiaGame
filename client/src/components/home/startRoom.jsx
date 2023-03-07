@@ -40,13 +40,13 @@ class StartRoom extends Component {
         };
         const body = JSON.stringify({ nickname:this.state.nickname });
 
-        const room = this.makeid(5);
-        const player_id = this.makeid(16);
+        // const room = this.makeid(5);
+        // const player_id = this.makeid(16);
 
         try {
             axios.post(`${baseURL}/create`, body, config).then((result) => {
                 const data = result['data'];
-                if (data['success'] == true) {
+                if (data['success'] === true) {
                     delete data['success'];
                     delete data['message'];
                     localStorage.setItem('user', JSON.stringify(data));

@@ -1,9 +1,8 @@
-import React, { useRef, useEffect, useState } from 'react'
-import socketIO from 'socket.io-client';
-import axios from 'axios'
+// import React, { useRef, useEffect, useState } from 'react'
+import React from 'react'
 import '../../style/room.css'
 
-const baseURL = 'http://' + process.env.REACT_APP_URL_ADDRESS + ':3000/api/mafia'
+// const baseURL = 'http://' + process.env.REACT_APP_URL_ADDRESS + ':3000/api/mafia'
 
 function Role(props) {
 

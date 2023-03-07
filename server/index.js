@@ -5,7 +5,7 @@ socketConnection = require('./helpers/socket-singleton')
 
 const app = express()
 
-const db = require('./db')
+const {db, redisClient } = require('./db')
 const mafiaRouter = require('./routes/mafia-router')
 
 require("dotenv").config();

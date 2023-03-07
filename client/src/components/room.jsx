@@ -68,7 +68,7 @@ class Room extends Component {
             // console.log(this.state.dead)
             // console.log(this.state.evil_chat)
 
-            if (((this.state.secret != undefined && this.state.messages != undefined) && this.state.dead != undefined) && this.state.evil_chat != undefined) {
+            if (((this.state.secret !== undefined && this.state.messages !== undefined) && this.state.dead !== undefined) && this.state.evil_chat !== undefined) {
                 // console.log("in here")
                 this.setState({
                     messages : [...this.state.messages, ...this.state.secret, ...this.state.dead, ...this.state.evil_chat].sort((a, b) => {
