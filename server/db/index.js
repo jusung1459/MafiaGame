@@ -14,7 +14,7 @@ const db = mongoose.connection
 
 const redisClient = redis.createClient();
 redisClient.on('connect', () => {
-    console.log('connected to redis');
+    console.log('connected to redisssssssssssssssssssssssssssssssssssssssssssssssssss');
 });
 
 module.exports = {
