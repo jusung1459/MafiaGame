@@ -1,7 +1,8 @@
 const Mafia = require('../models/mafia-model')
 const helper = require('../helpers/helper')
 const jwt = require('jsonwebtoken');
-const { redisClient } = require('../db/index')
+const {db, redisClient} = require('../db/index')
+
 
 createRoom = async (req, res) => {
     const nickname = req.body.nickname;
@@ -34,11 +35,11 @@ createRoom = async (req, res) => {
             player_id : player,
             living : true
         },
-        messages : {
+        messages : [{
             message : nickname + " has joined",
             nickname : "Game",
             player_id : "0"
-        },
+        }],
         votes : {},
         trial : {
             votes : {}
@@ -50,8 +51,7 @@ createRoom = async (req, res) => {
     if (!data) {
         return res.status(400).json({ success: false, error: err })
     }
-
-    redisClient.json.set(`mafia:${room}`, '$', data)
+    redisClient.json.set(`mafia:${room}`, '.', data)
     .then(() => {
         console.log('redis')
         const token = jwt.sign(user, process.env.JWT_KEY, { expiresIn : '7d'});
@@ -94,28 +94,19 @@ joinRoom = (req, res) => {
         browser : browser,
         owner : false};
 
-    Mafia.findOneAndUpdate({roomid:room_id},
-        {
-            $push: {players: {
-                nickname : nickname,
-                player_id : player_id,
-                living : true,
-            },
-            messages : {
-                message : nickname + " has joined",
-                nickname : "Game",
-                player_id : "0"
-            }
-            }
-        }
-    ).then((result) => {
-        console.log(result);
+    const join_message = {
+        message : nickname + " has joined",
+        nickname : "Game",
+        player_id : "0"
+    }
+
+    redisClient.json.arrAppend(`mafia:${room_id}`, '$.messages', join_message)
+    .then((result) => {
         if (result === null) {
             throw ("Room does not exist");
         }
         const token = jwt.sign(user, process.env.JWT_KEY, { expiresIn : '7d'});
         
-        // todo
         // send socket message to room of udpated message
         const socketConnection = require('../helpers/socket-singleton').connection();
         socketConnection.sendEvent("gameUpdate", "message", user.room);

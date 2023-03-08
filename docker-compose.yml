@@ -33,7 +33,7 @@ services:
     volumes:
       - mongo-data:/data/db
   redis:
-    image: 'bitnami/redis:latest'
+    image: redis/redis-stack
     ports:
       - "6379:6379"
     environment:
