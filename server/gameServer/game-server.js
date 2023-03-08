@@ -464,4 +464,4 @@ setInterval(() => {
     if (counter < 0) {
         updateGame();
     }
-}, 1000, total_counter, counter);
+}, 1000);

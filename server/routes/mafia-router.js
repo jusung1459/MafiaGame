@@ -22,13 +22,15 @@ router.post('/mafia/join', MafiaCtrl.joinRoom)
 router.post('/mafia/startroom', UserCtrl.StartRoom)
 router.get('/mafia/gamestate', MafiaCtrl.getRoom)
 
-router.post('/mafiaredis/create', MafiaCtrl_redis.createRoom)
-router.post('/mafiaredis/join', MafiaCtrl_redis.joinRoom)
-
 router.post('/mafia/owner', PlayerCtrl.owner)
 router.post('/mafia/player', PlayerCtrl.player)
 router.post('/mafia/message', MessageCtrl.message)
 router.post('/mafia/role', RoleCtrl.role)
 
+router.post('/mafiaredis/create', MafiaCtrl_redis.createRoom)
+router.post('/mafiaredis/join', MafiaCtrl_redis.joinRoom)
+router.get('/mafiaredis/gamestate', MafiaCtrl_redis.getRoom)
+
+router.post('/mafiaredis/message', MessageCtrl_redis.message)
 
 module.exports = router

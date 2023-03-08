@@ -2,7 +2,7 @@ const mongoose = require('mongoose')
 const redis = require('redis');
 
 mongoose
-    .connect('mongodb://172.18.0.1:27017/mafia', { useNewUrlParser: true })
+    .connect('mongodb://172.19.0.1:27017/mafia', { useNewUrlParser: true })
     .then(() => {
         console.log('successfully connected to the database');
     })

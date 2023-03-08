@@ -1,7 +1,6 @@
-const Mafia = require('../models/mafia-model')
 const helper = require('../helpers/helper')
 const jwt = require('jsonwebtoken');
-const {db, redisClient} = require('../db/index')
+const { redisClient } = require('../db/index')
 
 
 createRoom = async (req, res) => {
@@ -28,13 +27,22 @@ createRoom = async (req, res) => {
         roomid : room,
         owner : player,
         game: {
-            state: "waiting"
+            state: "waiting",
+            "evil_players" : [
+
+            ],
+            "good_players" : [
+    
+            ],
+            "dead_players" : [
+    
+            ]
         },
-        players: {
+        players: [{
             nickname : nickname,
             player_id : player,
             living : true
-        },
+        }],
         messages : [{
             message : nickname + " has joined",
             nickname : "Game",
@@ -45,7 +53,10 @@ createRoom = async (req, res) => {
             votes : {}
         },
         night : {},
-        secret : {}
+        secret : {
+            evil : [],
+            dead : []
+        }
 
     };
     if (!data) {
@@ -99,9 +110,14 @@ joinRoom = (req, res) => {
         nickname : "Game",
         player_id : "0"
     }
-
-    redisClient.json.arrAppend(`mafia:${room_id}`, '$.messages', join_message)
-    .then((result) => {
+    const new_player = {
+        nickname : nickname,
+        player_id : player_id,
+        living : true,
+    }
+    const add_player = redisClient.json.arrAppend(`mafia:${room_id}`, '$.players', new_player);
+    const add_message = redisClient.json.arrAppend(`mafia:${room_id}`, '$.messages', join_message);
+    Promise.all([add_player, add_message]).then((result) => {
         if (result === null) {
             throw ("Room does not exist");
         }
@@ -131,17 +147,17 @@ joinRoom = (req, res) => {
 
 // returns filterd game state
 getRoom = (req, res) => {
+    // console.log(req.query)
     const token = req.query.token;
-
+    
     const user = jwt.verify(token, process.env.JWT_KEY);
-
     if (user == null) {
         return res.status(400).json({
             message: 'Can not verify token',
         })
     }
-
-    Mafia.findOne({roomid:user.room}).lean().then((data) => {
+    // console.log(user)
+    redisClient.json.get(`mafia:${user.room}`).then((data) => {
         // console.log(data)
 
         // filter secret messages for user

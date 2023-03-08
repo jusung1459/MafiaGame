@@ -1,4 +1,4 @@
-const Mafia = require('../models/mafia-model')
+const { redisClient } = require('../db/index')
 const helper = require('../helpers/helper')
 const jwt = require('jsonwebtoken');
 
@@ -15,26 +15,21 @@ message = (req, res) => {
     };
 
     if (message != '') {
-        Mafia.findOne({roomid:user.room}).lean().then((data) => {
+        redisClient.json.get(`mafia:${user.room}`).then((data) => {
             let state = data.game.state;
             // check if alive
             let player_status = data.players.find((player) => {return player.player_id === user.player_id});
             console.log(player_status);
 
             if (player_status.living == true) { // only alive players can talk
-                if  (state === "trial") {
+                if  (state === "trial") { // only player on trial can talk
                     if (user.player_id === data.trial.trial_player) {
-                        Mafia.findOneAndUpdate({roomid:user.room},
-                            {   
-                                $push : {
-                                    messages : {
-                                        message : message,
-                                        nickname : user.nickname,
-                                        player_id : user.player_id
-                                    }
-                                }
-                            }
-                        ).then(() => {
+                        let message = {
+                            message : message,
+                            nickname : user.nickname,
+                            player_id : user.player_id
+                        }
+                        redisClient.json.arrAppend(`mafia:${user.room}`, '$.messages', message).then(() => {
                             // tell players to update
                             const socketConnection = require('../helpers/socket-singleton').connection();
                             socketConnection.sendEvent("gameUpdate", "message", user.room);
@@ -45,8 +40,7 @@ message = (req, res) => {
                             })
                         });
                     }
-                } else if (state === "night") {
-                    // only mafia can talk to each other
+                } else if (state === "night") { // only mafia can talk to each other
                     if (data.game.roles[user.player_id].includes("EVIL")) {
                         console.log("is evil")
                         let new_message = { "nickname" : user.nickname,
@@ -55,11 +49,8 @@ message = (req, res) => {
                 
                         new_message["message"] = message;
 
-                        Mafia.updateOne({roomid:user.room}, {
-                            $push: {
-                                ["secret." + "evil"] : new_message,
-                            }
-                        }).then(() => {
+                        redisClient.json.arrAppend(`mafia:${user.room}`, '$.secret', new_message)
+                        .then(() => {
                             const socketConnection = require('../helpers/socket-singleton').connection();
                             socketConnection.sendEvent("gameUpdate", "message", user.room);
 
@@ -71,18 +62,13 @@ message = (req, res) => {
                             console.log(error);
                         });
                     }
-                } else {
-                    Mafia.findOneAndUpdate({roomid:user.room},
-                        {   
-                            $push : {
-                                messages : {
-                                    message : message,
-                                    nickname : user.nickname,
-                                    player_id : user.player_id
-                                }
-                            }
-                        }
-                    ).then(() => {
+                } else { // anyone can talk
+                    let message = {
+                        message : message,
+                        nickname : user.nickname,
+                        player_id : user.player_id
+                    }
+                    redisClient.json.arrAppend(`mafia:${user.room}`, '$.messages', message).then(() => {
                         // tell players to update
                         const socketConnection = require('../helpers/socket-singleton').connection();
                         socketConnection.sendEvent("gameUpdate", "message", user.room);
@@ -95,17 +81,12 @@ message = (req, res) => {
                 }
             } else if (state.includes("end")) {
                 // allow anyone to talk after game ends
-                Mafia.findOneAndUpdate({roomid:user.room},
-                    {   
-                        $push : {
-                            messages : {
-                                message : message,
-                                nickname : user.nickname,
-                                player_id : user.player_id
-                            }
-                        }
-                    }
-                ).then(() => {
+                let message = {
+                    message : message,
+                    nickname : user.nickname,
+                    player_id : user.player_id
+                }
+                redisClient.json.arrAppend(`mafia:${user.room}`, '$.messages', message).then(() => {
                     // tell players to update
                     const socketConnection = require('../helpers/socket-singleton').connection();
                     socketConnection.sendEvent("gameUpdate", "message", user.room);
@@ -123,11 +104,8 @@ message = (req, res) => {
                 
                 new_message["message"] = message;
 
-                Mafia.updateOne({roomid:user.room}, {
-                    $push: {
-                        ["secret." + "dead"] : new_message,
-                    }
-                }).then(() => {
+                redisClient.json.arrAppend(`mafia:${user.room}`, '$.dead', new_message)
+                .then(() => {
                     const socketConnection = require('../helpers/socket-singleton').connection();
                         socketConnection.sendEvent("gameUpdate", "message", user.room);
 
