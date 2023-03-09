@@ -1,4 +1,4 @@
-const Mafia = require('../models/mafia-model')
+const { redisClient } = require('../db/index')
 const helper = require('../helpers/helper')
 const jwt = require('jsonwebtoken');
 const { fork } = require('child_process');
@@ -9,7 +9,7 @@ StartRoom = (req, res) => {
         const user = jwt.verify(token, process.env.JWT_KEY);
         // console.log(user);
 
-        Mafia.findOne({roomid:user.room}).lean().then((data) => {
+        redisClient.json.get(`mafia:${user.room}`).then((data) => {
             if (user.player_id == data.owner) {
                 if (data.game.state == "waiting" || data.game.state == "end") {
                     const child_process = fork('./gameServer/game-server.js', [user.room]);

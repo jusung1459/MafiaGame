@@ -29,6 +29,7 @@ router.post('/mafia/role', RoleCtrl.role)
 
 router.post('/mafiaredis/create', MafiaCtrl_redis.createRoom)
 router.post('/mafiaredis/join', MafiaCtrl_redis.joinRoom)
+router.post('/mafiaredis/startroom', UserCtrl_redis.StartRoom)
 router.get('/mafiaredis/gamestate', MafiaCtrl_redis.getRoom)
 
 router.post('/mafiaredis/message', MessageCtrl_redis.message)
