@@ -17,21 +17,22 @@ const auth = require('../middleware/auth');
 
 const router = express.Router()
 
-router.post('/mafia/create', MafiaCtrl.createRoom)
-router.post('/mafia/join', MafiaCtrl.joinRoom)
-router.post('/mafia/startroom', UserCtrl.StartRoom)
-router.get('/mafia/gamestate', MafiaCtrl.getRoom)
+// router.post('/mafia/create', MafiaCtrl.createRoom)
+// router.post('/mafia/join', MafiaCtrl.joinRoom)
+// router.post('/mafia/startroom', UserCtrl.StartRoom)
+// router.get('/mafia/gamestate', MafiaCtrl.getRoom)
 
-router.post('/mafia/owner', PlayerCtrl.owner)
+// router.post('/mafia/owner', PlayerCtrl.owner)
 router.post('/mafia/player', PlayerCtrl.player)
-router.post('/mafia/message', MessageCtrl.message)
+// router.post('/mafia/message', MessageCtrl.message)
 router.post('/mafia/role', RoleCtrl.role)
 
-router.post('/mafiaredis/create', MafiaCtrl_redis.createRoom)
-router.post('/mafiaredis/join', MafiaCtrl_redis.joinRoom)
-router.post('/mafiaredis/startroom', UserCtrl_redis.StartRoom)
-router.get('/mafiaredis/gamestate', MafiaCtrl_redis.getRoom)
+router.post('/mafia/create', MafiaCtrl_redis.createRoom)
+router.post('/mafia/join', MafiaCtrl_redis.joinRoom)
+router.post('/mafia/startroom', UserCtrl_redis.StartRoom)
+router.get('/mafia/gamestate', MafiaCtrl_redis.getRoom)
 
-router.post('/mafiaredis/message', MessageCtrl_redis.message)
+router.post('/mafia/message', MessageCtrl_redis.message)
+router.post('/mafia/owner', PlayerCtrl_redis.owner)
 
 module.exports = router

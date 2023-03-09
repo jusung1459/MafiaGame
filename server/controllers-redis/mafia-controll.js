@@ -56,7 +56,8 @@ createRoom = async (req, res) => {
         secret : {
             evil : [],
             dead : []
-        }
+        },
+        role_counter : {}
 
     };
     if (!data) {
@@ -166,7 +167,8 @@ getRoom = (req, res) => {
         if (data.secret_message === undefined) {
             data.secret_message = [];
         }
-        let player_status = data.players.find((player) => {return player.player_id === user.player_id});
+
+        let player_status = data.players.find((player) => {return player.player_id == user.player_id});
         if (player_status.living == false) {
             data.dead = secrets.get("dead");
             if (data.dead === undefined) {

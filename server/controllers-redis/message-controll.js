@@ -16,6 +16,7 @@ message = (req, res) => {
 
     if (message != '') {
         redisClient.json.get(`mafia:${user.room}`).then((data) => {
+            console.log(data)
             let state = data.game.state;
             // check if alive
             let player_status = data.players.find((player) => {return player.player_id === user.player_id});
@@ -63,12 +64,12 @@ message = (req, res) => {
                         });
                     }
                 } else { // anyone can talk
-                    let message = {
+                    let new_message = {
                         message : message,
                         nickname : user.nickname,
                         player_id : user.player_id
                     }
-                    redisClient.json.arrAppend(`mafia:${user.room}`, '$.messages', message).then(() => {
+                    redisClient.json.arrAppend(`mafia:${user.room}`, '$.messages', new_message).then(() => {
                         // tell players to update
                         const socketConnection = require('../helpers/socket-singleton').connection();
                         socketConnection.sendEvent("gameUpdate", "message", user.room);

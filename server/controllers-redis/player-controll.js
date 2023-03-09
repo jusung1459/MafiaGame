@@ -1,4 +1,4 @@
-const Mafia = require('../models/mafia-model')
+const { redisClient } = require('../db/index')
 const helper = require('../helpers/helper')
 const jwt = require('jsonwebtoken');
 
@@ -17,16 +17,18 @@ owner = (req, res) => {
     switch (action) {
         case 'kick-player':
             const kick_player_id = req.body.chosen_player_id;
-            if (kick_player_id != null) {
-                Mafia.findOne({roomid:user.room}).lean().then((data) => {
+            if (kick_player_id !== null && kick_player_id !== user.player_id) {
+                redisClient.json.get(`mafia:${user.room}`).then((data) => {
                     if (data.game.state == "waiting" || data.game.state == "end") {
-                        Mafia.updateOne({roomid:user.room}, {
-                            $pull: {
-                                players : {
-                                    player_id : kick_player_id
-                                },
-                            }
-                        }).then((data) => {
+                        console.log(data.players)
+                        let remove_player_index = data.players.findIndex((player) => {
+                            return player.player_id === kick_player_id
+                        })
+                        if (remove_player_index > 0) {
+                            data.players.splice(remove_player_index, 1);
+                            console.log(data.players)
+                        }
+                        redisClient.json.set(`mafia:${user.room}`, "$.players", data.players).then((data) => {
                             const socketConnection = require('../helpers/socket-singleton').connection();
                             socketConnection.sendEvent("gameUpdate", "message", user.room);
         

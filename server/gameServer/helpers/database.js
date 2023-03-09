@@ -12,12 +12,22 @@ mongoose
 
 const db = mongoose.connection
 
-db.on('error', console.error.bind(console, 'MongoDB connection error:'))
+connectRedis = async () => {
+    await redisClient.connect();
+}
 
-const redisClient = redis.createClient();
+const redisClient = redis.createClient({
+    socket: {
+        host: '172.19.0.1',
+        port: '6379'
+    }
+});
 redisClient.on('connect', () => {
     console.log('connected to redis');
 });
+
+connectRedis();
+
 
 module.exports = {
     db,

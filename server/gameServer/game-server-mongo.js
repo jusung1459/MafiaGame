@@ -53,6 +53,15 @@ var room_id = process.argv[2];
 var game_state = null;
 var next_game_state = null;
 
+MafiaDB.findOneAndUpdate({roomid:room_id}, {
+    $set: { 'game.state': 'starting'}
+}).then((data) => {
+    // console.log(data);
+    process.send({action : "update_game"});
+}).catch(error => {
+    console.log(error);
+});
+
 class Game {
     constructor(room_id, data) {
         this.game_state = "starting";
@@ -68,11 +77,12 @@ const roles = ["ranger", "sasquatchEVIL", "camper", "camper", "camper", "hunter"
 let counter = 0;
 let total_counter = 900; // total seconds, game terminates if game goes on for too long
 
-async function initGame() {
+function initGame() {
     // getting game state
+    counter = 0;
+    total_counter = 900; 
 
-    redisClient.json.get(`mafia:${room_id}`).then((data) => {
-        console.log("init Game")
+    MafiaDB.findOne({roomid:process.argv[2]}).lean().then((data) => {
         // console.log(data)
         game = new Game(room_id, data);
 
@@ -91,25 +101,24 @@ async function initGame() {
                 good_players.push(player.player_id);
             }
         });
-
+        
         let role_counter = {
             "hunter" : 2,
             "littlefeetEVIL" : 3,
             "lumberjack" : 3
         }
 
-        let new_game_state = {
-            state: "starting",
-            evil_players: evil_players,
-            good_players: good_players,
-            dead_players: dead_players,
-            roles: Object.fromEntries(role_map),
-        }
-
-        const set_game = redisClient.json.set(`mafia:${room_id}`, '$.game', new_game_state);
-        const set_role = redisClient.json.set(`mafia:${room_id}`, '$.role_counter', role_counter);
-
-        Promise.all([set_game, set_role]).then((data) => {
+        MafiaDB.findOneAndUpdate({roomid:room_id}, {
+            $set: { game: {
+                    evil_players : evil_players,
+                    good_players : good_players,
+                    dead_players : dead_players,
+                    roles : role_map,
+                    state: "starting"
+                },
+                role_counter : role_counter
+            }
+        }).then((data) => {
             // console.log(data);
             process.send({action : "get_roles"});
             counter = 10;
@@ -122,11 +131,12 @@ async function initGame() {
 }
 
 async function checkEndGame() {
-    redisClient.json.get(`mafia:${process.argv[2]}`).then((data) => {
+    MafiaDB.findOne({roomid:process.argv[2]}).lean().then((data) => {
         // console.log(data)
         let evil_players = data.game.evil_players;
         let good_players = data.game.good_players;
         
+        let messages = [];
         let message = { "nickname" : "Game",
                         "player_id" : "1"};
         message["message"] = next_game_state + " " + game.counter;
@@ -138,16 +148,18 @@ async function checkEndGame() {
             next_game_state = "end-town";
             message["message"] = "Campers won!"
         }
+        messages.push(message)
         console.log(next_game_state)
         if (next_game_state == "night") {
             game.counter++;
         }
 
-        const add_message = redisClient.json.arrAppend(`mafia:${room_id}`, '$.messages', message);
-        const reset_night = redisClient.json.arrAppend(`mafia:${room_id}`, '$.night', {});
-        const change_state = redisClient.json.arrAppend(`mafia:${room_id}`, '$.game.state', next_game_state);
-
-        Promise.all([add_message, reset_night, change_state]).then((data) => {
+        MafiaDB.updateOne({roomid:process.argv[2]}, {
+            $set: { 'game.state': next_game_state,
+                    'night':new Map()
+            },
+            $push : { messages : { $each : messages } }
+        }).then((data) => {
             // console.log(data);
             process.send({action : "update_game"});
         }).catch(error => {
@@ -419,7 +431,7 @@ async function updateGame() {
     console.log("update game")
 
     // getting game state
-    await redisClient.json.get(`mafia:${room_id}`).then((data) => {
+    await MafiaDB.findOne({roomid:process.argv[2]}).lean().then((data) => {
         console.log("first then")
         // console.log(data)
         game.data = data;
