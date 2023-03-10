@@ -134,7 +134,8 @@ async function checkEndGame() {
         let good_players = data.game.good_players;
         
         let message = { "nickname" : "Game",
-                        "player_id" : "1"};
+                        "player_id" : "1",
+                        "createdAt" : new Date()};
         message["message"] = next_game_state + " " + game.counter;
 
         if (good_players.length == 0) {
@@ -231,12 +232,10 @@ async function checkState() {
     }
 
     if (game_state == "trial") {
-        // todo
         // count up guilty vs innocents
         // kill player or save player
         console.log(game.data.trial)
 
-        // todo find player to lynch
         let lynch_player = game.data.trial.trial_player;
 
 
@@ -249,7 +248,8 @@ async function checkState() {
                 console.log(player)
                 if (player.living == true) {
                     let message = { "nickname" : "Game",
-                                "player_id" : "0"};
+                                "player_id" : "0",
+                                "createdAt" : new Date()};
                     if (trial_votes.has(player.player_id)) {
                         if (trial_votes.get(player.player_id) == "guilty") {
                             message["message"] = player.nickname + " voted guilty";
@@ -278,7 +278,8 @@ async function checkState() {
 
                 let against_player_info = game.data.players.find(element => element.player_id == lynch_player);
                 let message = { "nickname" : "Game",
-                                "player_id" : "0"};
+                                "player_id" : "0",
+                                "createdAt" : new Date()};
                 message["message"] = "The camp has lynched " + against_player_info.nickname + ", camper was " + game.data.game.roles[lynch_player]+"!";
 
                 // remove from good_players or evil_players
@@ -297,7 +298,7 @@ async function checkState() {
                 }
 
                 const add_message = redisClient.json.arrAppend(`mafia:${room_id}`, '$.messages', message);
-                const add_dead_player = redisClient.json.arrAppend(`mafia:${room_id}`, '$.game.dead_players', lynch_player);
+                const add_dead_player = redisClient.json.arrAppend(`mafia:${room_id}`, '$.game.dead_players', String(lynch_player));
                 const living_promise = redisClient.json.set(`mafia:${room_id}`, `$.players.${String(lynch_player)}.living`, false);
                 const set_game = redisClient.json.set(`mafia:${room_id}`, '$.game', game.data.game);
 
@@ -357,7 +358,8 @@ async function checkState() {
                     console.log("in ranger");
                     const against_role = roles.get(value.against_id);
                     let message = { "nickname" : "Game",
-                                    "player_id" : "0"};
+                                    "player_id" : "0",
+                                    "createdAt" : new Date()};
                     
                     message["message"] =against_player_info.nickname + role_investigation[against_role];
 

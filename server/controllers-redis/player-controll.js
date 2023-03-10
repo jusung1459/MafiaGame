@@ -93,7 +93,8 @@ player = (req, res) => {
                         const add_message = redisClient.json.arrAppend(`mafia:${user.room}`, '$.messages', {
                             message : vote_msg,
                             nickname : "Game",
-                            player_id : 0
+                            player_id : 0,
+                            createdAt : new Date()
                         });
                         Promise.all([reset_votes, add_message]).then((data) => {
                             const socketConnection = require('../helpers/socket-singleton').connection();

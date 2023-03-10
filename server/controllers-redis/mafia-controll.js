@@ -110,7 +110,8 @@ joinRoom = (req, res) => {
     const join_message = {
         message : nickname + " has joined",
         nickname : "Game",
-        player_id : "0"
+        player_id : "0", 
+        createdAt : new Date()
     }
     const new_player = {
         nickname : nickname,

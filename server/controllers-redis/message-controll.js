@@ -28,7 +28,8 @@ message = (req, res) => {
                         let message = {
                             message : message,
                             nickname : user.nickname,
-                            player_id : user.player_id
+                            player_id : user.player_id,
+                            createdAt : new Date()
                         }
                         redisClient.json.arrAppend(`mafia:${user.room}`, '$.messages', message).then(() => {
                             // tell players to update
@@ -67,7 +68,8 @@ message = (req, res) => {
                     let new_message = {
                         message : message,
                         nickname : user.nickname,
-                        player_id : user.player_id
+                        player_id : user.player_id,
+                        createdAt : new Date()
                     }
                     redisClient.json.arrAppend(`mafia:${user.room}`, '$.messages', new_message).then(() => {
                         // tell players to update
@@ -85,7 +87,8 @@ message = (req, res) => {
                 let message = {
                     message : message,
                     nickname : user.nickname,
-                    player_id : user.player_id
+                    player_id : user.player_id,
+                    createdAt : new Date()
                 }
                 redisClient.json.arrAppend(`mafia:${user.room}`, '$.messages', message).then(() => {
                     // tell players to update
