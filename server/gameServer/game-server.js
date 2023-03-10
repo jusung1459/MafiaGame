@@ -205,19 +205,17 @@ async function checkState() {
         // console.log(lynch_player)
         if (lynch_player != null) {
             // place player on trial
-            MafiaDB.updateOne({roomid:process.argv[2]},
-                {$set:{"trial.trial_player":String(lynch_player),
-                    "votes":new Map()}
-            }).then((data) => {
+            const set_trial_player = redisClient.json.set(`mafia:${room_id}`, '$.trial.trial_player', String(lynch_player));
+            const reset_votes = redisClient.json.set(`mafia:${room_id}`, '$.votes', {});
+            Promise.all([set_trial_player, reset_votes]).then((data) => {
                 console.log(data)
             }).catch(error => {
                 console.log(error);
             });
         } else {
-            MafiaDB.updateOne({roomid:process.argv[2]},
-                {$set:{"trial.trial_player":"",
-                    "votes":new Map()}
-            }).then((data) => {
+            const set_trial_player = redisClient.json.set(`mafia:${room_id}`, '$.trial.trial_player', "");
+            const reset_votes = redisClient.json.set(`mafia:${room_id}`, '$.votes', {});
+            Promise.all([set_trial_player, reset_votes]).then((data) => {
                 console.log(data)
             }).catch(error => {
                 console.log(error);
@@ -261,11 +259,11 @@ async function checkState() {
             })
             console.log(vote_count_guilty + " " + vote_count_inno)
             console.log(messages);
-    
-            await MafiaDB.updateOne({roomid:process.argv[2]}, {
-                $push : { messages : { $each : messages } },
-                $set : {trial : {votes : {}, trial_player: ""}}
-            }).exec().catch(error => {
+
+            const add_message = redisClient.json.arrAppend(`mafia:${room_id}`, '$.messages', ...messages);
+            const reset_trial = redisClient.json.set(`mafia:${room_id}`, '$.trial', {votes: {}, trial_player:""});
+
+            await Promise.all([reset_trial, add_message]).catch(error => {
                 console.log(error);
             });
 
@@ -276,23 +274,41 @@ async function checkState() {
                 let message = { "nickname" : "Game",
                                 "player_id" : "0"};
                 message["message"] = "The camp has lynched " + against_player_info.nickname + ", camper was " + game.data.game.roles[lynch_player]+"!";
-                messages = [];
-                messages.push(message)
 
-                const living_promise = MafiaDB.updateOne({roomid:process.argv[2], "players.player_id":String(lynch_player)},
-                    {$set:{"players.$.living":false}
-                }).exec().catch(error => {
-                    console.log(error);
-                });
-                const list_promise = MafiaDB.updateOne({roomid:process.argv[2]},{
-                    $pull:{"game.good_players":lynch_player, "game.evil_players":lynch_player},
-                    $push : { messages : { $each : messages },
-                             "game.dead_players":lynch_player}
-                }).exec().catch(error => {
-                    console.log(error);
-                });
+                // remove from good_players or evil_players
+                let remove_player_index = game.data.game.good_players.findIndex((player) => {
+                    return player.player_id === lynch_player
+                })
+                if (remove_player_index > 0) {
+                    game.data.game.good_players.splice(remove_player_index, 1);
+                } else {
+                    remove_player_index = game.data.game.evil_players.findIndex((player) => {
+                        return player.player_id === lynch_player
+                    })
+                    if (remove_player_index > 0) {
+                        game.data.game.evil_players.splice(remove_player_index, 1);
+                    }
+                }
 
-                await Promise.all([living_promise, list_promise])
+                const add_message = redisClient.json.arrAppend(`mafia:${room_id}`, '$.messages', message);
+                const add_dead_player = redisClient.json.arrAppend(`mafia:${room_id}`, '$.game.dead_players', lynch_player);
+                const living_promise = redisClient.json.set(`mafia:${room_id}`, `$.players.${String(lynch_player)}.living`, false);
+                const set_game = redisClient.json.set(`mafia:${room_id}`, '$.game', game.data.game);
+
+                // const living_promise = MafiaDB.updateOne({roomid:process.argv[2], "players.player_id":String(lynch_player)},
+                //     {$set:{"players.$.living":false}
+                // }).exec().catch(error => {
+                //     console.log(error);
+                // });
+                // const list_promise = MafiaDB.updateOne({roomid:process.argv[2]},{
+                //     $pull:{"game.good_players":lynch_player, "game.evil_players":lynch_player},
+                //     $push : { messages : { $each : messages },
+                //              "game.dead_players":lynch_player}
+                // }).exec().catch(error => {
+                //     console.log(error);
+                // });
+
+                await Promise.all([add_message, add_dead_player, living_promise, set_game])
                 
             }
         }

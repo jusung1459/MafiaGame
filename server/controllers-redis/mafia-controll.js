@@ -50,6 +50,7 @@ createRoom = async (req, res) => {
         }],
         votes : {},
         trial : {
+            trial_player : "",
             votes : {}
         },
         night : {},
