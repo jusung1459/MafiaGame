@@ -131,7 +131,7 @@ player = (req, res) => {
 
                 if (data.game.state == "trial") {
                     if (vote == "guilty" || vote == "inno") {
-                        redisClient.json.set(`mafia:${room_id}`, trial_player_id, String(req.body.vote))
+                        redisClient.json.set(`mafia:${user.room}`, trial_player_id, String(req.body.vote))
                         .then((data) => {
                             const socketConnection = require('../helpers/socket-singleton').connection();
                             socketConnection.sendEvent("gameUpdate", "message", user.room);
