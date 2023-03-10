@@ -23,9 +23,9 @@ const router = express.Router()
 // router.get('/mafia/gamestate', MafiaCtrl.getRoom)
 
 // router.post('/mafia/owner', PlayerCtrl.owner)
-router.post('/mafia/player', PlayerCtrl.player)
+// router.post('/mafia/player', PlayerCtrl.player)
 // router.post('/mafia/message', MessageCtrl.message)
-router.post('/mafia/role', RoleCtrl.role)
+// router.post('/mafia/role', RoleCtrl.role)
 
 router.post('/mafia/create', MafiaCtrl_redis.createRoom)
 router.post('/mafia/join', MafiaCtrl_redis.joinRoom)
@@ -34,5 +34,7 @@ router.get('/mafia/gamestate', MafiaCtrl_redis.getRoom)
 
 router.post('/mafia/message', MessageCtrl_redis.message)
 router.post('/mafia/owner', PlayerCtrl_redis.owner)
+router.post('/mafia/player', PlayerCtrl_redis.player)
+router.post('/mafia/role', RoleCtrl_redis.role)
 
 module.exports = router

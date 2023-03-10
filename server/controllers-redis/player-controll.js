@@ -76,11 +76,12 @@ player = (req, res) => {
         case 'vote-player':
             const vote_player_id = req.body.chosen_player_id;
             if (vote_player_id != null) {
-                Mafia.findOne({roomid:user.room}).lean().then((data) => {
+                redisClient.json.get(`mafia:${user.room}`).then((data) => {
+                    // console.log(data)
                     voted_player_info = data.players.find(element => element.player_id == vote_player_id)
                     const player_info = data.players.find(element => element.player_id == user.player_id);
-                    // console.log(voted_player_info)
-                    // console.log(player_info)
+                    console.log(voted_player_info)
+                    console.log(player_info)
                     if (data.game.state == "vote" && (voted_player_info.living && player_info.living)) {
                         let new_votes = data.votes;
                         if (new_votes == undefined) {
@@ -88,18 +89,13 @@ player = (req, res) => {
                         }
                         let vote_msg = user.nickname + " voted for " + voted_player_info.nickname;
                         new_votes[user.player_id] = vote_player_id;
-                        Mafia.updateOne({roomid:user.room}, {
-                            $set: {
-                                votes : new_votes,
-                            },
-                            $push : {
-                                messages : {
-                                    message : vote_msg,
-                                    nickname : "Game",
-                                    player_id : 0
-                                }
-                            }
-                        }).then((data) => {
+                        const reset_votes = redisClient.json.set(`mafia:${user.room}`, '$.votes', new_votes);
+                        const add_message = redisClient.json.arrAppend(`mafia:${user.room}`, '$.messages', {
+                            message : vote_msg,
+                            nickname : "Game",
+                            player_id : 0
+                        });
+                        Promise.all([reset_votes, add_message]).then((data) => {
                             const socketConnection = require('../helpers/socket-singleton').connection();
                             socketConnection.sendEvent("gameUpdate", "message", user.room);
         
@@ -130,16 +126,13 @@ player = (req, res) => {
             break;
         case 'trial-vote-player':
             const vote = req.body.vote;
-            const trial_player_id = "trial.votes."+String(user.player_id)
-            Mafia.findOne({roomid:user.room}).lean().then((data) => {
+            const trial_player_id = "$.trial.votes."+String(user.player_id)
+            redisClient.json.get(`mafia:${user.room}`).then((data) => {
 
                 if (data.game.state == "trial") {
                     if (vote == "guilty" || vote == "inno") {
-                        Mafia.updateOne({roomid:user.room}, {
-                            $set: {
-                                [trial_player_id] : String(req.body.vote),
-                            },
-                        }).then((data) => {
+                        redisClient.json.set(`mafia:${room_id}`, trial_player_id, String(req.body.vote))
+                        .then((data) => {
                             const socketConnection = require('../helpers/socket-singleton').connection();
                             socketConnection.sendEvent("gameUpdate", "message", user.room);
 

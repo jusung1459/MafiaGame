@@ -1,4 +1,4 @@
-const Mafia = require('../models/mafia-model')
+const { redisClient } = require('../db/index')
 const helper = require('../helpers/helper')
 const jwt = require('jsonwebtoken');
 
@@ -23,7 +23,7 @@ role = (req, res) => {
         })
     };
 
-    Mafia.findOne({roomid:user.room}).lean().then((data) => {
+    redisClient.json.get(`mafia:${user.room}`).then((data) => {
 
         //todo
         // if check for correct state, both player are alive
@@ -40,14 +40,9 @@ role = (req, res) => {
             const player_role_counter = data.role_counter[player_role];
     
             if (player_role_counter === undefined || player_role_counter > 0) {
-                Mafia.updateOne({roomid:user.room}, {
-                    $set: {
-                        ["night." + player_role] : {
-                            player_id: user.player_id,
-                            against_id: against_player_info.player_id
-                        }
-                    }
-                    
+                redisClient.json.set(`mafia:${user.room}`, "$.night." + player_role, {
+                    player_id: user.player_id,
+                    against_id: against_player_info.player_id
                 }).catch(error => {
                     console.log(error);
                 });
