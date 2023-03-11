@@ -117,7 +117,7 @@ async function initGame() {
 
         Promise.all([set_game, set_role, set_secret]).then((data) => {
             // console.log(data);
-            process.send({action : "get_roles"});
+            process.send({action : "update_game"});
             counter = 10;
         }).catch(error => {
             console.log(error);
@@ -373,7 +373,7 @@ async function checkState() {
                                     "player_id" : "0",
                                     "createdAt" : new Date()};
                     
-                    message["message"] =against_player_info.nickname + role_investigation[against_role];
+                    message["message"] = against_player_info.nickname + role_investigation[against_role];
 
                     if (role === 'littlefeetEVIL') {
                         const dec_role = redisClient.json.numIncrBy(`mafia:${process.argv[2]}`, '$.role_counter.littlefeetEVIL', -1);
@@ -388,30 +388,42 @@ async function checkState() {
 
                     let dead_reveal_msg = { "nickname" : "Game",
                                     "player_id" : "0"};
-                    dead_reveal_msg["message"] = against_player_info.nickname + "was found dead tonight, camper was " + against_role + "!";
+                    dead_reveal_msg["message"] = against_player_info.nickname + " was found dead tonight, camper was " + against_role + "!";
                     dead_reveal_msgs.push(dead_reveal_msg);
 
                     // remove from good_players or evil_players
                     let remove_player_index = game.data.game.good_players.findIndex((player) => {
-                        return player.player_id === lynch_player
+                        console.log(player + " " + against_player_info.player_id)
+                        return player == against_player_info.player_id
                     })
-                    if (remove_player_index > 0) {
+                    if (remove_player_index >= 0) {
                         game.data.game.good_players.splice(remove_player_index, 1);
                     } else {
                         remove_player_index = game.data.game.evil_players.findIndex((player) => {
-                            return player.player_id === lynch_player
+                            return player == against_player_info.player_id
                         })
-                        if (remove_player_index > 0) {
+                        if (remove_player_index >= 0) {
                             game.data.game.evil_players.splice(remove_player_index, 1);
                         }
                     }
+                    game.data.game.dead_players.push(against_player_info.player_id)
+
+                    if (remove_player_index >= 0) {
+                        game.data.players[remove_player_index].living = false
+                    }
+                    console.log(game.data.players)
+                    console.log(remove_player_index)
+
+        //     const add_message = redisClient.json.arrAppend(`mafia:${room_id}`, '$.messages', message);
+        // // const add_dead_player = redisClient.json.arrAppend(`mafia:${room_id}`, '$.game.dead_players', String(lynch_player));
+        // const living_promise = redisClient.json.set(`mafia:${room_id}`, '$.players', game.data.players);
+        // const set_game = redisClient.json.set(`mafia:${room_id}`, '$.game', game.data.game);
 
                     if (role === 'hunter') {                        
                         const dec_role = redisClient.json.numIncrBy(`mafia:${process.argv[2]}`, '$.role_counter.hunter', -1);
-                        const set_player_dead = redisClient.json.set(`mafia:${process.argv[2]}`, "$.players."+ value.against_id +".living", false);
-                        const add_dead_player = redisClient.json.arrAppend(`mafia:${process.argv[2]}`, "$.game.dead_players", value.against_id);
+                        const set_player_dead = redisClient.json.set(`mafia:${process.argv[2]}`, "$.players", game.data.players);
                         const set_game = redisClient.json.set(`mafia:${process.argv[2]}`, '$.game', game.data.game);
-                        return Promise.all([dec_role, set_player_dead, add_dead_player, set_game])
+                        return Promise.all([dec_role, set_player_dead, set_game])
                         // return MafiaDB.updateOne({roomid:process.argv[2], "players.player_id":value.against_id},
                         //     {$set:{"players.$.living":false},
                         //     $inc: {
@@ -426,10 +438,9 @@ async function checkState() {
                         //     console.log(error);
                         // });
                     } else {
-                        const set_player_dead = redisClient.json.set(`mafia:${process.argv[2]}`, "$.players."+ value.against_id +".living", false);
-                        const add_dead_player = redisClient.json.arrAppend(`mafia:${process.argv[2]}`, "$.game.dead_players", value.against_id);
+                        const set_player_dead = redisClient.json.set(`mafia:${process.argv[2]}`, "$.players", game.data.players);
                         const set_game = redisClient.json.set(`mafia:${process.argv[2]}`, '$.game', game.data.game);
-                        return Promise.all([dec_role, set_player_dead, add_dead_player, set_game])
+                        return Promise.all([set_player_dead, set_game])
                         // return MafiaDB.updateOne({roomid:process.argv[2], "players.player_id":value.against_id},
                         //     {$set:{"players.$.living":false}
                         // }).then( (result) => {
