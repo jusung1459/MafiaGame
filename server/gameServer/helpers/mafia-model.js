@@ -5,11 +5,13 @@ const MessagesSchema = new Schema({
     message : String,
     nickname : String,
     player_id : String
-})
+},
+{ timestamps: true })
 
 const PlayerSchema = new Schema({
     nickname : String,
-    player_id : String
+    player_id : String,
+    living : Boolean,
 })
 
 const Mafia = new Schema(
@@ -19,6 +21,7 @@ const Mafia = new Schema(
         game: { 
             evil_players : [String],
             good_players : [String],
+            dead_players : [String],
             roles : {
                 type : Map,
                 of : String    
@@ -26,7 +29,33 @@ const Mafia = new Schema(
             state : { type: String, required: true }
         },
         players : [PlayerSchema],
-        messages : [MessagesSchema]
+        votes : {
+            type : Map,
+            of : String    
+        },
+        trial : {
+            trial_player : String,
+            votes : {
+                type : Map,
+                of : String  
+            }  
+        },
+        night : {
+            type: Map,
+            of : new Schema({
+                player_id: String,
+                against_id: String
+            })
+        },
+        secret : {
+            type: Map,
+            of : [MessagesSchema]
+        },
+        messages : [MessagesSchema],
+        role_counter : {
+            type : Map,
+            of : Number
+        }
     },
     { timestamps: true },
 )
