@@ -3,8 +3,24 @@ const bodyParser = require('body-parser');
 const cors = require('cors');
 socketConnection = require('./helpers/socket-singleton');
 
+// setting up BullMQ GUI for testing
+const { createBullBoard } = require('@bull-board/api');
+const { BullMQAdapter } = require('@bull-board/api/bullMQAdapter');
+const { ExpressAdapter } = require('@bull-board/express');
+const { Queue } = require('bullmq');
 
-// set up distributed queue
+const roomQueue = new Queue('Room', { connection: {
+    host: '172.21.0.1',
+    port: '6379'
+  }});
+
+const serverAdapter = new ExpressAdapter();
+serverAdapter.setBasePath('/admin/queues');
+
+const { addQueue, removeQueue, setQueues, replaceQueues } = createBullBoard({
+    queues: [new BullMQAdapter(roomQueue)],
+    serverAdapter: serverAdapter,
+});
 
 
 
@@ -34,6 +50,7 @@ app.use(bodyParser.json());
 db.on('error', console.error.bind(console, 'MongoDB connection error:'));
 
 app.use('/api', mafiaRouter);
+app.use('/admin/queues', serverAdapter.getRouter());
 
 socketConnection.connect(server);
 
