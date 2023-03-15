@@ -4,8 +4,8 @@ const jwt = require('jsonwebtoken');
 const { Queue } = require('bullmq');
 const { fork } = require('child_process');
 
-const roomQueue = new Queue('Room', { connection: {
-    host: '172.21.0.1',
+const roomQueue = new Queue('room', { connection: {
+    host: process.env.REDIS_URL,
     port: '6379'
   }});
 
@@ -20,7 +20,7 @@ StartRoom = (req, res) => {
                 if (data.game.state == "waiting" || data.game.state == "end") {
 
                     // add job to queue
-                    roomQueue.add('room', { room: user.room });
+                    roomQueue.add('room', { room: user.room, tick:0 }).then((data) => console.log(data.data));
 
                     // const child_process = fork('./gameServer/game-server.js', [user.room]);
                     // // child_process.send({"start":"hi"});

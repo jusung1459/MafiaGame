@@ -2,7 +2,7 @@ const mongoose = require('mongoose')
 const redis = require('redis');
 
 mongoose
-    .connect('mongodb://172.21.0.1:27017/mafia', { useNewUrlParser: true })
+    .connect('mongodb://'+ process.env.MONGO_URL + ':27017/mafia', { useNewUrlParser: true })
     .then(() => {
         console.log('successfully connected to the database');
     })
@@ -18,7 +18,7 @@ connectRedis = async () => {
 
 const redisClient = redis.createClient({
     socket: {
-        host: '172.21.0.1',
+        host: process.env.REDIS_URL,
         port: '6379'
     }
 });
