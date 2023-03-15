@@ -2,6 +2,7 @@ const express = require('express');
 const bodyParser = require('body-parser');
 const cors = require('cors');
 socketConnection = require('./helpers/socket-singleton');
+const { fork } = require('child_process');
 
 // setting up BullMQ GUI for testing
 const { createBullBoard } = require('@bull-board/api');
@@ -22,6 +23,12 @@ const { addQueue, removeQueue, setQueues, replaceQueues } = createBullBoard({
     serverAdapter: serverAdapter,
 });
 
+// run room consumer in own process
+const child_process = fork('./gameServer/game-server-queue.js');
+// child_process.send({"start":"hi"});
+child_process.on("message", (msg) => {
+    console.log(msg);
+});
 
 
 // setup express server
