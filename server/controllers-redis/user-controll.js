@@ -1,7 +1,13 @@
 const { redisClient } = require('../db/index')
 const helper = require('../helpers/helper')
 const jwt = require('jsonwebtoken');
+const { Queue } = require('bullmq');
 const { fork } = require('child_process');
+
+const roomQueue = new Queue('Room', { connection: {
+    host: '172.21.0.1',
+    port: '6379'
+  }});
 
 StartRoom = (req, res) => {
     const token = req.body.token;
@@ -12,6 +18,10 @@ StartRoom = (req, res) => {
         redisClient.json.get(`mafia:${user.room}`).then((data) => {
             if (user.player_id == data.owner) {
                 if (data.game.state == "waiting" || data.game.state == "end") {
+
+                    // add job to queue
+                    roomQueue.add('room', { room: user.room });
+
                     const child_process = fork('./gameServer/game-server.js', [user.room]);
                     // child_process.send({"start":"hi"});
                     child_process.on("message", (msg) => {

@@ -1,16 +1,38 @@
-const express = require('express')
-const bodyParser = require('body-parser')
-const cors = require('cors')
-socketConnection = require('./helpers/socket-singleton')
+const express = require('express');
+const bodyParser = require('body-parser');
+const cors = require('cors');
+socketConnection = require('./helpers/socket-singleton');
 
-const app = express()
+// setting up BullMQ GUI for testing
+const { createBullBoard } = require('@bull-board/api');
+const { BullMQAdapter } = require('@bull-board/api/bullMQAdapter');
+const { ExpressAdapter } = require('@bull-board/express');
+const { Queue } = require('bullmq');
 
-const {db, redisClient } = require('./db')
-const mafiaRouter = require('./routes/mafia-router')
+const roomQueue = new Queue('Room', { connection: {
+    host: '172.21.0.1',
+    port: '6379'
+  }});
+
+const serverAdapter = new ExpressAdapter();
+serverAdapter.setBasePath('/admin/queues');
+
+const { addQueue, removeQueue, setQueues, replaceQueues } = createBullBoard({
+    queues: [new BullMQAdapter(roomQueue)],
+    serverAdapter: serverAdapter,
+});
+
+
+
+// setup express server
+const app = express();
+
+const {db, redisClient } = require('./db');
+const mafiaRouter = require('./routes/mafia-router');
 
 require("dotenv").config();
 
-const apiPort = 3000
+const apiPort = 3000;
 
 var server = require('http').createServer(app);
 
@@ -22,13 +44,14 @@ const corsOptions = {
 app.use(cors(corsOptions));
 
 
-app.use(bodyParser.urlencoded({ extended: true }))
-app.use(bodyParser.json())
+app.use(bodyParser.urlencoded({ extended: true }));
+app.use(bodyParser.json());
 
-db.on('error', console.error.bind(console, 'MongoDB connection error:'))
+db.on('error', console.error.bind(console, 'MongoDB connection error:'));
 
-app.use('/api', mafiaRouter)
+app.use('/api', mafiaRouter);
+app.use('/admin/queues', serverAdapter.getRouter());
 
 socketConnection.connect(server);
 
-server.listen(apiPort, () => console.log(`Server running on port ${apiPort}`))
+server.listen(apiPort, () => console.log(`Server running on port ${apiPort}`));
