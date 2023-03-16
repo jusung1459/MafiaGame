@@ -27,7 +27,7 @@ const { addQueue, removeQueue, setQueues, replaceQueues } = createBullBoard({
 });
 
 // run room consumer in own process
-const child_process = fork('./gameServer/game-server-queue.js');
+const child_process = fork('./gameServer/game-server-worker.js');
 // child_process.send({"start":"hi"});
 child_process.on("message", (msg) => {
     console.log(msg);

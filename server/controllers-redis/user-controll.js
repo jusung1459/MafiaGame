@@ -3,6 +3,7 @@ const helper = require('../helpers/helper')
 const jwt = require('jsonwebtoken');
 const { Queue } = require('bullmq');
 const { fork } = require('child_process');
+const Room = require('../gameServer/room');
 
 const roomQueue = new Queue('room', { connection: {
     host: process.env.REDIS_URL,
@@ -19,8 +20,13 @@ StartRoom = (req, res) => {
             if (user.player_id == data.owner) {
                 if (data.game.state == "waiting" || data.game.state == "end") {
 
+                    let room = new Room(user.room, 10, 900);
+                    room.initGame();
+                    const socketConnection = require('../helpers/socket-singleton').connection();
+                    socketConnection.sendEvent("gameUpdate", "update", user.room);
+
                     // add job to queue
-                    roomQueue.add('room', { room: user.room, tick:0 }).then((data) => console.log(data.data));
+                    // roomQueue.add('room', { room: user.room, tick:0 }).then((data) => console.log(data.data));
 
                     // const child_process = fork('./gameServer/game-server.js', [user.room]);
                     // // child_process.send({"start":"hi"});
@@ -41,6 +47,7 @@ StartRoom = (req, res) => {
             }
 
         }).catch(error => {
+            console.log(error)
             return res.status(401).json({
                 success: false,
                 message: "coutld not authenticate token"
