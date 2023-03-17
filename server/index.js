@@ -26,14 +26,6 @@ const { addQueue, removeQueue, setQueues, replaceQueues } = createBullBoard({
     serverAdapter: serverAdapter,
 });
 
-// run room consumer in own process
-const child_process = fork('./gameServer/game-server-worker.js');
-// child_process.send({"start":"hi"});
-child_process.on("message", (msg) => {
-    console.log(msg);
-});
-
-
 // setup express server
 const app = express();
 
@@ -63,5 +55,17 @@ app.use('/api', mafiaRouter);
 app.use('/admin/queues', serverAdapter.getRouter());
 
 socketConnection.connect(server);
+
+// run room consumer in own process
+const child_process = fork('./gameServer/game-server-worker.js');
+// child_process.send({"start":"hi"});
+child_process.on("message", (msg) => {
+    console.log(msg);
+    const socketConnection = require('./helpers/socket-singleton').connection();
+    if (msg.action == "update_game") {
+        socketConnection.sendEvent("gameUpdate", msg, msg.room);
+    }
+    socketConnection.sendEvent("message", msg, msg.room);
+});
 
 server.listen(apiPort, () => console.log(`Server running on port ${apiPort}`));

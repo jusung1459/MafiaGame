@@ -1,4 +1,10 @@
-const { db, redisClient } = require("./helpers/database")
+const { db, redisClient } = require("./helpers/database");
+const { Queue } = require('bullmq');
+
+const roomQueue = new Queue('room', { connection: {
+    host: process.env.REDIS_URL,
+    port: '6379'
+  }});
 
 const next_state = {
     "starting" : {
@@ -107,8 +113,8 @@ class Room {
 
             Promise.all([set_game, set_role, set_secret]).then((data) => {
                 // console.log(data);
+                
 
-                this.counter = 10;
             }).catch(error => {
                 console.log(error);
             });

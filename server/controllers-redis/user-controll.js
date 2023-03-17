@@ -26,7 +26,10 @@ StartRoom = (req, res) => {
                     socketConnection.sendEvent("gameUpdate", "update", user.room);
 
                     // add job to queue
-                    // roomQueue.add('room', { room: user.room, tick:0 }).then((data) => console.log(data.data));
+                    roomQueue.add('room', 
+                                    { room: user.room, tick:10, total_tick:900 },  
+                                    { delay: 1000 })
+                    .then((data) => console.log(data.data));
 
                     // const child_process = fork('./gameServer/game-server.js', [user.room]);
                     // // child_process.send({"start":"hi"});
