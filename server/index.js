@@ -1,7 +1,9 @@
+require('dotenv').config()
 const express = require('express');
 const bodyParser = require('body-parser');
 const cors = require('cors');
-socketConnection = require('./helpers/socket-singleton');
+const socketConnection = require('./helpers/socket-singleton');
+const { fork } = require('child_process');
 
 // setting up BullMQ GUI for testing
 const { createBullBoard } = require('@bull-board/api');
@@ -9,8 +11,10 @@ const { BullMQAdapter } = require('@bull-board/api/bullMQAdapter');
 const { ExpressAdapter } = require('@bull-board/express');
 const { Queue } = require('bullmq');
 
-const roomQueue = new Queue('Room', { connection: {
-    host: '172.21.0.1',
+console.log(process.env.REDIS_URL)
+
+const roomQueue = new Queue('room', { connection: {
+    host: process.env.REDIS_URL,
     port: '6379'
   }});
 
@@ -21,8 +25,6 @@ const { addQueue, removeQueue, setQueues, replaceQueues } = createBullBoard({
     queues: [new BullMQAdapter(roomQueue)],
     serverAdapter: serverAdapter,
 });
-
-
 
 // setup express server
 const app = express();
@@ -53,5 +55,17 @@ app.use('/api', mafiaRouter);
 app.use('/admin/queues', serverAdapter.getRouter());
 
 socketConnection.connect(server);
+
+// run room consumer in own process
+const child_process = fork('./gameServer/game-server-worker.js');
+// child_process.send({"start":"hi"});
+child_process.on("message", (msg) => {
+    console.log(msg);
+    const socketConnection = require('./helpers/socket-singleton').connection();
+    if (msg.action == "update_game") {
+        socketConnection.sendEvent("gameUpdate", msg, msg.room);
+    }
+    socketConnection.sendEvent("message", msg, msg.room);
+});
 
 server.listen(apiPort, () => console.log(`Server running on port ${apiPort}`));

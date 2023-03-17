@@ -1,9 +1,9 @@
 const { db, redisClient } = require("./helpers/database")
 // const MafiaDB = require('./helpers/mafia-model')
 
-process.on('message', (msg) => {
-    console.log('Message from parent:', msg);
-});
+// process.on('message', (msg) => {
+//     console.log('Message from parent:', msg);
+// });
 
 next_state = {
     "starting" : {
