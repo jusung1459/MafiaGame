@@ -59,11 +59,13 @@ class Room {
     game;
     game_state;
     next_game_state;
+    day_counter;
 
-    constructor(room_id, counter, total_counter) {
+    constructor(room_id, counter, total_counter, day_counter) {
         this.room_id = room_id;
         this.counter = counter;
         this.total_counter = total_counter;
+        this.day_counter = day_counter;
     }
 
     async initGame() {
@@ -134,8 +136,7 @@ class Room {
                             "player_id" : "1",
                             "createdAt" : new Date()};
             // todo game counter
-            // message["message"] = this.next_game_state + " " + game.counter;
-            message["message"] = this.next_game_state + " 0";
+            message["message"] = this.next_game_state + " " + this.day_counter;
     
             if (good_players.length <= 0) {
                 this.next_game_state = "end-mafia";
@@ -174,7 +175,6 @@ class Room {
             return;
         } 
     
-        // todo make switch statement
         if (this.game_state == "vote") {
             // count up votes and put player on trial
             let votes = new Map(Object.entries(this.game.votes));

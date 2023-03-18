@@ -27,21 +27,13 @@ StartRoom = (req, res) => {
 
                     // add job to queue
                     roomQueue.add('room', 
-                                    { room: user.room, tick:10, total_tick:900 },  
+                                    { room: user.room, 
+                                        tick:10, 
+                                        total_tick:900,
+                                        day_counter:0 },  
                                     { delay: 1000 })
                     .then((data) => console.log(data.data));
 
-                    // const child_process = fork('./gameServer/game-server.js', [user.room]);
-                    // // child_process.send({"start":"hi"});
-                    // child_process.on("message", (msg) => {
-                    //     console.log(msg);
-                    //     if (msg.action == "update_game") {
-                    //         const socketConnection = require('../helpers/socket-singleton').connection();
-                    //         socketConnection.sendEvent("gameUpdate", msg, user.room);
-                    //     }
-                    //     const socketConnection = require('../helpers/socket-singleton').connection();
-                    //     socketConnection.sendEvent("message", msg, user.room);
-                    // });
                     return res.status(200).json({
                         success: true,
                         message: "started game"
