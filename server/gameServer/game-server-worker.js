@@ -1,4 +1,5 @@
-const { Queue, Worker } = require('bullmq')
+const { Queue, Worker } = require('bullmq');
+const Room = require('./room');
 
 console.log("worker " + process.env.REDIS_URL);
 
@@ -12,8 +13,16 @@ const roomWorker = new Worker('room', async (job)=>{
   console.log(job.data)
 
   if (job.data.total_tick >= 0) {
+    let game_state = undefined;
     if (job.data.tick < 0) {
+      let room = new Room(job.data.room, job.data.tick, job.data.total_tick);
+      await room.update();
+      job.data.tick = room.getNextTime();
+      game_state = room.getState();
+    }
 
+    if (game_state == "end" || game_state === "end-mafia" || game_state === "end-town") {
+      return;
     } else {
       roomQueue.add('room', 
                   { room: job.data.room, tick:(job.data.tick-1), total_tick:(job.data.total_tick-1)},  
@@ -22,6 +31,7 @@ const roomWorker = new Worker('room', async (job)=>{
           process.send({ counter: job.data.tick, room:job.data.room});
       });
     }
+
 
   }
 

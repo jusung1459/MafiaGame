@@ -63,6 +63,9 @@ child_process.on("message", (msg) => {
     console.log(msg);
     const socketConnection = require('./helpers/socket-singleton').connection();
     if (msg.action == "update_game") {
+        console.log("SOCKET UPDATE GAME")
+        console.log(msg)
+        console.log(msg.room)
         socketConnection.sendEvent("gameUpdate", msg, msg.room);
     }
     socketConnection.sendEvent("message", msg, msg.room);
