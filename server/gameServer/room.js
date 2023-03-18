@@ -126,7 +126,7 @@ class Room {
 
     async checkEndGame() {
         redisClient.json.get(`mafia:${this.room_id}`).then((data) => {
-            // console.log(data)
+            console.log(data)
             let evil_players = data.game.evil_players;
             let good_players = data.game.good_players;
             
@@ -137,10 +137,10 @@ class Room {
             // message["message"] = this.next_game_state + " " + game.counter;
             message["message"] = this.next_game_state + " 0";
     
-            if (good_players.length == 0) {
+            if (good_players.length <= 0) {
                 this.next_game_state = "end-mafia";
                 message["message"] = "Mafia won!"
-            } else if (evil_players.length == 0) {
+            } else if (evil_players.length <= 0) {
                 this.next_game_state = "end-town";
                 message["message"] = "Campers won!"
             }
@@ -281,36 +281,41 @@ class Room {
                     let message = { "nickname" : "Game",
                                     "player_id" : "0",
                                     "createdAt" : new Date()};
-                    message["message"] = "The camp has lynched " + against_player_info.nickname + ", camper was " + this.game.roles[lynch_player]+"!";
+                    message["message"] = "The camp has lynched " + against_player_info.nickname + ", camper was " + this.game.game.roles[lynch_player]+"!";
     
                     // remove from good_players or evil_players
-                    let remove_player_index = this.game.good_players.findIndex((player) => {
+                    let remove_player_index = this.game.game.good_players.findIndex((player) => {
                         console.log(player + " " + lynch_player)
                         return player == String(lynch_player)
                     })
                     if (remove_player_index >= 0) {
-                        this.game.good_players.splice(remove_player_index, 1);
+                        this.game.game.good_players.splice(remove_player_index, 1);
                     } else {
-                        remove_player_index = this.game.evil_players.findIndex((player) => {
+                        remove_player_index = this.game.game.evil_players.findIndex((player) => {
                             return player == String(lynch_player)
                         })
                         if (remove_player_index >= 0) {
-                            this.game.evil_players.splice(remove_player_index, 1);
+                            this.game.game.evil_players.splice(remove_player_index, 1);
                         }
                     }
-                    this.game.dead_players.push(String(lynch_player))
+                    this.game.game.dead_players.push(String(lynch_player))
+
+                    remove_player_index = this.game.players.findIndex((player) => {
+                        console.log(player.player_id + " " + lynch_player)
+                        return player.player_id == String(lynch_player)
+                    })
     
                     if (remove_player_index >= 0) {
                         this.game.players[remove_player_index].living = false
                     }
-                    console.log(this.game.players)
-                    console.log(remove_player_index)
+                    // console.log(this.game.players)
+                    // console.log(remove_player_index)
                     
-                    console.log(this.game)
+                    // console.log(this.game)
                     const add_message = redisClient.json.arrAppend(`mafia:${this.room_id}`, '$.messages', message);
                     // const add_dead_player = redisClient.json.arrAppend(`mafia:${this.room_id}`, '$.game.dead_players', String(lynch_player));
                     const living_promise = redisClient.json.set(`mafia:${this.room_id}`, '$.players', this.game.players);
-                    const set_game = redisClient.json.set(`mafia:${this.room_id}`, '$.game', this.game);
+                    const set_game = redisClient.json.set(`mafia:${this.room_id}`, '$.game', this.game.game);
     
                     await Promise.all([add_message, living_promise, set_game])
                     .catch((error) => {
@@ -335,7 +340,7 @@ class Room {
             console.log(this.game.night)
             if (this.game.night != undefined) {
                 const night_roles = new Map(Object.entries(this.game.night));
-                const roles = new Map(Object.entries(this.game.roles));
+                const roles = new Map(Object.entries(this.game.game.roles));
     
                 const role_investigation = {
                     "ranger" : " upkeeps the park",
@@ -349,7 +354,7 @@ class Room {
     
                 let dead_reveal_msgs = [];
                 await Promise.all(Array.from(night_roles).map(([role, value]) => {
-                    against_role = roles.get(value.against_id);
+                    let against_role = roles.get(value.against_id);
                     const against_player_info = this.game.players.find(element => element.player_id == value.against_id);
     
                     if (role === 'ranger' || role === 'littlefeetEVIL') {
@@ -380,21 +385,28 @@ class Room {
                         dead_reveal_msgs.push(dead_reveal_msg);
     
                         // remove from good_players or evil_players
-                        let remove_player_index = this.game.good_players.findIndex((player) => {
+                        console.log("REMOVE PLAYER");
+                        // console.log(this.game);
+                        let remove_player_index = this.game.game.good_players.findIndex((player) => {
                             console.log(player + " " + against_player_info.player_id)
                             return player == against_player_info.player_id
                         })
                         if (remove_player_index >= 0) {
-                            this.game.good_players.splice(remove_player_index, 1);
+                            this.game.game.good_players.splice(remove_player_index, 1);
                         } else {
-                            remove_player_index = this.game.evil_players.findIndex((player) => {
+                            remove_player_index = this.game.game.evil_players.findIndex((player) => {
                                 return player == against_player_info.player_id
                             })
                             if (remove_player_index >= 0) {
-                                this.game.evil_players.splice(remove_player_index, 1);
+                                this.game.game.evil_players.splice(remove_player_index, 1);
                             }
                         }
-                        this.game.dead_players.push(against_player_info.player_id)
+                        this.game.game.dead_players.push(against_player_info.player_id)
+
+                        remove_player_index = this.game.players.findIndex((player) => {
+                            console.log(player.player_id + " " + against_player_info.player_id)
+                            return player.player_id == against_player_info.player_id
+                        })
     
                         if (remove_player_index >= 0) {
                             this.game.players[remove_player_index].living = false
@@ -405,11 +417,11 @@ class Room {
                         if (role === 'hunter') {                        
                             const dec_role = redisClient.json.numIncrBy(`mafia:${this.room_id}`, '$.role_counter.hunter', -1);
                             const set_player_dead = redisClient.json.set(`mafia:${this.room_id}`, "$.players", this.game.players);
-                            const set_game = redisClient.json.set(`mafia:${this.room_id}`, '$.game', this.game);
+                            const set_game = redisClient.json.set(`mafia:${this.room_id}`, '$.game', this.game.game);
                             return Promise.all([dec_role, set_player_dead, set_game])
                         } else {
                             const set_player_dead = redisClient.json.set(`mafia:${this.room_id}`, "$.players", this.game.players);
-                            const set_game = redisClient.json.set(`mafia:${this.room_id}`, '$.game', this.game);
+                            const set_game = redisClient.json.set(`mafia:${this.room_id}`, '$.game', this.game.game);
                             return Promise.all([set_player_dead, set_game])
                         }
                     }
