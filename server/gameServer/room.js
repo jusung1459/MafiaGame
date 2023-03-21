@@ -465,6 +465,10 @@ class Room {
             console.log(error);
         });
 
+        if (this.game_state === this.next_game_state) {
+            return;
+        }
+
         console.log(this.next_game_state)
 
         try {
