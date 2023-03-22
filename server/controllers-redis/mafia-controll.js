@@ -100,44 +100,54 @@ joinRoom = (req, res) => {
         });
     }
 
-    const user = {nickname : nickname,
-        room : room_id,
-        player_id : player_id,
-        ip : ip,
-        browser : browser,
-        owner : false};
+    redisClient.json.get(`mafia:${room_id}`).then((result) => {
+        console.log(result.players)
+        console.log(result.players.length)
 
-    const join_message = {
-        message : nickname + " has joined",
-        nickname : "Game",
-        player_id : "0", 
-        createdAt : new Date()
-    }
-    const new_player = {
-        nickname : nickname,
-        player_id : player_id,
-        living : true,
-    }
-    const add_player = redisClient.json.arrAppend(`mafia:${room_id}`, '$.players', new_player);
-    const add_message = redisClient.json.arrAppend(`mafia:${room_id}`, '$.messages', join_message);
-    Promise.all([add_player, add_message]).then((result) => {
-        if (result === null) {
-            throw ("Room does not exist");
-        }
-        const token = jwt.sign(user, process.env.JWT_KEY, { expiresIn : '7d'});
+        if (result.players.length < 10) {
+            const user = {nickname : nickname,
+                room : room_id,
+                player_id : player_id,
+                ip : ip,
+                browser : browser,
+                owner : false};
         
-        // send socket message to room of udpated message
-        const socketConnection = require('../helpers/socket-singleton').connection();
-        socketConnection.sendEvent("gameUpdate", "message", user.room);
-
-        return res.status(201).json({
-            success: true,
-            nickname : user.nickname,
-            room: room_id,
-            player_id: player_id,
-            token: token,
-            message: 'joined room',
-        })
+            const join_message = {
+                message : nickname + " has joined",
+                nickname : "Game",
+                player_id : "0", 
+                createdAt : new Date()
+            }
+            const new_player = {
+                nickname : nickname,
+                player_id : player_id,
+                living : true,
+            }
+            const add_player = redisClient.json.arrAppend(`mafia:${room_id}`, '$.players', new_player);
+            const add_message = redisClient.json.arrAppend(`mafia:${room_id}`, '$.messages', join_message);
+            Promise.all([add_player, add_message]).then((result) => {
+                if (result === null) {
+                    throw ("Room does not exist");
+                }
+                const token = jwt.sign(user, process.env.JWT_KEY, { expiresIn : '7d'});
+                
+                // send socket message to room of udpated message
+                const socketConnection = require('../helpers/socket-singleton').connection();
+                socketConnection.sendEvent("gameUpdate", "message", user.room);
+        
+                return res.status(201).json({
+                    success: true,
+                    nickname : user.nickname,
+                    room: room_id,
+                    player_id: player_id,
+                    token: token,
+                    message: 'joined room',
+                })
+            })
+        } else {
+            throw new Error("Room Full")
+        }
+        
     }).catch(error => {
         return res.status(400).json({
             error: JSON.stringify(error),
