@@ -24,19 +24,11 @@ role = (req, res) => {
     };
 
     redisClient.json.get(`mafia:${user.room}`).then((data) => {
-
-        //todo
-        // if check for correct state, both player are alive
-        // throw new Error("something");
         const against_player_info = data.players.find(element => element.player_id == against_player_id);
         const player_info = data.players.find(element => element.player_id == user.player_id);
-        console.log(player_info.living && against_player_info.living)
 
         if (player_info.living && against_player_info.living) {
             const player_role = data.game.roles[user.player_id];
-            // console.log(player_role)
-            // console.log(data.role_counter)
-            // console.log(data.role_counter[player_role])
             const player_role_counter = data.role_counter[player_role];
     
             if (player_role_counter === undefined || player_role_counter > 0) {
