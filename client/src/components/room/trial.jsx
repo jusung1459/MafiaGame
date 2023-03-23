@@ -16,6 +16,11 @@ function Trial(props) {
 
     useEffect(() => {
         // console.log(props)
+        // reset votes after trial
+        if (props.game.state !== "trial") {
+            setActive_lynch(false);
+            setActive_save(false);
+        }
         
     }, [props.game])
 
