@@ -217,7 +217,8 @@ getRoom = (req, res) => {
 
         if (data.game.state != 'waiting') {
             data.role = data.game.roles[user.player_id];
-
+            
+            // evil player filter
             if (data.game.roles[user.player_id].includes("EVIL")) {
                 data.evil_chat = secrets.get("evil");
                 if (data.evil_chat == undefined) {

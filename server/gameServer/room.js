@@ -128,7 +128,7 @@ class Room {
 
     async checkEndGame() {
         redisClient.json.get(`mafia:${this.room_id}`).then((data) => {
-            console.log(data)
+            // console.log(data)
             let evil_players = data.game.evil_players;
             let good_players = data.game.good_players;
             
@@ -145,7 +145,7 @@ class Room {
                 this.next_game_state = "end-town";
                 message["message"] = "Campers won!"
             }
-            console.log(this.next_game_state)
+            // console.log(this.next_game_state)
             // if (this.next_game_state == "night") {
             //     game.counter++;
             // }
@@ -246,7 +246,7 @@ class Room {
                 let vote_count_guilty = 0
                 let vote_count_inno = 0
                 this.game.players.forEach((player) => {
-                    console.log(player)
+                    // console.log(player)
                     if (player.living == true) {
                         let message = { "nickname" : "Game",
                                     "player_id" : "0",
@@ -264,8 +264,8 @@ class Room {
                         messages.push(message)
                     }
                 })
-                console.log(vote_count_guilty + " " + vote_count_inno)
-                console.log(messages);
+                // console.log(vote_count_guilty + " " + vote_count_inno)
+                // console.log(messages);
     
                 const add_message = redisClient.json.arrAppend(`mafia:${this.room_id}`, '$.messages', ...messages);
                 const reset_trial = redisClient.json.set(`mafia:${this.room_id}`, '$.trial', {votes: {}, trial_player:""});

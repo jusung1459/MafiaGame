@@ -22,12 +22,13 @@ const roomWorker = new Worker('room', async (job)=>{
       await room.update();
       job.data.tick = room.getNextTime();
       game_state = room.getState();
+      console.log("counter: ", job.data.day_counter)
     }
 
-    if (game_state == "end" || game_state === "end-mafia" || game_state === "end-town") {
+    if (game_state == "end" || game_state == "end-mafia" || game_state == "end-town") {
       return;
     } else {
-      if (game_state == "night") {
+      if (game_state == "trial" || game_state == "after_trial_talk") {
         roomQueue.add('room', 
                   { room: job.data.room, 
                     tick:(job.data.tick-1), 
