@@ -101,8 +101,8 @@ joinRoom = (req, res) => {
     }
 
     redisClient.json.get(`mafia:${room_id}`).then((result) => {
-        console.log(result.players)
-        console.log(result.players.length)
+        // console.log(result.players)
+        // console.log(result.players.length)
 
         if (result.players.length < 10) {
             const user = {nickname : nickname,
@@ -224,8 +224,10 @@ getRoom = (req, res) => {
                 if (data.evil_chat == undefined) {
                     data.evil_chat  = [];
                 }
+                data.evil_players = data['game']['evil_players'];
             } else {
                 data.evil_chat  = [];
+                data.evil_players = [];
             }
         }
         delete data['game']['evil_players'];
