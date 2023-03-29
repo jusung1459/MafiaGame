@@ -34,7 +34,7 @@ const roomWorker = new Worker('room', async (job)=>{
                     tick:(job.data.tick-1), 
                     total_tick:(job.data.total_tick-1),
                     day_counter:job.data.day_counter+1},  
-                  { delay: 1000 })
+                  { delay: 1000, removeOnComplete: 1000, removeOnFail: 5000 })
         .then((data) => {
             process.send({ counter: job.data.tick, room:job.data.room});
         });
@@ -44,7 +44,7 @@ const roomWorker = new Worker('room', async (job)=>{
                       tick:(job.data.tick-1), 
                       total_tick:(job.data.total_tick-1),
                       day_counter:job.data.day_counter},  
-                    { delay: 1000 })
+                    { delay: 1000, removeOnComplete: 1000, removeOnFail: 5000 })
         .then((data) => {
             process.send({ counter: job.data.tick, room:job.data.room});
         });
