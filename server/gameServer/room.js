@@ -71,7 +71,7 @@ class Room {
     async initGame() {
         // getting game state
 
-        console.log(this.room_id)
+        // console.log(this.room_id)
         redisClient.json.get(`mafia:${this.room_id}`).then((data) => {
             // console.log(data)
             this.game = data
@@ -145,18 +145,12 @@ class Room {
                 this.next_game_state = "end-town";
                 message["message"] = "Campers won!"
             }
-            // console.log(this.next_game_state)
-            // if (this.next_game_state == "night") {
-            //     game.counter++;
-            // }
     
             const add_message = redisClient.json.arrAppend(`mafia:${this.room_id}`, '$.messages', message);
             const reset_night = redisClient.json.set(`mafia:${this.room_id}`, '$.night', {});
             const change_state = redisClient.json.set(`mafia:${this.room_id}`, '$.game.state', this.next_game_state);
     
             Promise.all([add_message, reset_night, change_state]).then((data) => {
-                // console.log(data);
-                console.log("UPDATE GAMEEEEEEEEEEEEEEEEEEEEEEEEEE")
                 process.send({action : "update_game", room : this.room_id});
             }).catch(error => {
                 console.log(error);
@@ -168,7 +162,7 @@ class Room {
     }
     
     async checkState() {
-        console.log("game state: " + this.game_state);
+        // console.log("game state: " + this.game_state);
     
         if (this.game_state == "end" || this.game_state == "end-mafia" || this.game_state == "end-town") {
             // process.exit(0);
@@ -189,9 +183,9 @@ class Room {
             });
             let lynch_player = null;
             if (votes.size > 0) {
-                console.log(vote_counts)
+                // console.log(vote_counts)
                 let votesDesc = [...vote_counts.entries()].sort((a,b) => b[1] - a[1])
-                console.log(votesDesc);
+                // console.log(votesDesc);
                 if (votesDesc.length > 1) {
                     if (votesDesc[0][1] > votesDesc[1][1]) {
                         // lynch player
