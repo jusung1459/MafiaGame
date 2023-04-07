@@ -1,5 +1,6 @@
 const { db, redisClient } = require("./helpers/database");
 const { Queue } = require('bullmq');
+const { DataHandler } = require("./helpers/DataHandler");
 
 const roomQueue = new Queue('room', { connection: {
     host: process.env.REDIS_URL,
@@ -60,19 +61,21 @@ class Room {
     game_state;
     next_game_state;
     day_counter;
+    #dataHandler;
 
     constructor(room_id, counter, total_counter, day_counter) {
         this.room_id = room_id;
         this.counter = counter;
         this.total_counter = total_counter;
         this.day_counter = day_counter;
+        this.#dataHandler = new DataHandler(room_id);
     }
 
     async initGame() {
         // getting game state
 
         // console.log(this.room_id)
-        redisClient.json.get(`mafia:${this.room_id}`).then((data) => {
+        this.#dataHandler.getRoomData().then((data) => {
             // console.log(data)
             this.game = data
 
@@ -81,7 +84,7 @@ class Room {
             players = players.sort(() => Math.random() - 0.5);
             let evil_players = [];
             let good_players = [];
-            let dead_players = []
+            let dead_players = [];
             let role_map = new Map();
             players.forEach(function(player, index) {
                 role_map.set(player.player_id, roles[index]);
@@ -110,10 +113,9 @@ class Room {
                 this.game.secret[player.player_id] = [];
             })
             
-
-            const set_game = redisClient.json.set(`mafia:${this.room_id}`, '$.game', new_game_state);
-            const set_role = redisClient.json.set(`mafia:${this.room_id}`, '$.role_counter', role_counter);
-            const set_secret = redisClient.json.set(`mafia:${this.room_id}`, '$.secret', this.game.secret);
+            const set_game = this.#dataHandler.addRoomData('$.game', new_game_state);
+            const set_role = this.#dataHandler.addRoomData('$.role_counter', role_counter);
+            const set_secret = this.#dataHandler.addRoomData('$.secret', this.game.secret);
 
             Promise.all([set_game, set_role, set_secret]).then((data) => {
                 // console.log(data);
@@ -127,7 +129,7 @@ class Room {
     }
 
     async checkEndGame() {
-        redisClient.json.get(`mafia:${this.room_id}`).then((data) => {
+        await this.#dataHandler.getRoomData().then((data) => {
             // console.log(data)
             let evil_players = data.game.evil_players;
             let good_players = data.game.good_players;
@@ -146,9 +148,9 @@ class Room {
                 message["message"] = "Campers won!"
             }
     
-            const add_message = redisClient.json.arrAppend(`mafia:${this.room_id}`, '$.messages', message);
-            const reset_night = redisClient.json.set(`mafia:${this.room_id}`, '$.night', {});
-            const change_state = redisClient.json.set(`mafia:${this.room_id}`, '$.game.state', this.next_game_state);
+            const add_message = this.#dataHandler.appendRoomData('$.messages', message);
+            const reset_night = this.#dataHandler.addRoomData('$.night', {});
+            const change_state = this.#dataHandler.addRoomData('$.game.state', this.next_game_state);
     
             Promise.all([add_message, reset_night, change_state]).then((data) => {
                 process.send({action : "update_game", room : this.room_id});
@@ -207,16 +209,16 @@ class Room {
             // console.log(lynch_player)
             if (lynch_player != null) {
                 // place player on trial
-                const set_trial_player = redisClient.json.set(`mafia:${this.room_id}`, '$.trial.trial_player', String(lynch_player));
-                const reset_votes = redisClient.json.set(`mafia:${this.room_id}`, '$.votes', {});
+                const set_trial_player = this.#dataHandler.addRoomData('$.trial.trial_player', String(lynch_player));
+                const reset_votes = this.#dataHandler.addRoomData('$.votes', {});
                 Promise.all([set_trial_player, reset_votes]).then((data) => {
                     console.log(data)
                 }).catch(error => {
                     console.log(error);
                 });
             } else {
-                const set_trial_player = redisClient.json.set(`mafia:${this.room_id}`, '$.trial.trial_player', "");
-                const reset_votes = redisClient.json.set(`mafia:${this.room_id}`, '$.votes', {});
+                const set_trial_player = this.#dataHandler.addRoomData('$.trial.trial_player', "");
+                const reset_votes = this.#dataHandler.addRoomData('$.votes', {});
                 Promise.all([set_trial_player, reset_votes]).then((data) => {
                     console.log(data)
                 }).catch(error => {
@@ -261,8 +263,8 @@ class Room {
                 // console.log(vote_count_guilty + " " + vote_count_inno)
                 // console.log(messages);
     
-                const add_message = redisClient.json.arrAppend(`mafia:${this.room_id}`, '$.messages', ...messages);
-                const reset_trial = redisClient.json.set(`mafia:${this.room_id}`, '$.trial', {votes: {}, trial_player:""});
+                const add_message = this.#dataHandler.appendRoomData('$.messages', ...messages);
+                const reset_trial = this.#dataHandler.addRoomData('$.trial', {votes: {}, trial_player:""});
     
                 await Promise.all([reset_trial, add_message]).catch(error => {
                     console.log(error);
@@ -306,10 +308,9 @@ class Room {
                     // console.log(remove_player_index)
                     
                     // console.log(this.game)
-                    const add_message = redisClient.json.arrAppend(`mafia:${this.room_id}`, '$.messages', message);
-                    // const add_dead_player = redisClient.json.arrAppend(`mafia:${this.room_id}`, '$.game.dead_players', String(lynch_player));
-                    const living_promise = redisClient.json.set(`mafia:${this.room_id}`, '$.players', this.game.players);
-                    const set_game = redisClient.json.set(`mafia:${this.room_id}`, '$.game', this.game.game);
+                    const add_message = this.#dataHandler.appendRoomData('$.messages', message);
+                    const living_promise = this.#dataHandler.addRoomData('$.players', this.game.players);
+                    const set_game = this.#dataHandler.addRoomData('$.game', this.game.game);
     
                     await Promise.all([add_message, living_promise, set_game])
                     .catch((error) => {
@@ -363,11 +364,11 @@ class Room {
                         message["message"] = against_player_info.nickname + role_investigation[against_role];
     
                         if (role === 'littlefeetEVIL') {
-                            const dec_role = redisClient.json.numIncrBy(`mafia:${this.room_id}`, '$.role_counter.littlefeetEVIL', -1);
-                            const add_secret_message = redisClient.json.arrAppend(`mafia:${this.room_id}`, "$.secret." + value.player_id, message);
+                            const dec_role = this.#dataHandler.incrData('$.role_counter.littlefeetEVIL');
+                            const add_secret_message = this.#dataHandler.appendRoomData("$.secret." + value.player_id, message);
                             return Promise.all([dec_role, add_secret_message])
                         } else {
-                            return redisClient.json.arrAppend(`mafia:${this.room_id}`, "$.secret." + value.player_id, message);
+                            return this.#dataHandler.appendRoomData("$.secret." + value.player_id, message);
                         }
                     } else if (role === 'hunter' || role === 'sasquatchEVIL') {
                         // kill player and remove from alive
@@ -409,19 +410,19 @@ class Room {
                         console.log(remove_player_index)
     
                         if (role === 'hunter') {                        
-                            const dec_role = redisClient.json.numIncrBy(`mafia:${this.room_id}`, '$.role_counter.hunter', -1);
-                            const set_player_dead = redisClient.json.set(`mafia:${this.room_id}`, "$.players", this.game.players);
-                            const set_game = redisClient.json.set(`mafia:${this.room_id}`, '$.game', this.game.game);
+                            const dec_role = this.#dataHandler.incrData('$.role_counter.hunter');
+                            const set_player_dead = this.#dataHandler.addRoomData("$.players", this.game.players);
+                            const set_game = this.#dataHandler.addRoomData('$.game', this.game.game);
                             return Promise.all([dec_role, set_player_dead, set_game])
                         } else {
-                            const set_player_dead = redisClient.json.set(`mafia:${this.room_id}`, "$.players", this.game.players);
-                            const set_game = redisClient.json.set(`mafia:${this.room_id}`, '$.game', this.game.game);
+                            const set_player_dead = this.#dataHandler.addRoomData("$.players", this.game.players);
+                            const set_game = this.#dataHandler.addRoomData('$.game', this.game.game);
                             return Promise.all([set_player_dead, set_game])
                         }
                     }
                 })).then((data) => {
                     if (dead_reveal_msgs.length > 0) {
-                        redisClient.json.arrAppend(`mafia:${this.room_id}`, '$.messages', ...dead_reveal_msgs)
+                        this.#dataHandler.appendRoomData('$.messages', ...dead_reveal_msgs)
                         .catch(error => {
                             console.log(error);
                         });
@@ -442,9 +443,9 @@ class Room {
         console.log("update game")
 
         // getting game state
-        await redisClient.json.get(`mafia:${this.room_id}`).then((data) => {
+        await this.#dataHandler.getRoomData().then((data) => {
             console.log("first then")
-            // console.log(data)
+            console.log(data)
             this.game = data;
             this.game_state = this.game.game.state;
             console.log(next_state[this.game_state]);
