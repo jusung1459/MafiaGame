@@ -20,7 +20,7 @@ StartRoom = (req, res) => {
             if (user.player_id == data.owner) {
                 if (data.game.state == "waiting" || data.game.state == "end") {
 
-                    let room = new Room(user.room, 10, 900);
+                    let room = new Room(user.room, 10, 900, 0);
                     room.initGame();
                     const socketConnection = require('../helpers/socket-singleton').connection();
                     socketConnection.sendEvent("gameUpdate", "update", user.room);
