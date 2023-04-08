@@ -55,13 +55,9 @@ game_roles = ["ranger", "sasquatchEVIL", "camper", "camper", "camper", "hunter",
 
 class StandardGame extends AbstractGame {
 
-    room_id;
-    counter;
-    total_counter;
     game;
     game_state;
     next_game_state;
-    day_counter;
 
     constructor(room_id, counter, total_counter, day_counter) {
       super(room_id, counter, total_counter, day_counter);
@@ -136,13 +132,13 @@ class StandardGame extends AbstractGame {
 
             console.log("end first")
             
-            return true;
+            return;
         }).catch(error => {
             console.log(error);
         });
 
         if (this.game_state === this.next_game_state) {
-            return true;
+            return;
         }
 
         console.log(this.next_game_state);

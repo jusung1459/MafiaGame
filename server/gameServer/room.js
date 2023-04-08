@@ -16,22 +16,23 @@ class Room {
 
     async update() {
         try {
-            if (await this.game.updateGame()) {
-                return;
-            }
+            await this.game.updateGame();
         } catch (err) {
+            console.log("update game error")
             console.log(err);
         }
 
         try {
             await this.game.checkStateGame();
         } catch (err) {
+            console.log("check state game error")
             console.log(err);
         }
 
         try {
             await this.game.checkEndGame();
         } catch (err) {
+            console.log("check end game error")
             console.log(err)
         }
     }
