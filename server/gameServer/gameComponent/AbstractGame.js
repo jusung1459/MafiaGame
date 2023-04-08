@@ -34,11 +34,9 @@ class AbstractGame {
     }
 
     getNextTime() {
-        return this.counter;
     }
 
     getState() {
-        return this.game_state;
     }
     
 }

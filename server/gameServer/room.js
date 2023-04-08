@@ -24,7 +24,7 @@ class Room {
         }
 
         try {
-            await this.game.checkState();
+            await this.game.checkStateGame();
         } catch (err) {
             console.log(err);
         }
@@ -41,7 +41,7 @@ class Room {
     }
 
     getState() {
-        return this.game.getNextTime();
+        return this.game.getState();
     }
 }
 

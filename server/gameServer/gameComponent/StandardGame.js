@@ -8,52 +8,52 @@ const { Queue } = require('bullmq');
 const { DataHandler } = require("../helpers/DataHandler");
 const AbstractGame = require('./AbstractGame');
 
-class StandardGame extends AbstractGame {
+next_state = {
+    "starting" : {
+        "next" : "start",
+        "time" : 10
+    },
+    "start" : {
+        "next" : "night",
+        "time" : 5
+    },
+    "night" : {
+        "next" : "day_talk",
+        "time" : 5
+    },
+    "day_talk" : {
+        "next" : "vote",
+        "time" : 5
+    },
+    "vote" : {
+        "next" : "trial",
+        "time" : 5
+    },
+    "trial" : {
+        "next" : "night",
+        "time" : 5
+    },
+    "after_trial_talk" : {
+        "next" : "night",
+        "time" : 5
+    },
+    "end" : {
+        "next" : "end",
+        "time" : 1,
+    },
+    "end-mafia" : {
+        "next" : "end-mafia",
+        "time" : 1,
+    },
+    "end-town" : {
+        "next" : "end-town",
+        "time" : 1,
+    },
+}
 
-    next_state = {
-        "starting" : {
-            "next" : "start",
-            "time" : 10
-        },
-        "start" : {
-            "next" : "night",
-            "time" : 5
-        },
-        "night" : {
-            "next" : "day_talk",
-            "time" : 5
-        },
-        "day_talk" : {
-            "next" : "vote",
-            "time" : 5
-        },
-        "vote" : {
-            "next" : "trial",
-            "time" : 5
-        },
-        "trial" : {
-            "next" : "night",
-            "time" : 5
-        },
-        "after_trial_talk" : {
-            "next" : "night",
-            "time" : 5
-        },
-        "end" : {
-            "next" : "end",
-            "time" : 1,
-        },
-        "end-mafia" : {
-            "next" : "end-mafia",
-            "time" : 1,
-        },
-        "end-town" : {
-            "next" : "end-town",
-            "time" : 1,
-        },
-    }
-    
-    roles = ["ranger", "sasquatchEVIL", "camper", "camper", "camper", "hunter", "littlefeetEVIL", "camper", "lumberjack", "bigfeetEVIL"];
+game_roles = ["ranger", "sasquatchEVIL", "camper", "camper", "camper", "hunter", "littlefeetEVIL", "camper", "lumberjack", "bigfeetEVIL"];
+
+class StandardGame extends AbstractGame {
 
     room_id;
     counter;
@@ -81,8 +81,8 @@ class StandardGame extends AbstractGame {
             let dead_players = [];
             let role_map = new Map();
             players.forEach(function(player, index) {
-                role_map.set(player.player_id, roles[index]);
-                if (roles[index].includes("EVIL")) {
+                role_map.set(player.player_id, game_roles[index]);
+                if (game_roles[index].includes("EVIL")) {
                     evil_players.push(player.player_id);
                 } else {
                     good_players.push(player.player_id);
@@ -126,7 +126,7 @@ class StandardGame extends AbstractGame {
         // getting game state
         await this.dataHandler.getRoomData().then((data) => {
             console.log("first then")
-            console.log(data)
+            // console.log(data)
             this.game = data;
             this.game_state = this.game.game.state;
             console.log(next_state[this.game_state]);
@@ -195,7 +195,7 @@ class StandardGame extends AbstractGame {
                 const set_trial_player = this.dataHandler.addRoomData('$.trial.trial_player', String(lynch_player));
                 const reset_votes = this.dataHandler.addRoomData('$.votes', {});
                 Promise.all([set_trial_player, reset_votes]).then((data) => {
-                    console.log(data)
+                    // console.log(data)
                 }).catch(error => {
                     console.log(error);
                 });
@@ -203,7 +203,7 @@ class StandardGame extends AbstractGame {
                 const set_trial_player = this.dataHandler.addRoomData('$.trial.trial_player', "");
                 const reset_votes = this.dataHandler.addRoomData('$.votes', {});
                 Promise.all([set_trial_player, reset_votes]).then((data) => {
-                    console.log(data)
+                    // console.log(data)
                 }).catch(error => {
                     console.log(error);
                 });
@@ -405,7 +405,7 @@ class StandardGame extends AbstractGame {
                         });
                     }
                     console.log("after await")
-                    console.log(data)
+                    // console.log(data)
                 });
     
                 
@@ -449,6 +449,14 @@ class StandardGame extends AbstractGame {
             console.log(error);
         });
         return;
+    }
+
+    getNextTime() {
+        return this.counter;
+    }
+
+    getState() {
+        return this.game_state;
     }
     
 }

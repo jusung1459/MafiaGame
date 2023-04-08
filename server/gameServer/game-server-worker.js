@@ -10,8 +10,8 @@ const roomQueue = new Queue('room', { connection: {
 
 const roomWorker = new Worker('room', async (job)=>{
   // Optionally report some progress
+  // return;
   console.log(job.data);
-
   if (job.data.total_tick >= 0) {
     let game_state = undefined;
     if (job.data.tick < 0) {
@@ -19,11 +19,14 @@ const roomWorker = new Worker('room', async (job)=>{
                           job.data.tick, 
                           job.data.total_tick,
                           job.data.day_counter);
-      await room.runState();
+      await room.update();
       job.data.tick = room.getNextTime();
       game_state = room.getState();
       console.log("counter: ", job.data.day_counter)
     }
+
+    console.log("state: " + game_state);
+    console.log("tick: " + job.data.tick);
 
     if (game_state == "end" || game_state == "end-mafia" || game_state == "end-town") {
       return;
