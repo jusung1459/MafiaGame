@@ -7,6 +7,8 @@ const { db, redisClient } = require("../helpers/database");
 const { Queue } = require('bullmq');
 const { DataHandler } = require("../helpers/DataHandler");
 const AbstractGame = require('./AbstractGame');
+const RangerNightRole = require('./standardNightRoles/RangerNightRole');
+const LittleFeetNightRole = require('./standardNightRoles/LittleFeetNightRole');
 
 next_state = {
     "starting" : {
@@ -324,25 +326,19 @@ class StandardGame extends AbstractGame {
                 await Promise.all(Array.from(night_roles).map(([role, value]) => {
                     let against_role = roles.get(value.against_id);
                     const against_player_info = this.game.players.find(element => element.player_id == value.against_id);
-    
-                    if (role === 'ranger' || role === 'littlefeetEVIL') {
-                        // get against_id players role
-                        // send message through secret channel
-                        console.log("in ranger");
-                        const against_role = roles.get(value.against_id);
-                        let message = { "nickname" : "Game",
-                                        "player_id" : "0",
-                                        "createdAt" : new Date()};
-                        
-                        message["message"] = against_player_info.nickname + role_investigation[against_role];
-    
-                        if (role === 'littlefeetEVIL') {
-                            const dec_role = this.dataHandler.incrData('$.role_counter.littlefeetEVIL');
-                            const add_secret_message = this.dataHandler.appendRoomData("$.secret." + value.player_id, message);
-                            return Promise.all([dec_role, add_secret_message])
-                        } else {
-                            return this.dataHandler.appendRoomData("$.secret." + value.player_id, message);
-                        }
+                    console.log("value")
+                    console.log(value);
+                    if (role === 'ranger') {
+                        let rangerNightRole = new RangerNightRole(against_role, against_player_info, this.room_id, value);
+                        rangerNightRole.messageAction();
+                        rangerNightRole.nightAction();
+                        let rangerPromiseExecute = rangerNightRole.executeRole();
+                        return rangerPromiseExecute;
+                    } else if (role === 'littlefeetEVIL') {
+                        let littlefeetNightRole = new LittleFeetNightRole(against_role, against_player_info, this.room_id, value);
+                        littlefeetNightRole.messageAction();
+                        littlefeetNightRole.nightAction();
+                        return littlefeetNightRole.executeRole();
                     } else if (role === 'hunter' || role === 'sasquatchEVIL') {
                         // kill player and remove from alive
                         console.log("hunter: " );
@@ -402,7 +398,7 @@ class StandardGame extends AbstractGame {
                     }
                     console.log("after await")
                     // console.log(data)
-                });
+                }).catch(error => console.log(error));
     
                 
             }
