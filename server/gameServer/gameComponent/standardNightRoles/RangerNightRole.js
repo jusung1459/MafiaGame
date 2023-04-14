@@ -8,7 +8,7 @@ class RangerNightRole extends AbstractNightRole {
 
     constructor(against_role, against_player_info, room_id, player) {
         super(against_role, against_player_info, room_id);
-        this.player = player;
+        this.player = player.player_id;
     }
 
 
@@ -26,7 +26,9 @@ class RangerNightRole extends AbstractNightRole {
     }
 
     async executeRole() {
-        return this.dataHandler.appendRoomData("$.secret." + this.player.player_id, this.message);
+        console.log(this.message);
+        console.log(this.player);
+        return this.dataHandler.appendRoomData("$.secret." + this.player, this.message);
     }
     
 }
