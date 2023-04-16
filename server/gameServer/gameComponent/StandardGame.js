@@ -326,8 +326,7 @@ class StandardGame extends AbstractGame {
                 await Promise.all(Array.from(night_roles).map(([role, value]) => {
                     let against_role = roles.get(value.against_id);
                     const against_player_info = this.game.players.find(element => element.player_id == value.against_id);
-                    console.log("value")
-                    console.log(value);
+                    
                     if (role === 'ranger') {
                         let rangerNightRole = new RangerNightRole(against_role, against_player_info, this.room_id, value);
                         rangerNightRole.messageAction();
