@@ -18,7 +18,7 @@ class SasquatchNightRole extends AbstractNightRole {
         this.message = { "nickname" : "Game",
                             "player_id" : "0"};
                         
-        this.message["message"] = this.against_player_info.nickname + this.role_msg;
+        this.message["message"] = this.against_player_info.nickname + " was found dead tonight, camper was " + this.against_role + "!";
         return;
     }
 
@@ -54,7 +54,7 @@ class SasquatchNightRole extends AbstractNightRole {
 
     async executeRole() {
         const set_player_dead = this.dataHandler.addRoomData("$.players", this.game_players);
-        const set_game = this.dataHandler.addRoomData('$.game', this.game.game);
+        const set_game = this.dataHandler.addRoomData('$.game', this.game);
         const add_mesg = this.dataHandler.appendRoomData('$.messages', this.message);
         return Promise.all([set_player_dead, set_game, add_mesg])
     }
