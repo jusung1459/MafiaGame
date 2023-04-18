@@ -9,6 +9,7 @@ const { DataHandler } = require("../helpers/DataHandler");
 const AbstractGame = require('./AbstractGame');
 const RangerNightRole = require('./standardNightRoles/RangerNightRole');
 const LittleFeetNightRole = require('./standardNightRoles/LittleFeetNightRole');
+const SasquatchNightRole = require('./standardNightRoles/SasquatchNightRole');
 
 next_state = {
     "starting" : {
@@ -326,20 +327,38 @@ class StandardGame extends AbstractGame {
                 await Promise.all(Array.from(night_roles).map(([role, value]) => {
                     let against_role = roles.get(value.against_id);
                     const against_player_info = this.game.players.find(element => element.player_id == value.against_id);
-                    console.log("value")
-                    console.log(value);
+
                     if (role === 'ranger') {
-                        let rangerNightRole = new RangerNightRole(against_role, against_player_info, this.room_id, value);
+                        let rangerNightRole = new RangerNightRole(against_role, 
+                                                                against_player_info, 
+                                                                this.room_id, 
+                                                                value);
                         rangerNightRole.messageAction();
                         rangerNightRole.nightAction();
                         let rangerPromiseExecute = rangerNightRole.executeRole();
                         return rangerPromiseExecute;
                     } else if (role === 'littlefeetEVIL') {
-                        let littlefeetNightRole = new LittleFeetNightRole(against_role, against_player_info, this.room_id, value);
+                        let littlefeetNightRole = new LittleFeetNightRole(against_role, 
+                                                                        against_player_info, 
+                                                                        this.room_id, 
+                                                                        value);
                         littlefeetNightRole.messageAction();
                         littlefeetNightRole.nightAction();
                         return littlefeetNightRole.executeRole();
-                    } else if (role === 'hunter' || role === 'sasquatchEVIL') {
+                    } else if (role === 'sasquatchEVIL') {
+                        let sasquatchNightRole = new SasquatchNightRole(against_role, 
+                                                                    against_player_info, 
+                                                                    this.room_id, 
+                                                                    value,
+                                                                    this.game.game,
+                                                                    this.game.players);
+                        sasquatchNightRole.messageAction();
+                        sasquatchNightRole.nightAction();
+                        return sasquatchNightRole.executeRole();
+                    } else if (role === 'hunter') {
+
+
+                    } else if (role === 'temp') {
                         // kill player and remove from alive
                         console.log("hunter: " );
     
