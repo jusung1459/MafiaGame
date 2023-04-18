@@ -10,7 +10,7 @@ const roomQueue = new Queue('room', { connection: {
 
 const roomWorker = new Worker('room', async (job)=>{
   // Optionally report some progress
-  return;
+  // return;
   console.log(job.data);
   if (job.data.total_tick >= 0) {
     let game_state = undefined;
