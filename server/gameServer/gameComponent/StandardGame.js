@@ -341,16 +341,17 @@ class StandardGame extends AbstractGame {
                         let littlefeetNightRole = new LittleFeetNightRole(against_role, 
                                                                         against_player_info, 
                                                                         this.room_id, 
-                                                                        value,
-                                                                        this.game.game,
-                                                                        this.game.players);
+                                                                        value);
                         littlefeetNightRole.messageAction();
                         littlefeetNightRole.nightAction();
                         return littlefeetNightRole.executeRole();
                     } else if (role === 'sasquatchEVIL') {
                         let sasquatchNightRole = new SasquatchNightRole(against_role, 
                                                                     against_player_info, 
-                                                                    this.room_id, value);
+                                                                    this.room_id, 
+                                                                    value,
+                                                                    this.game.game,
+                                                                    this.game.players);
                         sasquatchNightRole.messageAction();
                         sasquatchNightRole.nightAction();
                         return sasquatchNightRole.executeRole();

@@ -25,7 +25,7 @@ class SasquatchNightRole extends AbstractNightRole {
     nightAction() {
         // remove from good_players or evil_players
         console.log("REMOVE PLAYER");
-        // console.log(this.game);
+        console.log(this.game);
         let remove_player_index = this.game.good_players.findIndex((player) => {
             console.log(player + " " + this.against_player_info.player_id)
             return player == this.against_player_info.player_id
