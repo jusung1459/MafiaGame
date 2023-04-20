@@ -10,6 +10,7 @@ const AbstractGame = require('./AbstractGame');
 const RangerNightRole = require('./standardNightRoles/RangerNightRole');
 const LittleFeetNightRole = require('./standardNightRoles/LittleFeetNightRole');
 const SasquatchNightRole = require('./standardNightRoles/SasquatchNightRole');
+const HunterNightRole = require('./standardNightRoles/HunterNightRole');
 
 next_state = {
     "starting" : {
@@ -356,7 +357,15 @@ class StandardGame extends AbstractGame {
                         sasquatchNightRole.nightAction();
                         return sasquatchNightRole.executeRole();
                     } else if (role === 'hunter') {
-
+                        let hunterNightRole = new HunterNightRole(against_role, 
+                                                        against_player_info, 
+                                                        this.room_id, 
+                                                        value,
+                                                        this.game.game,
+                                                        this.game.players);
+                            hunterNightRole.messageAction();
+                            hunterNightRole.nightAction();
+                            return hunterNightRole.executeRole();
 
                     } else if (role === 'temp') {
                         // kill player and remove from alive

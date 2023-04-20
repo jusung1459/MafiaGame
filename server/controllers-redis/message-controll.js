@@ -16,11 +16,16 @@ message = (req, res) => {
 
     if (message != '') {
         redisClient.json.get(`mafia:${user.room}`).then((data) => {
-            console.log(data)
+            // console.log(data)
             let state = data.game.state;
             // check if alive
             let player_status = data.players.find((player) => {return player.player_id === user.player_id});
             console.log(player_status);
+            const TRIM_COUNT = 30; // max message count
+            if (data.messages.length > TRIM_COUNT) {
+                let trim_count = data.messages.length - TRIM_COUNT;
+                redisClient.json.arrTrim(`mafia:${user.room}`, '$.messages', trim_count, -1);
+            }
 
             if (player_status.living == true) { // only alive players can talk
                 if  (state === "trial") { // only player on trial can talk
