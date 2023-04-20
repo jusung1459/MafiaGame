@@ -25,7 +25,6 @@ class HunterNightRole extends AbstractNightRole {
     nightAction() {
         // remove from good_players or evil_players
         console.log("REMOVE PLAYER");
-        console.log(this.game);
         let remove_player_index = this.game.good_players.findIndex((player) => {
             console.log(player + " " + this.against_player_info.player_id)
             return player == this.against_player_info.player_id
@@ -53,10 +52,11 @@ class HunterNightRole extends AbstractNightRole {
     }
 
     async executeRole() {
+        const dec_role = this.dataHandler.decrData('$.role_counter.hunter');
         const set_player_dead = this.dataHandler.addRoomData("$.players", this.game_players);
         const set_game = this.dataHandler.addRoomData('$.game', this.game);
         const add_mesg = this.dataHandler.appendRoomData('$.messages', this.message);
-        return Promise.all([set_player_dead, set_game, add_mesg])
+        return Promise.all([dec_role, set_player_dead, set_game, add_mesg])
     }
     
 }
