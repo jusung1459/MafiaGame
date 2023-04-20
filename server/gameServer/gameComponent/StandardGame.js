@@ -363,59 +363,10 @@ class StandardGame extends AbstractGame {
                                                         value,
                                                         this.game.game,
                                                         this.game.players);
-                            hunterNightRole.messageAction();
-                            hunterNightRole.nightAction();
-                            return hunterNightRole.executeRole();
+                        hunterNightRole.messageAction();
+                        hunterNightRole.nightAction();
+                        return hunterNightRole.executeRole();
 
-                    } else if (role === 'temp') {
-                        // kill player and remove from alive
-                        console.log("hunter: " );
-    
-                        let dead_reveal_msg = { "nickname" : "Game",
-                                        "player_id" : "0"};
-                        dead_reveal_msg["message"] = against_player_info.nickname + " was found dead tonight, camper was " + against_role + "!";
-                        dead_reveal_msgs.push(dead_reveal_msg);
-    
-                        // remove from good_players or evil_players
-                        console.log("REMOVE PLAYER");
-                        // console.log(this.game);
-                        let remove_player_index = this.game.game.good_players.findIndex((player) => {
-                            console.log(player + " " + against_player_info.player_id)
-                            return player == against_player_info.player_id
-                        })
-                        if (remove_player_index >= 0) {
-                            this.game.game.good_players.splice(remove_player_index, 1);
-                        } else {
-                            remove_player_index = this.game.game.evil_players.findIndex((player) => {
-                                return player == against_player_info.player_id
-                            })
-                            if (remove_player_index >= 0) {
-                                this.game.game.evil_players.splice(remove_player_index, 1);
-                            }
-                        }
-                        this.game.game.dead_players.push(against_player_info.player_id)
-
-                        remove_player_index = this.game.players.findIndex((player) => {
-                            console.log(player.player_id + " " + against_player_info.player_id)
-                            return player.player_id == against_player_info.player_id
-                        })
-    
-                        if (remove_player_index >= 0) {
-                            this.game.players[remove_player_index].living = false
-                        }
-                        console.log(this.game.players)
-                        console.log(remove_player_index)
-    
-                        if (role === 'hunter') {                        
-                            const dec_role = this.dataHandler.incrData('$.role_counter.hunter');
-                            const set_player_dead = this.dataHandler.addRoomData("$.players", this.game.players);
-                            const set_game = this.dataHandler.addRoomData('$.game', this.game.game);
-                            return Promise.all([dec_role, set_player_dead, set_game])
-                        } else {
-                            const set_player_dead = this.dataHandler.addRoomData("$.players", this.game.players);
-                            const set_game = this.dataHandler.addRoomData('$.game', this.game.game);
-                            return Promise.all([set_player_dead, set_game])
-                        }
                     }
                 })).then((data) => {
                     if (dead_reveal_msgs.length > 0) {
